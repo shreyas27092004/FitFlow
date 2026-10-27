@@ -64,6 +64,18 @@ public class PermissionChecker {
         return true;
     }
 
+    public boolean hasAny(String... permissions) {
+        if (permissions == null || permissions.length == 0) {
+            return false;
+        }
+        for (String perm : permissions) {
+            if (has(perm)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean isSensitive(String permission) {
         return SENSITIVE_PERMISSIONS.contains(permission);
     }

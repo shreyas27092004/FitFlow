@@ -34,7 +34,7 @@ public class User extends BaseVersionedAuditedEntity {
     @Column(name = "password_hash", nullable = false)
     private String passwordHash;
 
-    @Column(name = "full_name", nullable = false, length = 150)
+    @Column(name = "full_name", length = 150)
     private String fullName;
 
     @Column(name = "phone", length = 30)
@@ -42,6 +42,9 @@ public class User extends BaseVersionedAuditedEntity {
 
     @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
+
+    @Column(name = "notification_prefs", columnDefinition = "JSON")
+    private String notificationPrefs;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)

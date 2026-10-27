@@ -4,6 +4,7 @@ import com.fitflow.auth.entity.RefreshToken;
 import com.fitflow.auth.repository.RefreshTokenRepository;
 import com.fitflow.common.error.ApiException;
 import com.fitflow.security.JwtProperties;
+import com.fitflow.user.RefreshTokenRevoker;
 import com.fitflow.user.entity.User;
 import com.fitflow.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +25,7 @@ import java.util.UUID;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class RefreshTokenService {
+public class RefreshTokenService implements RefreshTokenRevoker {
 
     public record RotationResult(User user, String newRawToken) {}
 

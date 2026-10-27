@@ -145,6 +145,9 @@ Every API error returns `application/problem+json` with fields: `type`, `title`,
 | Event Name | Payload Fields | Producer Module | Consumer Modules | Introduced In |
 | :--- | :--- | :--- | :--- | :--- |
 | `password.reset_requested` | `userId`, `token` | `auth` | `notification` (email dispatch) | Stage 2 |
+| `user.deletion_requested` | `userId` | `user` | `booking`, `notification` | Stage 3 |
+| `user.created` | `userId`, `role`, `tempPasswordDeliveredVia`, `tempPassword` | `admin` | `notification` (email dispatch) | Stage 3 |
+| `user.suspended` | `userId` | `admin` | `notification` | Stage 3 |
 
 ---
 
@@ -162,6 +165,28 @@ All routes are prefixed with `/api/v1` and speak `application/json` (or `applica
 | `POST` | `/api/v1/auth/forgot-password` | Anonymous | `ForgotPasswordRequest` | `ForgotPasswordResponse` | 202, 400 | Stage 2 |
 | `POST` | `/api/v1/auth/reset-password` | Anonymous | `ResetPasswordRequest` | Void | 204, 400 | Stage 2 |
 | `GET` | `/api/v1/me/permissions` | Authenticated | None | `PermissionsResponse` | 200, 401 | Stage 2 |
+| `GET` | `/api/v1/me` | Authenticated | None | `UserProfileResponse` | 200, 401 | Stage 3 |
+| `PATCH` | `/api/v1/me` | Authenticated | `UpdateProfileRequest` | `UserProfileResponse` | 200, 400, 401, 409 | Stage 3 |
+| `GET` | `/api/v1/me/export` | Authenticated | None | `UserDataExportResponse` | 200, 401 | Stage 3 |
+| `POST` | `/api/v1/me/delete-request` | Authenticated | `DeleteAccountRequest` | Void | 202, 400, 401 | Stage 3 |
+| `GET` | `/api/v1/admin/users` | `USER_READ` | Filters (q, role, status, page, size, sort) | `PageResponse<UserSummaryDto>` | 200, 401, 403 | Stage 3 |
+| `GET` | `/api/v1/admin/users/{id}` | `USER_READ` | None | `AdminUserDetailResponse` | 200, 401, 403, 404 | Stage 3 |
+| `POST` | `/api/v1/admin/users` | `USER_EDIT` (`SUPER_ADMIN` for Admin/Perms) | `AdminCreateUserRequest` | `UserSummaryDto` | 201, 400, 401, 403, 409 | Stage 3 |
+| `PATCH` | `/api/v1/admin/users/{id}` | `USER_EDIT` | `AdminUpdateUserRequest` | `AdminUserDetailResponse` | 200, 400, 401, 403, 404, 409 | Stage 3 |
+| `POST` | `/api/v1/admin/users/{id}/suspend` | `USER_EDIT` | None | `Map<String, String>` | 200, 401, 403, 404, 409 | Stage 3 |
+| `POST` | `/api/v1/admin/users/{id}/reactivate`| `USER_EDIT` | None | `Map<String, String>` | 200, 401, 403, 404 | Stage 3 |
+| `PUT` | `/api/v1/admin/users/{id}/permissions`| `SUPER_ADMIN` | `AdminPermissionsRequest` | `Map<String, Object>` | 200, 400, 401, 403, 404, 409 | Stage 3 |
+| `GET` | `/api/v1/trainers` | Authenticated | None | `List<TrainerPublicResponse>` | 200, 401 | Stage 3 |
+| `GET` | `/api/v1/trainers/{id}` | Authenticated | None | `TrainerPublicResponse` | 200, 401, 404 | Stage 3 |
+| `GET` | `/api/v1/trainer/me` | Role `TRAINER` | None | `TrainerProfileResponse` | 200, 401, 403, 404 | Stage 3 |
+| `PATCH` | `/api/v1/trainer/me` | Role `TRAINER` | `UpdateTrainerProfileRequest` | `TrainerProfileResponse` | 200, 400, 401, 403, 409 | Stage 3 |
+| `PATCH` | `/api/v1/admin/trainers/{id}/rate` | `PAYOUT_APPROVE` or `SUPER_ADMIN` | `UpdateTrainerRateRequest` | `TrainerProfileResponse` | 200, 400, 401, 403, 404, 409 | Stage 3 |
+| `GET` | `/api/v1/trainer/me/summary` | Role `TRAINER` | None | `TrainerSummaryResponse` | 200, 401, 403 | Stage 3 |
+| `GET` | `/api/v1/admin/settings/ai` | `SETTINGS_EDIT` or `SUPER_ADMIN` | None | `AiSettingsResponse` | 200, 401, 403 | Stage 3 |
+| `PUT` | `/api/v1/admin/settings/ai/key` | `SETTINGS_EDIT` or `SUPER_ADMIN` | `SetAiKeyRequest` | `AiSettingsResponse` | 200, 400, 401, 403 | Stage 3 |
+| `DELETE`| `/api/v1/admin/settings/ai/key` | `SETTINGS_EDIT` or `SUPER_ADMIN` | None | Void | 204, 401, 403 | Stage 3 |
+| `PUT` | `/api/v1/admin/settings/ai/model` | `SETTINGS_EDIT` or `SUPER_ADMIN` | `SetAiModelRequest` | `AiSettingsResponse` | 200, 400, 401, 403 | Stage 3 |
+| `POST` | `/api/v1/admin/settings/ai/test` | `SETTINGS_EDIT` or `SUPER_ADMIN` | None | `AiTestResponse` | 200, 401, 403 | Stage 3 |
 | `GET` | `/dev/mail` | Anonymous (Dev profile only) | None | `List<EmailMessageDto>` | 200 | Stage 1 |
 | `DELETE` | `/dev/mail` | Anonymous (Dev profile only) | None | Void | 204 | Stage 1 |
 
@@ -236,6 +261,8 @@ All other endpoints require authentication (deny by default).
 | Stub Name | Location | Purpose | Test Proving Contract |
 | :--- | :--- | :--- | :--- |
 | `MockLlmClient` | `com.fitflow.agent.MockLlmClient` | Deterministic canned responses for AI agent workflows before Stage 8 Gemini integration. | Verified in unit and architecture tests. |
+| `BookingCancellationStub` | `com.fitflow.booking.BookingCancellationStub` | Placeholder for future booking cancellation and quota restoration upon user deletion (Stage 4/5). | Verified via `BookingCancellationStubTest`. |
+| `GeminiClientStub` | `com.fitflow.agent.GeminiClientStub` | Deterministic stub for live Gemini test connection before full LLM integration in Stage 8. | Verified via `GeminiClientStubTest`. |
 
 ---
 
@@ -267,6 +294,21 @@ All other endpoints require authentication (deny by default).
 9. **Automated Endpoint Security Coverage Gate (`EndpointSecurityCoverageTest`)**:
    - *Decision*: Every endpoint mapped in Spring MVC is audited at test time to verify it is explicitly registered in `PublicRoutes` or guarded with `@PreAuthorize`.
    - *Rationale*: Guarantees deny-by-default security across all future stages; any endpoint accidentally left open fails the test gate immediately.
+10. **Acyclic Module Boundaries via Dependency Inversion Principle (DIP)**:
+    - *Decision*: When `user` requires token revocation on account deletion, `user` defines `RefreshTokenRevoker` interface implemented by `RefreshTokenService` in `auth`. When `settings` requires AI connection test execution, `settings` defines `AiConnectionTester` interface implemented by `GeminiClientStub` in `agent`.
+    - *Rationale*: Strictly preserves ArchUnit Rule D (acyclic package slice graph `com.fitflow.(*)..`) without circular dependencies between domain modules.
+11. **Administrative Trainer Compensation Segregation**:
+    - *Decision*: Trainer profile self-service (`/api/v1/trainer/me`) and public trainer catalogs (`/api/v1/trainers`) reside in `com.fitflow.trainer`, while administrative session pay rate mutations (`/api/v1/admin/trainers/{id}/rate`) and audit logging reside in `com.fitflow.admin`.
+    - *Rationale*: Prevents `trainer` from depending on `admin`, maintaining a clean unidirectional dependency `admin` -> `trainer`.
+12. **Trainer Availability Slot Validation Engine**:
+    - *Decision*: Dedicated `TrainerAvailabilityValidator` validates day of week (1..7), enforces 24-hour time formats `HH:mm`, guarantees `end` strictly after `start`, and prevents overlapping time intervals for the same weekday.
+    - *Rationale*: Ensures robust scheduling data integrity before class session calendar scheduling is introduced in Stage 4.
+13. **Last SUPER_ADMIN Protective Guard**:
+    - *Decision*: Suspending a user or updating an admin's permissions queries the count of active super administrators in the database; if the target holds `SUPER_ADMIN` and active count is <= 1, the operation is blocked with 409 Conflict. Additionally, administrators cannot suspend their own accounts.
+    - *Rationale*: Prevents accidental system-wide lockout of all super administrative access.
+14. **Dynamic AI Key & Model Configuration with Safe Redaction**:
+    - *Decision*: AI API keys are validated (`^AIza[^\s]{16,196}$`), encrypted via `SecretsService` (AES-256-GCM), and masked on all reads (`maskedLast4`). Audit logs record `configured: true/false` without secret keys. `LogRedactor` ensures keys, passwords, and tokens are redacted to `[REDACTED]` in all application logging.
+    - *Rationale*: Provides flexible runtime configuration for multi-agent capabilities while enforcing zero secret leakage in logs, audit trails, and client responses (Rule R10).
 
 ---
 
@@ -285,4 +327,5 @@ All other endpoints require authentication (deny by default).
 | Stage | Date | Built | Verified How | UNVERIFIED Items | Known Gaps |
 | :---: | :---: | :--- | :--- | :--- | :--- |
 | **Stage 1** | 2026-10-27 | Repository scaffold, Maven build with Java 17, Dual MySQL/PostgreSQL DataSources & Flyway migrations, AES-256-GCM EncryptionService, SecretsService, ErrorCode & GlobalExceptionHandler, CorrelationIdFilter, PageRequestDto, ArchUnit 7 architecture rules, GreenMail dev mail controller, DevSeedRunner. | `mvn verify` green (35 tests: 25 unit + 10 IT); Jacoco coverage check passed; Live health check UP; 3 Sanity-Breaks executed and proven. | None | Authentication workflows (JWT issuance, login endpoints) scheduled for Stage 2. |
-| **Stage 2** | 2026-10-28 | Production-grade JWT auth (`TokenService`, JJWT), BCrypt(12), role & permission model (`PermissionChecker`), token rotation with family revocation on reuse, `PasswordPolicy`, forgot/reset password with outbox events, rate limiting & lockout (`LoginAttemptService`, Bucket4j), `AdminActionLogger`, `AgeService`, `EndpointSecurityCoverageTest` automated gate. | `mvn verify` green (90 tests: 51 unit + 39 IT); Jacoco coverage check passed; EndpointSecurityCoverageTest passed; Live app walkthrough (10 endpoints) passed; 3 Sanity-Breaks executed and proven. | None | Fitness class catalog and scheduling engine scheduled for Stage 3. |
+| **Stage 2** | 2026-10-28 | Production-grade JWT auth (`TokenService`, JJWT), BCrypt(12), role & permission model (`PermissionChecker`), token rotation with family revocation on reuse, `PasswordPolicy`, forgot/reset password with outbox events, rate limiting & lockout (`LoginAttemptService`, Bucket4j), `AdminActionLogger`, `AgeService`, `EndpointSecurityCoverageTest` automated gate. | `mvn verify` green (90 tests: 51 unit + 39 IT); Jacoco coverage check passed; EndpointSecurityCoverageTest passed; Live app walkthrough (10 endpoints) passed; 3 Sanity-Breaks executed and proven. | None | User, trainer, and admin management scheduled for Stage 3. |
+| **Stage 3** | 2026-10-28 | Member self-service (`GET/PATCH /api/v1/me`, `GET /export`, `POST /delete-request`), Admin user management with pagination, filtering & last-super-admin guard (`/api/v1/admin/users`), Trainer catalog & self-service availability validation (`/api/v1/trainers`, `/api/v1/trainer/me`, `/rate`), AI runtime settings with AES-256-GCM encrypted Gemini key & mock fallback (`/api/v1/admin/settings/ai`), `BookingCancellationStub`, `GeminiClientStub`. | `mvn verify` green (160 tests: 66 unit + 94 IT); Jacoco coverage check passed; EndpointSecurityCoverageTest passed; ArchUnit 7 gates passed; Live app walkthrough (21 endpoints) passed; 3 Sanity-Breaks executed and proven. | None | Fitness class catalog, room scheduling, and booking engine scheduled for Stage 4. |

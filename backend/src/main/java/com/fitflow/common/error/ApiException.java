@@ -60,6 +60,14 @@ public class ApiException extends RuntimeException {
         return new ApiException(ErrorCode.SESSION_FULL, HttpStatus.CONFLICT, message);
     }
 
+    public static ApiException optimisticLock(String message) {
+        return new ApiException(ErrorCode.OPTIMISTIC_LOCK, HttpStatus.CONFLICT, message);
+    }
+
+    public static ApiException internalError(String message) {
+        return new ApiException(ErrorCode.INTERNAL_ERROR, HttpStatus.INTERNAL_SERVER_ERROR, message);
+    }
+
     public static ApiException bookingViolation(String message) {
         return new ApiException(ErrorCode.BOOKING_RULE_VIOLATION, HttpStatus.UNPROCESSABLE_ENTITY, message);
     }
