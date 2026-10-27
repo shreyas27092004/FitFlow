@@ -31,6 +31,7 @@ import java.util.Optional;
 @EnableJpaAuditing(dateTimeProviderRef = "dateTimeProvider")
 @EnableJpaRepositories(
         basePackages = {
+                "com.fitflow.auth.repository",
                 "com.fitflow.user.repository",
                 "com.fitflow.trainer.repository",
                 "com.fitflow.fitnessclass.repository",
@@ -100,6 +101,7 @@ public class MySqlJpaConfig {
                 .dataSource(dataSource)
                 .packages(
                         "com.fitflow.common.entity",
+                        "com.fitflow.auth.entity",
                         "com.fitflow.user.entity",
                         "com.fitflow.trainer.entity",
                         "com.fitflow.fitnessclass.entity",

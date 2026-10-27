@@ -15,5 +15,6 @@ public enum ErrorCode {
     PAYMENT_FAILED,
     CONSENT_REQUIRED,
     AGE_RESTRICTED,
+    LOCKED,
     INTERNAL_ERROR
 }

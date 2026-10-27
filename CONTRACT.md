@@ -83,7 +83,8 @@ Every API error returns `application/problem+json` with fields: `type`, `title`,
 | `IDEMPOTENCY_REPLAY_MISMATCH`| 422 Unprocessable | Idempotency key reused with different request payload. |
 | `PAYMENT_FAILED` | 402 Payment Required | Payment gateway processing failed or declined. |
 | `CONSENT_REQUIRED` | 428 Precondition Required | Explicit health consent required before storing or accessing biometric data. |
-| `AGE_RESTRICTED` | 403 Forbidden | User does not meet minimum age requirement for class or plan. |
+| `AGE_RESTRICTED` | 400 Bad Request | User does not meet minimum age requirement for class or plan (< 14 for registration). |
+| `LOCKED` | 429 Too Many Requests| Account temporarily locked due to 5 consecutive login failures (includes Retry-After header). |
 | `INTERNAL_ERROR` | 500 Internal Error | Unexpected server error. Message is masked; details hidden from clients. |
 
 ---
@@ -143,7 +144,7 @@ Every API error returns `application/problem+json` with fields: `type`, `title`,
 
 | Event Name | Payload Fields | Producer Module | Consumer Modules | Introduced In |
 | :--- | :--- | :--- | :--- | :--- |
-| *(None yet)* | — | — | — | Stage 1 (Schema scaffolded) |
+| `password.reset_requested` | `userId`, `token` | `auth` | `notification` (email dispatch) | Stage 2 |
 
 ---
 
@@ -153,12 +154,60 @@ All routes are prefixed with `/api/v1` and speak `application/json` (or `applica
 
 | Method | Path | Roles / Permissions | Request DTO | Response DTO | Status Codes | Stage |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| `POST` | `/api/v1/auth/register` | Anonymous | `RegisterRequest` | `RegisterResponse` | 201, 400, 409 | Stage 2 |
+| `POST` | `/api/v1/auth/login` | Anonymous | `LoginRequest` | `AuthResponse` | 200, 400, 401, 429 | Stage 2 |
+| `POST` | `/api/v1/auth/refresh` | Anonymous | `RefreshRequest` | `AuthResponse` | 200, 400, 401 | Stage 2 |
+| `POST` | `/api/v1/auth/logout` | Authenticated | `LogoutRequest` | Void | 204, 401 | Stage 2 |
+| `POST` | `/api/v1/auth/change-password` | Authenticated | `ChangePasswordRequest` | Void | 204, 400, 401 | Stage 2 |
+| `POST` | `/api/v1/auth/forgot-password` | Anonymous | `ForgotPasswordRequest` | `ForgotPasswordResponse` | 202, 400 | Stage 2 |
+| `POST` | `/api/v1/auth/reset-password` | Anonymous | `ResetPasswordRequest` | Void | 204, 400 | Stage 2 |
+| `GET` | `/api/v1/me/permissions` | Authenticated | None | `PermissionsResponse` | 200, 401 | Stage 2 |
 | `GET` | `/dev/mail` | Anonymous (Dev profile only) | None | `List<EmailMessageDto>` | 200 | Stage 1 |
 | `DELETE` | `/dev/mail` | Anonymous (Dev profile only) | None | Void | 204 | Stage 1 |
 
 ---
 
-## 7. Environment Variables
+## 7. Public Routes List (Single Source of Truth)
+
+Defined centrally in `com.fitflow.security.PublicRoutes` and verified by `EndpointSecurityCoverageTest`:
+
+- `POST /api/v1/auth/register`
+- `POST /api/v1/auth/login`
+- `POST /api/v1/auth/refresh`
+- `POST /api/v1/auth/forgot-password`
+- `POST /api/v1/auth/reset-password`
+- `GET /actuator/health`
+- `GET /api/v1/plans` (added in Stage 5)
+- `GET /swagger-ui/**`, `/swagger-ui.html`, `/v3/api-docs/**`, `/swagger-resources/**` (dev/test only)
+- `GET /dev/mail` (dev only)
+- `* /error` (system error forward)
+
+All other endpoints require authentication (deny by default).
+
+---
+
+## 8. Role & Permission Model
+
+### Roles
+- `MEMBER`: Regular fitness club member.
+- `TRAINER`: Class coach / trainer.
+- `ADMIN`: Administrator with granular permission flags.
+
+### Admin Permissions
+- `USER_READ`: View user profiles.
+- `USER_EDIT`: Modify user details and permissions (Sensitive).
+- `CLASS_EDIT`: Create and modify fitness classes.
+- `PLAN_EDIT`: Modify membership plans.
+- `REFUND_APPROVE`: Approve member payment refunds (Sensitive).
+- `PAYOUT_APPROVE`: Approve trainer session payout batches (Sensitive).
+- `SETTINGS_EDIT`: Modify system application settings (Sensitive).
+- `SUPER_ADMIN`: Implies all permissions unconditionally.
+
+*Sensitive Action Re-validation*: When checking sensitive permissions (`REFUND_APPROVE`, `PAYOUT_APPROVE`, `USER_EDIT`, `SETTINGS_EDIT`), `PermissionChecker` verifies token claims AND re-queries `admin_permissions` in the database to ensure immediate revocation takes effect.
+
+---
+
+## 9. Environment Variables
 
 | Variable | Description | Default (Dev) | Required in Prod |
 | :--- | :--- | :--- | :---: |
@@ -175,14 +224,14 @@ All routes are prefixed with `/api/v1` and speak `application/json` (or `applica
 | `MESSAGING_MODE` | Messaging Engine (`rabbit` or `inmemory`) | `rabbit` | Yes |
 | `SMTP_HOST` | SMTP Mail Host | `localhost` | Yes |
 | `SMTP_PORT` | SMTP Port | `3025` (GreenMail in dev) | Yes |
-| `JWT_SECRET` | HMAC-SHA256 Signing Secret (>= 32 bytes) | Generated / dev key | Yes |
+| `JWT_SECRET` | HMAC-SHA256 Signing Secret (>= 32 bytes) | Generated in `.local/jwt.secret` | Yes |
 | `APP_MASTER_KEY` | AES-256-GCM 32-byte Base64 Encryption Key | Generated in `.local/master.key` | Yes |
 | `GEMINI_API_KEY` | Google Gemini API Key | Stored in `app_secrets` or env | No (optional) |
 | `CORS_ALLOWED_ORIGINS`| Permitted CORS Origins | `http://localhost:3000,http://localhost:5173` | Yes |
 
 ---
 
-## 8. Stubs
+## 10. Stubs
 
 | Stub Name | Location | Purpose | Test Proving Contract |
 | :--- | :--- | :--- | :--- |
@@ -190,7 +239,7 @@ All routes are prefixed with `/api/v1` and speak `application/json` (or `applica
 
 ---
 
-## 9. Architectural & Engineering Decisions
+## 11. Architectural & Engineering Decisions
 
 1. **Java 17 LTS Baseline (Amended Rule R2)**:
    - *Decision*: Adopt Java 17 LTS as the compilation and runtime baseline, approved explicitly by the user during Stage 1 preflight.
@@ -206,10 +255,22 @@ All routes are prefixed with `/api/v1` and speak `application/json` (or `applica
    - *Rationale*: Provides authenticated encryption (AEAD). Any tampering with ciphertext or wrong decryption key throws an immediate authentication failure.
 5. **No Entity Leakage (ArchUnit Gate)**:
    - *Decision*: Strict ArchUnit automated rules enforce that `@RestController` classes never depend on `@Entity` or `repository` packages, and never accept or return entities.
+6. **Password Hashing Baseline (BCrypt 12)**:
+   - *Decision*: Standardized on BCrypt with work factor (strength) 12 for all password hashing.
+   - *Rationale*: Work factor 12 provides strong protection against GPU dictionary and brute-force attacks while maintaining acceptable verification latency (< 250ms per check).
+7. **Refresh Token Security: Rotation & Family Revocation**:
+   - *Decision*: Refresh tokens are single-use rotated, stored only as SHA-256 hashes (`token_hash CHAR(64)`), and grouped by a UUID `family_id`.
+   - *Rationale*: Replaying a revoked refresh token immediately revokes all tokens within that family, cutting off compromised sessions across all devices. Raw tokens never reside in persistent storage.
+8. **Rate Limiting & Brute-Force Lockout**:
+   - *Decision*: In-memory token bucket rate limiting (10 attempts/min per IP+email via Bucket4j) combined with progressive lockout (5 failed login attempts locks account for 15 minutes, returning 429 with `Retry-After` header).
+   - *Rationale*: Thwarts distributed credential stuffing and automated password guessing while giving locked users a deterministic retry window.
+9. **Automated Endpoint Security Coverage Gate (`EndpointSecurityCoverageTest`)**:
+   - *Decision*: Every endpoint mapped in Spring MVC is audited at test time to verify it is explicitly registered in `PublicRoutes` or guarded with `@PreAuthorize`.
+   - *Rationale*: Guarantees deny-by-default security across all future stages; any endpoint accidentally left open fails the test gate immediately.
 
 ---
 
-## 10. Assumptions
+## 12. Assumptions
 
 1. **Currency**: All money amounts are stored as `BIGINT` representing paise (INR). No floating point arithmetic is permitted for monetary calculations (Rule R4).
 2. **Time**: All dates and timestamps are stored in UTC using `java.time.Instant`. Time is always accessed via the injected `java.time.Clock` bean (Rule R5).
@@ -219,8 +280,9 @@ All routes are prefixed with `/api/v1` and speak `application/json` (or `applica
 
 ---
 
-## 11. Stage Log
+## 13. Stage Log
 
 | Stage | Date | Built | Verified How | UNVERIFIED Items | Known Gaps |
 | :---: | :---: | :--- | :--- | :--- | :--- |
 | **Stage 1** | 2026-10-27 | Repository scaffold, Maven build with Java 17, Dual MySQL/PostgreSQL DataSources & Flyway migrations, AES-256-GCM EncryptionService, SecretsService, ErrorCode & GlobalExceptionHandler, CorrelationIdFilter, PageRequestDto, ArchUnit 7 architecture rules, GreenMail dev mail controller, DevSeedRunner. | `mvn verify` green (35 tests: 25 unit + 10 IT); Jacoco coverage check passed; Live health check UP; 3 Sanity-Breaks executed and proven. | None | Authentication workflows (JWT issuance, login endpoints) scheduled for Stage 2. |
+| **Stage 2** | 2026-10-28 | Production-grade JWT auth (`TokenService`, JJWT), BCrypt(12), role & permission model (`PermissionChecker`), token rotation with family revocation on reuse, `PasswordPolicy`, forgot/reset password with outbox events, rate limiting & lockout (`LoginAttemptService`, Bucket4j), `AdminActionLogger`, `AgeService`, `EndpointSecurityCoverageTest` automated gate. | `mvn verify` green (90 tests: 51 unit + 39 IT); Jacoco coverage check passed; EndpointSecurityCoverageTest passed; Live app walkthrough (10 endpoints) passed; 3 Sanity-Breaks executed and proven. | None | Fitness class catalog and scheduling engine scheduled for Stage 3. |

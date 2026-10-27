@@ -18,6 +18,9 @@ logging:
 fitflow:
   messaging:
     mode: inmemory
+  security:
+    jwt:
+      secret: "c2VjcmV0LWtleS1mb3ItZml0Zmxvdy10ZXN0aW5nLTMyYnl0ZXMhIQ=="
   datasource:
     mysql:
       url: ${MYSQL_TEST_URL:jdbc:mysql://localhost:3306/fitflow_test?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC}

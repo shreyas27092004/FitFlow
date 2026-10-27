@@ -78,10 +78,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         problem.setProperty("code", ex.getErrorCode().name());
         problem.setProperty("traceId", traceId);
 
-        return ResponseEntity
+        var builder = ResponseEntity
                 .status(ex.getStatus())
-                .contentType(MediaType.parseMediaType(PROBLEM_JSON_MEDIA_TYPE))
-                .body(problem);
+                .contentType(MediaType.parseMediaType(PROBLEM_JSON_MEDIA_TYPE));
+        if (ex.getHeaders() != null && !ex.getHeaders().isEmpty()) {
+            builder.headers(ex.getHeaders());
+        }
+
+        return builder.body(problem);
     }
 
     @ExceptionHandler(OptimisticLockingFailureException.class)

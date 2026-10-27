@@ -1,6 +1,7 @@
 package com.fitflow.common.error;
 
 import lombok.Getter;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
 @Getter
@@ -8,11 +9,17 @@ public class ApiException extends RuntimeException {
 
     private final ErrorCode errorCode;
     private final HttpStatus status;
+    private final HttpHeaders headers;
 
     public ApiException(ErrorCode errorCode, HttpStatus status, String message) {
+        this(errorCode, status, message, new HttpHeaders());
+    }
+
+    public ApiException(ErrorCode errorCode, HttpStatus status, String message, HttpHeaders headers) {
         super(message);
         this.errorCode = errorCode;
         this.status = status;
+        this.headers = headers != null ? headers : new HttpHeaders();
     }
 
     public static ApiException notFound(String message) {
@@ -35,8 +42,18 @@ public class ApiException extends RuntimeException {
         return new ApiException(ErrorCode.VALIDATION_FAILED, HttpStatus.BAD_REQUEST, message);
     }
 
+    public static ApiException ageRestricted(String message) {
+        return new ApiException(ErrorCode.AGE_RESTRICTED, HttpStatus.BAD_REQUEST, message);
+    }
+
     public static ApiException rateLimited(String message) {
         return new ApiException(ErrorCode.RATE_LIMITED, HttpStatus.TOO_MANY_REQUESTS, message);
+    }
+
+    public static ApiException locked(String message, long retryAfterSeconds) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.RETRY_AFTER, String.valueOf(retryAfterSeconds));
+        return new ApiException(ErrorCode.LOCKED, HttpStatus.TOO_MANY_REQUESTS, message, headers);
     }
 
     public static ApiException sessionFull(String message) {
