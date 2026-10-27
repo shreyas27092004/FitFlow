@@ -1,0 +1,74 @@
+spring:
+  application:
+    name: fitflow
+  jackson:
+    default-property-inclusion: non_null
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+  mail:
+    host: ${SMTP_HOST:localhost}
+    port: ${SMTP_PORT:1025}
+    username: ${SMTP_USER:}
+    password: ${SMTP_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+
+server:
+  port: ${SERVER_PORT:8080}
+  error:
+    include-stacktrace: never
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
+
+fitflow:
+  messaging:
+    mode: ${MESSAGING_MODE:rabbit}
+  clock:
+    zone: UTC
+  display-timezone: Asia/Kolkata
+  datasource:
+    mysql:
+      url: ${MYSQL_URL:jdbc:mysql://localhost:3306/fitflow?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC}
+      jdbc-url: ${MYSQL_URL:jdbc:mysql://localhost:3306/fitflow?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC}
+      username: ${MYSQL_USER:fitflow_app}
+      password: ${MYSQL_PASSWORD:fitflow_pass}
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      pool-name: FitFlow-MySQL-Pool
+      maximum-pool-size: 10
+      minimum-idle: 2
+    postgres:
+      url: ${PG_URL:jdbc:postgresql://localhost:5432/fitflow}
+      jdbc-url: ${PG_URL:jdbc:postgresql://localhost:5432/fitflow}
+      username: ${PG_USER:fitflow_app}
+      password: ${PG_PASSWORD:fitflow_pass}
+      driver-class-name: org.postgresql.Driver
+      pool-name: FitFlow-Postgres-Pool
+      maximum-pool-size: 10
+      minimum-idle: 2
+  security:
+    jwt:
+      secret: ${JWT_SECRET:}
+      access-token-expiration-seconds: 900
+      refresh-token-expiration-seconds: 604800
+    master-key: ${APP_MASTER_KEY:}
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000,http://localhost:5173}

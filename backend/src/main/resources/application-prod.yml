@@ -1,0 +1,32 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
+
+fitflow:
+  messaging:
+    mode: rabbit
+  datasource:
+    mysql:
+      url: ${MYSQL_URL}
+      jdbc-url: ${MYSQL_URL}
+      username: ${MYSQL_USER}
+      password: ${MYSQL_PASSWORD}
+    postgres:
+      url: ${PG_URL}
+      jdbc-url: ${PG_URL}
+      username: ${PG_USER}
+      password: ${PG_PASSWORD}
+  security:
+    jwt:
+      secret: ${JWT_SECRET}
+    master-key: ${APP_MASTER_KEY}
+
+logging:
+  config: classpath:logback-spring.xml

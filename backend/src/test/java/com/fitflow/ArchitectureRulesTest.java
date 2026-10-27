@@ -1,0 +1,135 @@
+package com.fitflow;
+
+import com.fitflow.common.ClockConfig;
+import com.tngtech.archunit.core.domain.JavaClasses;
+import com.tngtech.archunit.core.importer.ClassFileImporter;
+import com.tngtech.archunit.core.importer.ImportOption;
+import com.tngtech.archunit.lang.ArchCondition;
+import com.tngtech.archunit.lang.ArchRule;
+import com.tngtech.archunit.lang.ConditionEvents;
+import com.tngtech.archunit.lang.SimpleConditionEvent;
+import jakarta.persistence.Entity;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.methods;
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noFields;
+import static com.tngtech.archunit.library.dependencies.SlicesRuleDefinition.slices;
+
+public class ArchitectureRulesTest {
+
+    private static JavaClasses importedClasses;
+
+    @BeforeAll
+    static void setUp() {
+        importedClasses = new ClassFileImporter()
+                .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
+                .importPackages("com.fitflow");
+    }
+
+    // (a) No field @Autowired
+    @Test
+    @DisplayName("Gate (a): No class has a field annotated with @Autowired")
+    void ruleA_noFieldAutowired() {
+        ArchRule rule = noFields()
+                .should().beAnnotatedWith(Autowired.class)
+                .because("Constructor injection must be used everywhere (Rule R6)");
+        rule.check(importedClasses);
+    }
+
+    // (b) Controllers must not depend on repositories or entities
+    @Test
+    @DisplayName("Gate (b): Controllers must not depend on repositories or @Entity classes")
+    void ruleB_controllersMustNotDependOnRepositoriesOrEntities() {
+        ArchRule rule = noClasses()
+                .that().resideInAPackage("..controller..")
+                .or().areAnnotatedWith(RestController.class)
+                .should().dependOnClassesThat().resideInAPackage("..repository..")
+                .orShould().dependOnClassesThat().areAnnotatedWith(Entity.class)
+                .because("Controllers must call services and expose only DTO records (Rule R7)");
+        rule.check(importedClasses);
+    }
+
+    // (c) @RestController method return type or parameter cannot be an @Entity
+    @Test
+    @DisplayName("Gate (c): @RestController methods must never accept or return @Entity classes")
+    void ruleC_controllerMethodsMustNotExposeOrAcceptEntities() {
+        ArchRule rule = methods()
+                .that().areDeclaredInClassesThat().areAnnotatedWith(RestController.class)
+                .should(new ArchCondition<>("not have entity return types or parameters") {
+                    @Override
+                    public void check(com.tngtech.archunit.core.domain.JavaMethod method, ConditionEvents events) {
+                        if (method.getRawReturnType().isAnnotatedWith(Entity.class)) {
+                            events.add(SimpleConditionEvent.violated(method,
+                                    "Method " + method.getFullName() + " returns an @Entity (" + method.getRawReturnType().getName() + ")"));
+                        }
+                        for (var param : method.getParameters()) {
+                            if (param.getRawType().isAnnotatedWith(Entity.class)) {
+                                events.add(SimpleConditionEvent.violated(method,
+                                        "Method " + method.getFullName() + " accepts an @Entity (" + param.getRawType().getName() + ") as parameter"));
+                            }
+                        }
+                    }
+                })
+                .because("Controllers must never expose or accept JPA entities (Rule R7)");
+        rule.check(importedClasses);
+    }
+
+    // (d) No cyclic dependencies among top-level domain packages
+    @Test
+    @DisplayName("Gate (d): No package cycles among top-level domain slices")
+    void ruleD_noPackageCycles() {
+        ArchRule rule = slices()
+                .matching("com.fitflow.(*)..")
+                .should().beFreeOfCycles()
+                .because("Top-level modules must maintain a clean DAG without cyclic package dependencies");
+        rule.check(importedClasses);
+    }
+
+    // (e) No calls to Instant.now(), LocalDate.now(), LocalDateTime.now(), System.currentTimeMillis() outside ClockConfig
+    @Test
+    @DisplayName("Gate (e): No direct calls to Instant/LocalDate.now() outside ClockConfig")
+    void ruleE_noDirectClockCalls() {
+        ArchRule rule = noClasses()
+                .that().doNotHaveFullyQualifiedName(ClockConfig.class.getName())
+                .should().callMethod(Instant.class, "now")
+                .orShould().callMethod(LocalDate.class, "now")
+                .orShould().callMethod(LocalDateTime.class, "now")
+                .orShould().callMethod(System.class, "currentTimeMillis")
+                .because("Time must always be derived from the injected java.time.Clock bean (Rule R5)");
+        rule.check(importedClasses);
+    }
+
+    // (f) System.out / System.err / printStackTrace not used
+    @Test
+    @DisplayName("Gate (f): System.out/err and printStackTrace are forbidden")
+    void ruleF_noSystemStreamsOrPrintStackTrace() {
+        ArchRule rule = noClasses()
+                .that().doNotHaveFullyQualifiedName("com.fitflow.FitFlowApplication")
+                .should().accessField(System.class, "out")
+                .orShould().accessField(System.class, "err")
+                .orShould().callMethod(Throwable.class, "printStackTrace")
+                .because("All logging must use SLF4J structured logging with correlation IDs and redaction");
+        rule.check(importedClasses);
+    }
+
+    // (g) Classes ending in Controller must reside in controller or devtools package
+    @Test
+    @DisplayName("Gate (g): Classes named *Controller must reside in controller or devtools packages")
+    void ruleG_controllersPackageConvention() {
+        ArchRule rule = classes()
+                .that().haveSimpleNameEndingWith("Controller")
+                .should().resideInAnyPackage("..controller..", "..devtools..")
+                .because("Controllers must reside in controller or devtools packages");
+        rule.check(importedClasses);
+    }
+}

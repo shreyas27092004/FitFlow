@@ -1,0 +1,40 @@
+spring:
+  mail:
+    host: ${SMTP_HOST:localhost}
+    port: ${SMTP_PORT:3025}
+    username: ${SMTP_USER:}
+    password: ${SMTP_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+
+logging:
+  level:
+    root: INFO
+    com.fitflow: DEBUG
+    org.springframework.web: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.orm.jdbc.bind: TRACE
+
+fitflow:
+  messaging:
+    mode: ${MESSAGING_MODE:rabbit}
+  flyway:
+    mysql:
+      locations:
+        - classpath:db/migration/mysql
+        - classpath:db/seed-dev
+    postgres:
+      locations:
+        - classpath:db/migration/postgres
