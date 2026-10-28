@@ -2,7 +2,6 @@ package com.fitflow.user;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fitflow.booking.BookingCancellationStub;
 import com.fitflow.common.error.ApiException;
 import com.fitflow.notification.entity.OutboxEvent;
 import com.fitflow.notification.repository.OutboxEventRepository;
@@ -34,7 +33,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserRoleRepository userRoleRepository;
     private final RefreshTokenRevoker refreshTokenRevoker;
-    private final BookingCancellationStub bookingCancellationStub;
+    private final UserBookingCancellationHandler bookingCancellationHandler;
     private final OutboxEventRepository outboxEventRepository;
     private final PasswordEncoder passwordEncoder;
     private final AgeService ageService;
@@ -148,7 +147,7 @@ public class UserService {
         userRepository.save(user);
 
         refreshTokenRevoker.revokeAllForUser(userId);
-        bookingCancellationStub.cancelFutureBookingsForUser(userId);
+        bookingCancellationHandler.cancelFutureBookingsForUser(userId);
 
         String payload = String.format("{\"userId\":%d}", userId);
         OutboxEvent event = OutboxEvent.builder()

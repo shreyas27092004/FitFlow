@@ -75,6 +75,18 @@ public class SessionSchedulingIT {
     private TrainerProfileRepository trainerProfileRepository;
 
     @Autowired
+    private com.fitflow.booking.repository.WaitlistEntryRepository waitlistEntryRepository;
+
+    @Autowired
+    private com.fitflow.booking.repository.AttendanceRecordRepository attendanceRecordRepository;
+
+    @Autowired
+    private com.fitflow.booking.repository.BookingRepository bookingRepository;
+
+    @Autowired
+    private com.fitflow.payout.repository.TrainerSessionEarningsRepository earningsRepository;
+
+    @Autowired
     private FitnessClassRepository fitnessClassRepository;
 
     @Autowired
@@ -102,6 +114,10 @@ public class SessionSchedulingIT {
 
     @BeforeEach
     void setUp() {
+        waitlistEntryRepository.deleteAll();
+        attendanceRecordRepository.deleteAll();
+        bookingRepository.deleteAll();
+        earningsRepository.deleteAll();
         sessionRepository.deleteAll();
         fitnessClassRepository.deleteAll();
 

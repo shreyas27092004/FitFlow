@@ -57,6 +57,18 @@ public class FitnessClassCatalogIT {
     private UserRoleRepository userRoleRepository;
 
     @Autowired
+    private com.fitflow.booking.repository.WaitlistEntryRepository waitlistEntryRepository;
+
+    @Autowired
+    private com.fitflow.booking.repository.AttendanceRecordRepository attendanceRecordRepository;
+
+    @Autowired
+    private com.fitflow.booking.repository.BookingRepository bookingRepository;
+
+    @Autowired
+    private com.fitflow.payout.repository.TrainerSessionEarningsRepository earningsRepository;
+
+    @Autowired
     private FitnessClassRepository fitnessClassRepository;
 
     @Autowired
@@ -74,6 +86,10 @@ public class FitnessClassCatalogIT {
 
     @BeforeEach
     void setUp() {
+        waitlistEntryRepository.deleteAll();
+        attendanceRecordRepository.deleteAll();
+        bookingRepository.deleteAll();
+        earningsRepository.deleteAll();
         classSessionRepository.deleteAll();
         fitnessClassRepository.deleteAll();
 

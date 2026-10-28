@@ -59,6 +59,10 @@ public class ApiException extends RuntimeException {
         return new ApiException(ErrorCode.AGE_RESTRICTED, HttpStatus.BAD_REQUEST, message);
     }
 
+    public static ApiException ageRestrictedForbidden(String message) {
+        return new ApiException(ErrorCode.AGE_RESTRICTED, HttpStatus.FORBIDDEN, message);
+    }
+
     public static ApiException rateLimited(String message) {
         return new ApiException(ErrorCode.RATE_LIMITED, HttpStatus.TOO_MANY_REQUESTS, message);
     }
@@ -82,6 +86,18 @@ public class ApiException extends RuntimeException {
     }
 
     public static ApiException bookingViolation(String message) {
-        return new ApiException(ErrorCode.BOOKING_RULE_VIOLATION, HttpStatus.UNPROCESSABLE_ENTITY, message);
+        return new ApiException(ErrorCode.BOOKING_RULE_VIOLATION, HttpStatus.CONFLICT, message);
+    }
+
+    public static ApiException bookingRuleViolation(String message) {
+        return new ApiException(ErrorCode.BOOKING_RULE_VIOLATION, HttpStatus.CONFLICT, message);
+    }
+
+    public static ApiException idempotencyReplayMismatch(String message) {
+        return new ApiException(ErrorCode.IDEMPOTENCY_REPLAY_MISMATCH, HttpStatus.UNPROCESSABLE_ENTITY, message);
+    }
+
+    public static ApiException upgradeRequired(String message) {
+        return new ApiException(ErrorCode.UPGRADE_REQUIRED, HttpStatus.CONFLICT, message);
     }
 }

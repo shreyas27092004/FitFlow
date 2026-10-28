@@ -34,7 +34,10 @@ class ConstraintIT {
         jdbcTemplate = new JdbcTemplate(mysqlDataSource);
 
         // Clean up test data
-        jdbcTemplate.execute("DELETE FROM bookings WHERE member_id >= 99000");
+        jdbcTemplate.execute("DELETE FROM waitlist_entries WHERE session_id >= 99000");
+        jdbcTemplate.execute("DELETE FROM attendance_records");
+        jdbcTemplate.execute("DELETE FROM trainer_session_earnings WHERE session_id >= 99000");
+        jdbcTemplate.execute("DELETE FROM bookings WHERE member_id >= 99000 OR session_id >= 99000");
         jdbcTemplate.execute("DELETE FROM class_sessions WHERE id >= 99000");
         jdbcTemplate.execute("DELETE FROM fitness_classes WHERE id >= 99000");
         jdbcTemplate.execute("DELETE FROM users WHERE id >= 99000");

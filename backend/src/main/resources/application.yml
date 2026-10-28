@@ -40,6 +40,9 @@ management:
   endpoint:
     health:
       show-details: always
+  health:
+    mail:
+      enabled: false
 
 springdoc:
   api-docs:
@@ -90,3 +93,8 @@ fitflow:
     master-key: ${APP_MASTER_KEY:}
   ai:
     default-model: "gemini-1.5-flash"
+  booking:
+    stub-free-sessions: 3
+    waitlist-enabled: true
+    cancel-cutoff-hours: 4
+    no-show-consumes: true

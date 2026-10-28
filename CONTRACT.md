@@ -106,6 +106,7 @@ Every API error returns `application/problem+json` with fields: `type`, `title`,
 | `bookings` | `booking` | Yes (`version`) | Member bookings with active_flag unique index per session/member. |
 | `waitlist_entries` | `booking` | No | Ordered FIFO waitlist for filled class sessions. |
 | `attendance_records` | `booking` | No | Marked attendance or no-show per booking. |
+| `idempotency_records` | `booking` | No | SHA-256 request payload hash, cached response JSON, status code, and expiry for idempotent mutations. |
 | `membership_plans` | `membership` | Yes (`version`) | Plan catalog, prices in paise, session quotas, free tier flags. |
 | `memberships` | `membership` | Yes (`version`) | User plan subscriptions, quotas used, validity windows. |
 | `membership_changes` | `membership` | No | Proration audit log for plan upgrades, downgrades, and refunds. |
@@ -148,6 +149,13 @@ Every API error returns `application/problem+json` with fields: `type`, `title`,
 | `user.deletion_requested` | `userId` | `user` | `booking`, `notification` | Stage 3 |
 | `user.created` | `userId`, `role`, `tempPasswordDeliveredVia`, `tempPassword` | `admin` | `notification` (email dispatch) | Stage 3 |
 | `user.suspended` | `userId` | `admin` | `notification` | Stage 3 |
+| `session.rescheduled` | `sessionId`, `previousStartsAt`, `newStartsAt` | `session` | `booking`, `notification` | Stage 4 |
+| `session.cancelled` | `sessionId`, `reason` | `session` | `booking`, `notification` | Stage 4 |
+| `booking.created` | `bookingId`, `sessionId`, `memberId` | `booking` | `notification` | Stage 4 |
+| `booking.cancelled` | `bookingId`, `sessionId`, `memberId`, `reason` | `booking` | `notification` | Stage 4 |
+| `waitlist.promoted` | `waitlistEntryId`, `sessionId`, `memberId`, `bookingId` | `booking` | `notification` | Stage 4 |
+| `attendance.marked` | `sessionId`, `bookingId`, `memberId`, `status` | `booking` | `notification`, `payout` | Stage 4 |
+| `session.completed` | `sessionId`, `trainerId`, `attendeeCount`, `amountPaise` | `booking` | `payout`, `notification` | Stage 4 |
 
 ---
 
@@ -187,6 +195,28 @@ All routes are prefixed with `/api/v1` and speak `application/json` (or `applica
 | `DELETE`| `/api/v1/admin/settings/ai/key` | `SETTINGS_EDIT` or `SUPER_ADMIN` | None | Void | 204, 401, 403 | Stage 3 |
 | `PUT` | `/api/v1/admin/settings/ai/model` | `SETTINGS_EDIT` or `SUPER_ADMIN` | `SetAiModelRequest` | `AiSettingsResponse` | 200, 400, 401, 403 | Stage 3 |
 | `POST` | `/api/v1/admin/settings/ai/test` | `SETTINGS_EDIT` or `SUPER_ADMIN` | None | `AiTestResponse` | 200, 401, 403 | Stage 3 |
+| `GET` | `/api/v1/classes/metadata` | Authenticated | None | `ClassMetadataResponse` | 200, 401 | Stage 4 |
+| `GET` | `/api/v1/classes` | Authenticated | Filters (category, intensity, impactLevel, q, page, size) | `PageResponse<ClassSummaryDto>` | 200, 401 | Stage 4 |
+| `GET` | `/api/v1/classes/{id}` | Authenticated | None | `ClassDetailResponse` | 200, 401, 404 | Stage 4 |
+| `POST` | `/api/v1/admin/classes` | `CLASS_EDIT` | `CreateClassRequest` | `ClassDetailResponse` | 201, 400, 401, 403 | Stage 4 |
+| `PUT` | `/api/v1/admin/classes/{id}` | `CLASS_EDIT` | `UpdateClassRequest` | `ClassDetailResponse` | 200, 400, 401, 403, 404, 409 | Stage 4 |
+| `POST` | `/api/v1/admin/classes/{id}/deactivate` | `CLASS_EDIT` | None | `ClassDetailResponse` | 200, 401, 403, 404 | Stage 4 |
+| `POST` | `/api/v1/admin/classes/{id}/activate` | `CLASS_EDIT` | None | `ClassDetailResponse` | 200, 401, 403, 404 | Stage 4 |
+| `POST` | `/api/v1/admin/classes/{id}/confirm-metadata` | `CLASS_EDIT` | None | `ClassDetailResponse` | 200, 401, 403, 404 | Stage 4 |
+| `POST` | `/api/v1/admin/sessions` | `CLASS_EDIT` | `CreateSessionRequest` | `List<SessionDetailResponse>` | 201, 400, 401, 403, 404, 409 | Stage 4 |
+| `PATCH` | `/api/v1/admin/sessions/{id}/reschedule` | `CLASS_EDIT` | `RescheduleSessionRequest` | `SessionDetailResponse` | 200, 400, 401, 403, 404, 409 | Stage 4 |
+| `POST` | `/api/v1/admin/sessions/{id}/cancel` | `CLASS_EDIT` | `CancelSessionRequest` | `SessionDetailResponse` | 200, 400, 401, 403, 404, 409 | Stage 4 |
+| `GET` | `/api/v1/sessions` | Authenticated | Filters (from, to, classId, trainerId, room) | `List<SessionSummaryDto>` | 200, 400, 401 | Stage 4 |
+| `GET` | `/api/v1/sessions/{id}` | Authenticated | None | `SessionDetailResponse` | 200, 401, 404 | Stage 4 |
+| `GET` | `/api/v1/trainer/sessions` | Role `TRAINER` | Filters (from, to) | `List<SessionSummaryDto>` | 200, 400, 401, 403 | Stage 4 |
+| `GET` | `/api/v1/admin/reports/utilization` | `USER_READ` or `SUPER_ADMIN` | Filters (from, to) | `List<SessionUtilizationReportDto>` | 200, 400, 401, 403 | Stage 4 |
+| `POST` | `/api/v1/bookings` | Role `MEMBER` | `CreateBookingRequest` | `BookingResponse` (201) / `WaitlistResponse` (202) | 201, 202, 400, 401, 402, 403, 404, 409, 422 | Stage 4 |
+| `DELETE`| `/api/v1/bookings/{id}` | Role `MEMBER` | None | Void | 204, 401, 403, 404, 409 | Stage 4 |
+| `GET` | `/api/v1/me/bookings` | Role `MEMBER` | None | `List<BookingResponse>` | 200, 401, 403 | Stage 4 |
+| `POST` | `/api/v1/admin/bookings/{id}/cancel` | `USER_EDIT` or `SUPER_ADMIN` | None | Void | 204, 401, 403, 404, 409 | Stage 4 |
+| `DELETE`| `/api/v1/waitlist/{sessionId}` | Role `MEMBER` | None | Void | 204, 401, 403, 404 | Stage 4 |
+| `POST` | `/api/v1/trainer/sessions/{id}/attendance` | Role `TRAINER` | `MarkAttendanceRequest` | Void | 200, 400, 401, 403, 404, 409 | Stage 4 |
+| `POST` | `/api/v1/trainer/sessions/{id}/complete` | Role `TRAINER` | `CompleteSessionRequest` | Void | 200, 400, 401, 403, 404, 409 | Stage 4 |
 | `GET` | `/dev/mail` | Anonymous (Dev profile only) | None | `List<EmailMessageDto>` | 200 | Stage 1 |
 | `DELETE` | `/dev/mail` | Anonymous (Dev profile only) | None | Void | 204 | Stage 1 |
 
@@ -263,6 +293,7 @@ All other endpoints require authentication (deny by default).
 | `MockLlmClient` | `com.fitflow.agent.MockLlmClient` | Deterministic canned responses for AI agent workflows before Stage 8 Gemini integration. | Verified in unit and architecture tests. |
 | `BookingCancellationStub` | `com.fitflow.booking.BookingCancellationStub` | Placeholder for future booking cancellation and quota restoration upon user deletion (Stage 4/5). | Verified via `BookingCancellationStubTest`. |
 | `GeminiClientStub` | `com.fitflow.agent.GeminiClientStub` | Deterministic stub for live Gemini test connection before full LLM integration in Stage 8. | Verified via `GeminiClientStubTest`. |
+| `DefaultFreeTierEntitlementService` | `com.fitflow.booking.DefaultFreeTierEntitlementService` | Grants 3 lifetime free bookings per member and tracks usage in-memory prior to Stage 5 paid membership plans. | Verified via `DefaultFreeTierEntitlementServiceTest` and `BookingConcurrencyIT`. |
 
 ---
 
@@ -309,6 +340,24 @@ All other endpoints require authentication (deny by default).
 14. **Dynamic AI Key & Model Configuration with Safe Redaction**:
     - *Decision*: AI API keys are validated (`^AIza[^\s]{16,196}$`), encrypted via `SecretsService` (AES-256-GCM), and masked on all reads (`maskedLast4`). Audit logs record `configured: true/false` without secret keys. `LogRedactor` ensures keys, passwords, and tokens are redacted to `[REDACTED]` in all application logging.
     - *Rationale*: Provides flexible runtime configuration for multi-agent capabilities while enforcing zero secret leakage in logs, audit trails, and client responses (Rule R10).
+15. **Atomic Seat Allocation via Direct SQL Predicate**:
+    - *Decision*: Seat allocation is performed in MySQL using `UPDATE class_sessions SET booked_count = booked_count + 1 WHERE id = :id AND booked_count < capacity AND active_flag = 1`.
+    - *Rationale*: Guarantees zero overbooking under high concurrent load (verified with 40 concurrent threads over 3 runs against 5 seats) without heavy table or row pessimistic locking.
+16. **Deterministic Idempotency Key Engine**:
+    - *Decision*: Implemented `IdempotencyService` storing SHA-256 hash of canonical HTTP request payloads in MySQL `idempotency_records` with 24-hour TTL. Duplicate identical requests return cached 201/202 responses; duplicate keys with differing payloads fail immediately with 422 `IDEMPOTENCY_REPLAY_MISMATCH`.
+    - *Rationale*: Protects payment, quota, and booking allocations against client network timeouts and retries.
+17. **FIFO Waitlist Promotion with Automatic Seat Reservation**:
+    - *Decision*: When a confirmed booking is cancelled, the session seat is immediately handed over to the earliest pending waitlist candidate (`status = PENDING` ordered by `created_at ASC`), maintaining `booked_count` unchanged, moving candidate to `PROMOTED`, and creating a new `CONFIRMED` booking.
+    - *Rationale*: Eliminates race conditions where an outside member could steal a released seat before waitlisted users could react.
+18. **4-Hour Cancellation Cutoff & Entitlement Restore**:
+    - *Decision*: Member self-service cancellations within 4 hours of session start time (`startsAt - 4h`) are rejected with 409 `CONFLICT`. Admin cancellations override this restriction. On successful cancellation, the user's booking credit is immediately restored via `EntitlementService`.
+    - *Rationale*: Protects trainers and waitlisted members from last-minute seat churn while preserving member fairness.
+19. **Trainer Attendance Window & Earnings Snapshots**:
+    - *Decision*: Attendance marking and session completion can only occur after `startsAt` has passed. Session completion records an immutable snapshot in `trainer_session_earnings` using `trainer_rate_snapshot_paise` captured at session creation time.
+    - *Rationale*: Preserves historical financial auditability against retroactive changes to a trainer's pay rate.
+20. **Acyclic Booking-User Boundary via DIP**:
+    - *Decision*: Account deletion in `com.fitflow.user` invokes `UserBookingCancellationHandler`, implemented cleanly by `BookingCancellationStub` in `com.fitflow.booking`.
+    - *Rationale*: Prevents circular package slice cycles between `user` and `booking`, satisfying ArchUnit rule 7.
 
 ---
 
@@ -329,3 +378,4 @@ All other endpoints require authentication (deny by default).
 | **Stage 1** | 2026-10-27 | Repository scaffold, Maven build with Java 17, Dual MySQL/PostgreSQL DataSources & Flyway migrations, AES-256-GCM EncryptionService, SecretsService, ErrorCode & GlobalExceptionHandler, CorrelationIdFilter, PageRequestDto, ArchUnit 7 architecture rules, GreenMail dev mail controller, DevSeedRunner. | `mvn verify` green (35 tests: 25 unit + 10 IT); Jacoco coverage check passed; Live health check UP; 3 Sanity-Breaks executed and proven. | None | Authentication workflows (JWT issuance, login endpoints) scheduled for Stage 2. |
 | **Stage 2** | 2026-10-28 | Production-grade JWT auth (`TokenService`, JJWT), BCrypt(12), role & permission model (`PermissionChecker`), token rotation with family revocation on reuse, `PasswordPolicy`, forgot/reset password with outbox events, rate limiting & lockout (`LoginAttemptService`, Bucket4j), `AdminActionLogger`, `AgeService`, `EndpointSecurityCoverageTest` automated gate. | `mvn verify` green (90 tests: 51 unit + 39 IT); Jacoco coverage check passed; EndpointSecurityCoverageTest passed; Live app walkthrough (10 endpoints) passed; 3 Sanity-Breaks executed and proven. | None | User, trainer, and admin management scheduled for Stage 3. |
 | **Stage 3** | 2026-10-28 | Member self-service (`GET/PATCH /api/v1/me`, `GET /export`, `POST /delete-request`), Admin user management with pagination, filtering & last-super-admin guard (`/api/v1/admin/users`), Trainer catalog & self-service availability validation (`/api/v1/trainers`, `/api/v1/trainer/me`, `/rate`), AI runtime settings with AES-256-GCM encrypted Gemini key & mock fallback (`/api/v1/admin/settings/ai`), `BookingCancellationStub`, `GeminiClientStub`. | `mvn verify` green (160 tests: 66 unit + 94 IT); Jacoco coverage check passed; EndpointSecurityCoverageTest passed; ArchUnit 7 gates passed; Live app walkthrough (21 endpoints) passed; 3 Sanity-Breaks executed and proven. | None | Fitness class catalog, room scheduling, and booking engine scheduled for Stage 4. |
+| **Stage 4** | 2026-10-28 | Fitness class catalog & metadata vocabularies (`/classes`, `/admin/classes`), session scheduling with recurrence & room/trainer conflict detection (`/sessions`, `/admin/sessions`), concurrent booking pipeline with atomic seat allocation (`/bookings`), FIFO waitlist promotion, 4h cancellation cutoff, idempotency key engine (`idempotency_records`), trainer attendance & earnings snapshot (`/trainer/sessions/{id}/attendance`, `/complete`), session utilization reporting. | `mvn verify` green (225 tests: 79 unit + 146 IT); Jacoco coverage check passed; EndpointSecurityCoverageTest passed (22 new endpoints guarded); ArchUnit 7 gates passed; 3 Sanity-Breaks executed and proven; Concurrency test (40 threads, 3 runs) 0 overbooking proven; Live app walkthrough (12 steps + direct MySQL CLI verification) passed. | None | Membership plans, subscriptions, quota tracking, and payment processing scheduled for Stage 5. |

@@ -1,5 +1,6 @@
 package com.fitflow.booking;
 
+import com.fitflow.user.UserBookingCancellationHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -9,8 +10,9 @@ import org.springframework.stereotype.Service;
  */
 @Slf4j
 @Service
-public class BookingCancellationStub {
+public class BookingCancellationStub implements UserBookingCancellationHandler {
 
+    @Override
     public int cancelFutureBookingsForUser(Long userId) {
         log.info("BookingCancellationStub: future bookings cancellation requested for user id {}", userId);
         return 0;

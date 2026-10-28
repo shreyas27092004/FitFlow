@@ -57,8 +57,8 @@ public interface ClassSessionRepository extends JpaRepository<ClassSession, Long
         UPDATE ClassSession s
         SET s.bookedCount = s.bookedCount + 1
         WHERE s.id = :sessionId
-          AND s.bookedCount < s.capacity
           AND s.status = 'SCHEDULED'
+          AND s.bookedCount < s.capacity
     """)
     int allocateSeatAtomic(@Param("sessionId") Long sessionId);
 

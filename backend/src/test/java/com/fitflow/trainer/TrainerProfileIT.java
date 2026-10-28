@@ -86,6 +86,7 @@ public class TrainerProfileIT {
 
     @BeforeEach
     void setUp() {
+        trainerProfileRepository.deleteAll();
         // 1. Trainer
         trainerUser = userRepository.save(User.builder()
                 .email("coach.sam@fitflow.local")
