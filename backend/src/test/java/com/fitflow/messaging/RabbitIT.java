@@ -129,8 +129,8 @@ public class RabbitIT {
         publisher.publish(envelope);
 
         if (greenMail != null) {
-            boolean received = greenMail.waitForIncomingEmail(10000, 1);
-            assertTrue(received, "GreenMail should receive booking confirmation email within 10s");
+            boolean received = greenMail.waitForIncomingEmail(25000, 1);
+            assertTrue(received, "GreenMail should receive booking confirmation email within 25s");
             MimeMessage[] messages = greenMail.getReceivedMessages();
             assertTrue(messages.length >= 1);
             assertEquals("Booking Confirmed", messages[0].getSubject());

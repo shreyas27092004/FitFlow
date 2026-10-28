@@ -85,6 +85,10 @@ public class ApiException extends RuntimeException {
         return new ApiException(ErrorCode.AGE_RESTRICTED, HttpStatus.FORBIDDEN, message);
     }
 
+    public static ApiException consentRequired(String message) {
+        return new ApiException(ErrorCode.CONSENT_REQUIRED, HttpStatus.FORBIDDEN, message);
+    }
+
     public static ApiException rateLimited(String message) {
         return new ApiException(ErrorCode.RATE_LIMITED, HttpStatus.TOO_MANY_REQUESTS, message);
     }

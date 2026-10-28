@@ -64,7 +64,9 @@ class FlywayMysqlIT {
             "job_locks",
             "processed_events",
             "booking_reminders",
-            "membership_notices"
+            "membership_notices",
+            "health_access_log",
+            "restriction_proposals"
     );
 
     @Test

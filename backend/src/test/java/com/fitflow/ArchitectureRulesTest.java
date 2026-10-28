@@ -193,4 +193,21 @@ public class ArchitectureRulesTest {
                 .because("Only package payment.gateway.razorpay may reference the Razorpay base URL or read razorpay secrets");
         rule.check(importedClasses);
     }
+
+    // (j) Only package com.fitflow.wellness may touch the health repositories and HealthDataCodec
+    @Test
+    @DisplayName("Gate (j): Only package com.fitflow.wellness may touch health repositories and HealthDataCodec")
+    void ruleJ_wellnessStorageIsolationBoundary() {
+        ArchRule rule = noClasses()
+                .that().resideOutsideOfPackage("..wellness..")
+                .should().dependOnClassesThat().haveSimpleNameEndingWith("HealthProfileRepository")
+                .orShould().dependOnClassesThat().haveSimpleNameEndingWith("HealthConsentRepository")
+                .orShould().dependOnClassesThat().haveSimpleNameEndingWith("BodyMetricRepository")
+                .orShould().dependOnClassesThat().haveSimpleNameEndingWith("ProgressLogRepository")
+                .orShould().dependOnClassesThat().haveSimpleNameEndingWith("HealthAccessLogRepository")
+                .orShould().dependOnClassesThat().haveSimpleNameEndingWith("RestrictionProposalRepository")
+                .orShould().dependOnClassesThat().haveSimpleName("HealthDataCodec")
+                .because("Only package com.fitflow.wellness may touch health repositories and HealthDataCodec (Stage 7)");
+        rule.check(importedClasses);
+    }
 }

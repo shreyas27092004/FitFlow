@@ -39,6 +39,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     List<Booking> findByMemberIdAndSessionIdIn(Long memberId, Collection<Long> sessionIds);
 
+    List<Booking> findAllByMemberId(Long memberId);
+
     @Query("SELECT b FROM Booking b WHERE b.memberId = :memberId " +
             "AND (:status IS NULL OR b.status = :status) " +
             "AND (:from IS NULL OR b.bookedAt >= :from) " +

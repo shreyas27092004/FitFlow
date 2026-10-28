@@ -48,4 +48,12 @@ public class AgeService {
             throw ApiException.ageRestricted("User must be at least 14 years old to register");
         }
     }
+
+    public int calculateAge(LocalDate dateOfBirth) {
+        if (dateOfBirth == null) {
+            return 0;
+        }
+        LocalDate today = LocalDate.now(clock);
+        return Period.between(dateOfBirth, today).getYears();
+    }
 }
