@@ -6,12 +6,15 @@ import com.fitflow.booking.dto.CreateBookingRequest;
 import com.fitflow.booking.entity.Booking;
 import com.fitflow.booking.model.BookingStatus;
 import com.fitflow.booking.model.WaitlistStatus;
+import com.fitflow.booking.repository.AttendanceRecordRepository;
 import com.fitflow.booking.repository.BookingRepository;
 import com.fitflow.booking.repository.WaitlistEntryRepository;
 import com.fitflow.fitnessclass.entity.FitnessClass;
 import com.fitflow.fitnessclass.model.ClassImpactLevel;
 import com.fitflow.fitnessclass.model.ClassIntensity;
 import com.fitflow.fitnessclass.repository.FitnessClassRepository;
+import com.fitflow.membership.MembershipService;
+import com.fitflow.payout.repository.TrainerSessionEarningsRepository;
 import com.fitflow.security.TokenService;
 import com.fitflow.session.entity.ClassSession;
 import com.fitflow.session.repository.ClassSessionRepository;
@@ -76,6 +79,15 @@ public class BookingConcurrencyIT {
     private FitnessClassRepository fitnessClassRepository;
 
     @Autowired
+    private AttendanceRecordRepository attendanceRecordRepository;
+
+    @Autowired
+    private TrainerSessionEarningsRepository trainerSessionEarningsRepository;
+
+    @Autowired
+    private MembershipService membershipService;
+
+    @Autowired
     private UserRepository userRepository;
 
     @Autowired
@@ -93,6 +105,8 @@ public class BookingConcurrencyIT {
     @BeforeEach
     void setUp() {
         waitlistEntryRepository.deleteAll();
+        attendanceRecordRepository.deleteAll();
+        trainerSessionEarningsRepository.deleteAll();
         bookingRepository.deleteAll();
         sessionRepository.deleteAll();
         fitnessClassRepository.deleteAll();
@@ -160,6 +174,7 @@ public class BookingConcurrencyIT {
                     .status(User.Status.ACTIVE)
                     .build());
             userRoleRepository.save(new UserRole(new UserRole.UserRoleId(member.getId(), UserRole.Role.MEMBER)));
+            membershipService.assignFreeMembershipIfMissing(member.getId());
             members.add(member);
             tokens.add(tokenService.generateAccessToken(member.getId(), member.getEmail(), List.of("MEMBER"), List.of()));
         }
@@ -269,6 +284,7 @@ public class BookingConcurrencyIT {
                 .status(User.Status.ACTIVE)
                 .build());
         userRoleRepository.save(new UserRole(new UserRole.UserRoleId(member1.getId(), UserRole.Role.MEMBER)));
+        membershipService.assignFreeMembershipIfMissing(member1.getId());
         String member1Token = tokenService.generateAccessToken(member1.getId(), member1.getEmail(), List.of("MEMBER"), List.of());
 
         Booking booking = bookingRepository.save(Booking.builder()
@@ -292,6 +308,7 @@ public class BookingConcurrencyIT {
                 .status(User.Status.ACTIVE)
                 .build());
         userRoleRepository.save(new UserRole(new UserRole.UserRoleId(member2.getId(), UserRole.Role.MEMBER)));
+        membershipService.assignFreeMembershipIfMissing(member2.getId());
 
         waitlistEntryRepository.save(com.fitflow.booking.entity.WaitlistEntry.builder()
                 .sessionId(session.getId())

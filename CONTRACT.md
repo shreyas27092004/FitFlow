@@ -110,12 +110,16 @@ Every API error returns `application/problem+json` with fields: `type`, `title`,
 | `membership_plans` | `membership` | Yes (`version`) | Plan catalog, prices in paise, session quotas, free tier flags. |
 | `memberships` | `membership` | Yes (`version`) | User plan subscriptions, quotas used, validity windows. |
 | `membership_changes` | `membership` | No | Proration audit log for plan upgrades, downgrades, and refunds. |
+| `pending_membership_changes` | `membership` | Yes (`version`) | Two-phase pending subscription/change intents awaiting payment confirmation. |
 | `payments` | `payment` | No | Monetary transactions, gateway references, idempotency keys. |
 | `refunds` | `payment` | No | Refund requests, approval states, idempotency keys. |
+| `refund_allocations` | `payment` | No | FIFO allocations of refunds across original payment intents. |
+| `payment_webhook_events` | `payment` | No | Idempotent log of processed payment gateway webhook payloads. |
 | `invoices` | `payment` | No | Tax-compliant invoice numbers and total amounts in paise. |
 | `trainer_payouts` | `payout` | Yes (`version`) | Payout batches for trainers across date periods. |
 | `trainer_session_earnings`| `payout` | No | Earnings per session linked to payout batches. |
 | `outbox_events` | `notification`| No | Transactional outbox events for guaranteed message delivery. |
+| `job_locks` | `common` | No | Advisory distributed row-based lock for background cron jobs. |
 | `member_health_profiles`| `wellness` | Yes (`version`) | Encrypted JSON blob containing sensitive member health data. |
 | `health_consents` | `wellness` | No | Audit trail of health data consents granted or revoked. |
 | `body_metrics` | `wellness` | No | Encrypted biometric measurements (weight, height). |
@@ -156,6 +160,14 @@ Every API error returns `application/problem+json` with fields: `type`, `title`,
 | `waitlist.promoted` | `waitlistEntryId`, `sessionId`, `memberId`, `bookingId` | `booking` | `notification` | Stage 4 |
 | `attendance.marked` | `sessionId`, `bookingId`, `memberId`, `status` | `booking` | `notification`, `payout` | Stage 4 |
 | `session.completed` | `sessionId`, `trainerId`, `attendeeCount`, `amountPaise` | `booking` | `payout`, `notification` | Stage 4 |
+| `membership.started` | `membershipId`, `memberId`, `planCode`, `endsAt` | `membership` | `notification` | Stage 5 |
+| `membership.changed` | `membershipId`, `memberId`, `fromPlanCode`, `toPlanCode`, `amountDuePaise`, `refundPaise` | `membership` | `notification` | Stage 5 |
+| `membership.cancelled` | `membershipId`, `memberId`, `planCode`, `refundPaise` | `membership` | `notification` | Stage 5 |
+| `payment.intent_created` | `paymentId`, `gatewayOrderId`, `memberId`, `amountPaise`, `gateway` | `payment` | `notification` | Stage 5 |
+| `payment.succeeded` | `paymentId`, `gatewayPaymentId`, `memberId`, `amountPaise`, `invoiceNumber` | `payment` | `membership`, `notification` | Stage 5 |
+| `payment.failed` | `paymentId`, `memberId`, `amountPaise`, `failureReason` | `payment` | `notification` | Stage 5 |
+| `payout.approved` | `payoutBatchId`, `approvedBy`, `totalPaise` | `payout` | `notification` | Stage 5 |
+| `payout.paid` | `payoutBatchId`, `markedPaidBy`, `totalPaise` | `payout` | `notification` | Stage 5 |
 
 ---
 
@@ -217,6 +229,24 @@ All routes are prefixed with `/api/v1` and speak `application/json` (or `applica
 | `DELETE`| `/api/v1/waitlist/{sessionId}` | Role `MEMBER` | None | Void | 204, 401, 403, 404 | Stage 4 |
 | `POST` | `/api/v1/trainer/sessions/{id}/attendance` | Role `TRAINER` | `MarkAttendanceRequest` | Void | 200, 400, 401, 403, 404, 409 | Stage 4 |
 | `POST` | `/api/v1/trainer/sessions/{id}/complete` | Role `TRAINER` | `CompleteSessionRequest` | Void | 200, 400, 401, 403, 404, 409 | Stage 4 |
+| `GET` | `/api/v1/plans` | Anonymous | None | `List<PlanDto>` | 200 | Stage 5 |
+| `POST` | `/api/v1/admin/plans` | `PLAN_EDIT` | `CreatePlanRequest` | `PlanDto` | 201, 400, 401, 403, 409 | Stage 5 |
+| `PUT` | `/api/v1/admin/plans/{id}` | `PLAN_EDIT` | `UpdatePlanRequest` | `PlanDto` | 200, 400, 401, 403, 404, 409 | Stage 5 |
+| `GET` | `/api/v1/me/membership` | Authenticated | None | `MemberMembershipSummaryResponse` | 200, 401 | Stage 5 |
+| `POST` | `/api/v1/me/membership/change-preview` | Authenticated | `ChangePreviewRequest` | `ChangePreviewResponse` | 200, 400, 401, 409 | Stage 5 |
+| `POST` | `/api/v1/memberships/subscribe` | Authenticated | `SubscribeRequest` | `PaymentIntentResponse` | 202, 400, 401, 409 | Stage 5 |
+| `POST` | `/api/v1/memberships/change` | Authenticated | `ChangeMembershipRequest` | `PaymentIntentResponse` / `MemberMembershipSummaryResponse` | 200, 202, 400, 401, 409 | Stage 5 |
+| `POST` | `/api/v1/memberships/cancel` | Authenticated | None | `Map<String, Object>` | 200, 401, 409 | Stage 5 |
+| `POST` | `/api/v1/payments/{paymentId}/confirm` | Role `MEMBER` | `ConfirmPaymentRequest` | `PaymentDetailResponse` | 200, 202, 400, 401, 404 | Stage 5 |
+| `GET` | `/api/v1/payments/{paymentId}` | Role `MEMBER` | None | `PaymentDetailResponse` | 200, 401, 404 | Stage 5 |
+| `POST` | `/api/v1/admin/refunds/{refundId}/approve` | `REFUND_APPROVE` | None | `RefundDetailResponse` | 200, 401, 403, 404, 409 | Stage 5 |
+| `POST` | `/api/v1/admin/refunds/{refundId}/reject` | `REFUND_APPROVE` | None | `RefundDetailResponse` | 200, 401, 403, 404, 409 | Stage 5 |
+| `GET` | `/api/v1/trainer/me/earnings` | Role `TRAINER` | None | `TrainerEarningsResponse` | 200, 401, 403 | Stage 5 |
+| `POST` | `/api/v1/admin/payouts` | `PAYOUT_MANAGE` or `ADMIN` | `CreatePayoutBatchRequest` | `PayoutBatchResponse` | 201, 400, 401, 403 | Stage 5 |
+| `GET` | `/api/v1/admin/payouts/{id}` | `PAYOUT_MANAGE` or `ADMIN` | None | `PayoutBatchResponse` | 200, 401, 403, 404 | Stage 5 |
+| `POST` | `/api/v1/admin/payouts/{id}/approve` | `PAYOUT_MANAGE` or `ADMIN` | None | `PayoutBatchResponse` | 200, 401, 403, 404, 409 | Stage 5 |
+| `POST` | `/api/v1/admin/payouts/{id}/mark-paid` | `PAYOUT_MANAGE` or `ADMIN` | None | `PayoutBatchResponse` | 200, 401, 403, 404, 409 | Stage 5 |
+| `GET` | `/api/v1/admin/payouts/{id}/export.csv` | `PAYOUT_MANAGE` or `ADMIN` | None | `text/csv` | 200, 401, 403, 404 | Stage 5 |
 | `GET` | `/dev/mail` | Anonymous (Dev profile only) | None | `List<EmailMessageDto>` | 200 | Stage 1 |
 | `DELETE` | `/dev/mail` | Anonymous (Dev profile only) | None | Void | 204 | Stage 1 |
 
@@ -255,6 +285,7 @@ All other endpoints require authentication (deny by default).
 - `PLAN_EDIT`: Modify membership plans.
 - `REFUND_APPROVE`: Approve member payment refunds (Sensitive).
 - `PAYOUT_APPROVE`: Approve trainer session payout batches (Sensitive).
+- `PAYOUT_MANAGE`: Create, manage, and mark trainer payout batches as paid.
 - `SETTINGS_EDIT`: Modify system application settings (Sensitive).
 - `SUPER_ADMIN`: Implies all permissions unconditionally.
 
@@ -293,7 +324,8 @@ All other endpoints require authentication (deny by default).
 | `MockLlmClient` | `com.fitflow.agent.MockLlmClient` | Deterministic canned responses for AI agent workflows before Stage 8 Gemini integration. | Verified in unit and architecture tests. |
 | `BookingCancellationStub` | `com.fitflow.booking.BookingCancellationStub` | Placeholder for future booking cancellation and quota restoration upon user deletion (Stage 4/5). | Verified via `BookingCancellationStubTest`. |
 | `GeminiClientStub` | `com.fitflow.agent.GeminiClientStub` | Deterministic stub for live Gemini test connection before full LLM integration in Stage 8. | Verified via `GeminiClientStubTest`. |
-| `DefaultFreeTierEntitlementService` | `com.fitflow.booking.DefaultFreeTierEntitlementService` | Grants 3 lifetime free bookings per member and tracks usage in-memory prior to Stage 5 paid membership plans. | Verified via `DefaultFreeTierEntitlementServiceTest` and `BookingConcurrencyIT`. |
+| `RazorpayGatewayStub` | `com.fitflow.payment.gateway.RazorpayGatewayStub` | Deterministic stub for Razorpay order generation and signature verification before live keys in Stage 8. | Verified in payment unit and integration tests. |
+| `DefaultFreeTierEntitlementService` | `com.fitflow.booking.DefaultFreeTierEntitlementService` | (Retired in Stage 5) Replaced by `RealEntitlementService` in `membership` with atomic row-locking on `memberships`. | Verified via `EntitlementOrderIT` and `BookingConcurrencyIT`. |
 
 ---
 
@@ -358,6 +390,18 @@ All other endpoints require authentication (deny by default).
 20. **Acyclic Booking-User Boundary via DIP**:
     - *Decision*: Account deletion in `com.fitflow.user` invokes `UserBookingCancellationHandler`, implemented cleanly by `BookingCancellationStub` in `com.fitflow.booking`.
     - *Rationale*: Prevents circular package slice cycles between `user` and `booking`, satisfying ArchUnit rule 7.
+21. **Exact Auditable Money Representation via `Money` Record**:
+    - *Decision*: Encapsulated monetary amounts into record `Money(long paise)` with zero floating point representations. Banned `double` and `float` primitive and boxed types across `membership`, `payment`, and `payout` packages via ArchUnit Rule 8.
+    - *Rationale*: Guarantees total freedom from IEEE-754 binary floating-point roundoff errors in high-value financial calculations.
+22. **MinRatio Proration Formula (`MIN_RATIO_V1`)**:
+    - *Decision*: Adopted conservative `min(daysRatio, sessionsRatio)` proration policy. Calculations use `BigDecimal` with scale 10 and `HALF_UP` rounding, rounded exactly once at the end to whole paise.
+    - *Rationale*: Ensures mathematically reproducible plan upgrades, downgrades, and cancellations while capping cumulative refunds by the net cash remaining in the chain.
+23. **Two-Phase Payment Gateway Integration with Pessimistic Locking**:
+    - *Decision*: Decoupled payment intents (Phase 1) from settlement (Phase 2). `PaymentFinalizer.finalizePayment` utilizes pessimistic DB row locking (`SELECT ... FOR UPDATE`) with status validation (`status == PENDING`).
+    - *Rationale*: Thwarts race conditions and double-spending across concurrent confirm requests, guaranteeing that membership changes and tax-compliant invoice numbers are issued exactly once.
+24. **Separation of Duties & Two-Person Approval Rule**:
+    - *Decision*: High-value refunds (> limit) and all trainer payout batches enforce two-person governance. The administrator who created or triggered the financial batch cannot be the one to approve it (returns 409 Conflict).
+    - *Rationale*: Prevents insider fraud and administrative collusion in financial disbursement pipelines.
 
 ---
 
@@ -368,6 +412,7 @@ All other endpoints require authentication (deny by default).
 3. **Display Timezone**: Documented as `Asia/Kolkata` (`fitflow.display-timezone`), used solely for user-facing UI formatting; internal persistence is strictly UTC.
 4. **Dual Database Consistency**: MySQL and PostgreSQL are eventually consistent via the transactional Outbox Pattern (`outbox_events`). Distributed 2PC (XA) transactions are explicitly avoided.
 5. **Gemini API Key**: The Gemini LLM key is entered at runtime by an administrator into `app_secrets` (encrypted at rest), with an optional fallback to `GEMINI_API_KEY` in environment variables.
+6. **Proration Policy Assumption**: The `MIN_RATIO_V1` formula (`daysRemaining / totalDays`, `sessionsRemaining / sessionsTotal`, `refundableFraction = min(daysRatio, sessionsRatio)`, cancellation fee deduction, and net cash cap) is a business assumption chosen by the platform case-study author.
 
 ---
 
@@ -379,3 +424,4 @@ All other endpoints require authentication (deny by default).
 | **Stage 2** | 2026-10-28 | Production-grade JWT auth (`TokenService`, JJWT), BCrypt(12), role & permission model (`PermissionChecker`), token rotation with family revocation on reuse, `PasswordPolicy`, forgot/reset password with outbox events, rate limiting & lockout (`LoginAttemptService`, Bucket4j), `AdminActionLogger`, `AgeService`, `EndpointSecurityCoverageTest` automated gate. | `mvn verify` green (90 tests: 51 unit + 39 IT); Jacoco coverage check passed; EndpointSecurityCoverageTest passed; Live app walkthrough (10 endpoints) passed; 3 Sanity-Breaks executed and proven. | None | User, trainer, and admin management scheduled for Stage 3. |
 | **Stage 3** | 2026-10-28 | Member self-service (`GET/PATCH /api/v1/me`, `GET /export`, `POST /delete-request`), Admin user management with pagination, filtering & last-super-admin guard (`/api/v1/admin/users`), Trainer catalog & self-service availability validation (`/api/v1/trainers`, `/api/v1/trainer/me`, `/rate`), AI runtime settings with AES-256-GCM encrypted Gemini key & mock fallback (`/api/v1/admin/settings/ai`), `BookingCancellationStub`, `GeminiClientStub`. | `mvn verify` green (160 tests: 66 unit + 94 IT); Jacoco coverage check passed; EndpointSecurityCoverageTest passed; ArchUnit 7 gates passed; Live app walkthrough (21 endpoints) passed; 3 Sanity-Breaks executed and proven. | None | Fitness class catalog, room scheduling, and booking engine scheduled for Stage 4. |
 | **Stage 4** | 2026-10-28 | Fitness class catalog & metadata vocabularies (`/classes`, `/admin/classes`), session scheduling with recurrence & room/trainer conflict detection (`/sessions`, `/admin/sessions`), concurrent booking pipeline with atomic seat allocation (`/bookings`), FIFO waitlist promotion, 4h cancellation cutoff, idempotency key engine (`idempotency_records`), trainer attendance & earnings snapshot (`/trainer/sessions/{id}/attendance`, `/complete`), session utilization reporting. | `mvn verify` green (225 tests: 79 unit + 146 IT); Jacoco coverage check passed; EndpointSecurityCoverageTest passed (22 new endpoints guarded); ArchUnit 7 gates passed; 3 Sanity-Breaks executed and proven; Concurrency test (40 threads, 3 runs) 0 overbooking proven; Live app walkthrough (12 steps + direct MySQL CLI verification) passed. | None | Membership plans, subscriptions, quota tracking, and payment processing scheduled for Stage 5. |
+| **Stage 5** | 2026-10-28 | Exact auditable money arithmetic (`Money` record, ArchUnit double/float ban in financial packages), `MIN_RATIO_V1` proration policy, 30-case boundary table test, 1000-iteration randomized property test, two-phase payment gateway router (`MockPaymentGateway`, `RazorpayGatewayStub`), pessimistic payment finalizer, membership subscribe/upgrade/cancel, atomic row-locking entitlement service (`RealEntitlementService`), auto-assigned FREE tier, admin payout batches & two-person approval rule. | `mvn verify` green (250 tests: 85 unit + 165 IT); Jacoco coverage check passed; EndpointSecurityCoverageTest passed; ArchUnit 8 rules passed; 4 Sanity-Breaks executed and proven; 20-thread concurrent confirm 0 duplicate execution proven; Live app walkthrough (10 steps + CSV export) passed. | None | Transactional notifications & outbox consumer scheduled for Stage 6. |

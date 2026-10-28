@@ -16,9 +16,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * Stage 4 stub implementation of {@link EntitlementService}.
  * Marked in CONTRACT.md "Stubs".
  * Allows up to N lifetime bookings per member (config fitflow.booking.stub-free-sessions, default 3).
- * Stage 5 replaces this with the real membership entitlement engine.
+ * Stage 5 replaces this with the real membership entitlement engine (RealEntitlementService).
  */
-@Service
 @Slf4j
 public class DefaultFreeTierEntitlementService implements EntitlementService {
 

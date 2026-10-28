@@ -195,7 +195,7 @@ public class BookingService implements SessionBookingHandler {
         } else {
             // Session full
             // Restore reserved entitlement
-            entitlementService.restore(null, "Session full; reservation released");
+            entitlementService.restoreEntitlement(entitlement.membershipId(), "Session full; reservation released");
 
             if (!waitlistEnabled) {
                 throw ApiException.sessionFull("Session is full and waitlist is currently disabled");
@@ -306,7 +306,19 @@ public class BookingService implements SessionBookingHandler {
         for (WaitlistEntry candidate : waitingList) {
             Long candidateMemberId = candidate.getMemberId();
 
-            // 1. Check candidate entitlement
+            // 1. Check candidate schedule overlap
+            List<Booking> overlapping = bookingRepository.findOverlappingConfirmedBookings(
+                    candidateMemberId, session.getStartsAt(), session.getEndsAt()
+            );
+            if (!overlapping.isEmpty()) {
+                log.info("Waitlist candidate memberId={} has schedule overlap during promotion, marked LEFT",
+                        candidateMemberId);
+                candidate.setStatus(WaitlistStatus.LEFT);
+                waitlistEntryRepository.save(candidate);
+                continue;
+            }
+
+            // 2. Check candidate entitlement
             Entitlement candidateEntitlement;
             try {
                 candidateEntitlement = entitlementService.reserve(
@@ -317,19 +329,6 @@ public class BookingService implements SessionBookingHandler {
                         candidateMemberId);
                 candidate.setStatus(WaitlistStatus.LEFT);
                 waitlistEntryRepository.save(candidate);
-                continue;
-            }
-
-            // 2. Check candidate schedule overlap
-            List<Booking> overlapping = bookingRepository.findOverlappingConfirmedBookings(
-                    candidateMemberId, session.getStartsAt(), session.getEndsAt()
-            );
-            if (!overlapping.isEmpty()) {
-                log.info("Waitlist candidate memberId={} has schedule overlap during promotion, marked LEFT",
-                        candidateMemberId);
-                candidate.setStatus(WaitlistStatus.LEFT);
-                waitlistEntryRepository.save(candidate);
-                entitlementService.restore(null, "Promotion skipped due to overlap");
                 continue;
             }
 
@@ -373,7 +372,7 @@ public class BookingService implements SessionBookingHandler {
                         candidateMemberId, promotedBooking.getId(), session.getId());
                 break; // Exactly one seat freed, so promote exactly one candidate
             } else {
-                entitlementService.restore(null, "Seat allocation failed during promotion");
+                entitlementService.restoreEntitlement(candidateEntitlement.membershipId(), "Seat allocation failed during promotion");
                 break;
             }
         }

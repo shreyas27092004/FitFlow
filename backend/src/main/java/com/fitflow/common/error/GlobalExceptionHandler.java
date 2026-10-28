@@ -77,6 +77,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         problem.setInstance(URI.create(request.getRequestURI()));
         problem.setProperty("code", ex.getErrorCode().name());
         problem.setProperty("traceId", traceId);
+        if (ex.getProperties() != null && !ex.getProperties().isEmpty()) {
+            ex.getProperties().forEach(problem::setProperty);
+        }
 
         var builder = ResponseEntity
                 .status(ex.getStatus())

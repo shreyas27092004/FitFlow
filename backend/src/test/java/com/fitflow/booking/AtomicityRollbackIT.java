@@ -52,6 +52,12 @@ public class AtomicityRollbackIT {
     private ObjectMapper objectMapper;
 
     @Autowired
+    private com.fitflow.payout.repository.TrainerSessionEarningsRepository trainerSessionEarningsRepository;
+
+    @Autowired
+    private com.fitflow.booking.repository.AttendanceRecordRepository attendanceRecordRepository;
+
+    @Autowired
     private BookingRepository bookingRepository;
 
     @Autowired
@@ -88,6 +94,8 @@ public class AtomicityRollbackIT {
         BookingService.setAtomicityFailureSimulation(false);
         outboxEventRepository.deleteAll();
         waitlistEntryRepository.deleteAll();
+        attendanceRecordRepository.deleteAll();
+        trainerSessionEarningsRepository.deleteAll();
         bookingRepository.deleteAll();
         sessionRepository.deleteAll();
         fitnessClassRepository.deleteAll();

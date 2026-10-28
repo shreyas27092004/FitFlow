@@ -45,6 +45,7 @@ public class AuthService {
     private final RefreshTokenService refreshTokenService;
     private final LoginAttemptService loginAttemptService;
     private final JwtProperties jwtProperties;
+    private final org.springframework.context.ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public RegisterResponse register(RegisterRequest request) {
@@ -77,6 +78,13 @@ public class AuthService {
                 .id(new UserRole.UserRoleId(savedUser.getId(), UserRole.Role.MEMBER))
                 .build();
         userRoleRepository.save(userRole);
+
+        // Publish event for downstream listeners (e.g., auto-assign free tier membership)
+        eventPublisher.publishEvent(new com.fitflow.auth.event.UserRegisteredEvent(
+                savedUser.getId(),
+                savedUser.getEmail(),
+                UserRole.Role.MEMBER.name()
+        ));
 
         log.info("Member registered successfully with userId={}", savedUser.getId());
         return new RegisterResponse(savedUser.getId(), savedUser.getEmail(), savedUser.getFullName());

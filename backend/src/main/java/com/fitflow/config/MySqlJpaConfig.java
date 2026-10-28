@@ -43,7 +43,8 @@ import java.util.Optional;
                 "com.fitflow.wellness.repository",
                 "com.fitflow.admin.repository",
                 "com.fitflow.settings.repository",
-                "com.fitflow.notification.repository"
+                "com.fitflow.notification.repository",
+                "com.fitflow.common.job"
         },
         entityManagerFactoryRef = "mysqlEntityManagerFactory",
         transactionManagerRef = "mysqlTransactionManager"
@@ -113,7 +114,8 @@ public class MySqlJpaConfig {
                         "com.fitflow.wellness.entity",
                         "com.fitflow.admin.entity",
                         "com.fitflow.settings.entity",
-                        "com.fitflow.notification.entity"
+                        "com.fitflow.notification.entity",
+                        "com.fitflow.common.job"
                 )
                 .persistenceUnit("mysql")
                 .properties(properties)

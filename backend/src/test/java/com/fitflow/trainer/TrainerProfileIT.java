@@ -30,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.util.List;
 
+import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -322,12 +323,12 @@ public class TrainerProfileIT {
     }
 
     @Test
-    @DisplayName("GET /api/v1/trainer/me/summary: returns upcomingSessionsCount=0 and earnings=null (Stage 5 placeholder)")
+    @DisplayName("GET /api/v1/trainer/me/summary: returns upcomingSessionsCount=0 and earnings (paise)")
     void testGetTrainerSummarySuccess() throws Exception {
         mockMvc.perform(get("/api/v1/trainer/me/summary")
                         .header("Authorization", "Bearer " + trainerToken))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.upcomingSessionsCount", is(0)))
-                .andExpect(jsonPath("$.earnings", nullValue()));
+                .andExpect(jsonPath("$.earnings", anyOf(nullValue(), is(0))));
     }
 }

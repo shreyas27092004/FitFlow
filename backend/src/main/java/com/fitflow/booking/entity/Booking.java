@@ -58,6 +58,9 @@ public class Booking {
     @Column(name = "cancelled_at")
     private Instant cancelledAt;
 
+    @Column(name = "restored_at")
+    private Instant restoredAt;
+
     @Column(name = "active_flag")
     private Byte activeFlag;
 

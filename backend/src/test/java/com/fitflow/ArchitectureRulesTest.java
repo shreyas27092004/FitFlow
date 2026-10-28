@@ -132,4 +132,41 @@ public class ArchitectureRulesTest {
                 .because("Controllers must reside in controller or devtools packages");
         rule.check(importedClasses);
     }
+
+    // (h) No double or float types in packages membership, payment, payout
+    @Test
+    @DisplayName("Gate (h): No double or float types in packages membership, payment, payout")
+    void ruleH_noDoubleOrFloatInMoneyPackages() {
+        ArchRule fieldRule = noFields()
+                .that().areDeclaredInClassesThat().resideInAnyPackage("..membership..", "..payment..", "..payout..")
+                .should().haveRawType(double.class)
+                .orShould().haveRawType(Double.class)
+                .orShould().haveRawType(float.class)
+                .orShould().haveRawType(Float.class)
+                .because("Money logic must use BigInt paise or BigDecimal, never double or float (Rule R4)");
+        fieldRule.check(importedClasses);
+
+        ArchRule methodRule = methods()
+                .that().areDeclaredInClassesThat().resideInAnyPackage("..membership..", "..payment..", "..payout..")
+                .should(new ArchCondition<>("not have double or float parameters or return types") {
+                    @Override
+                    public void check(com.tngtech.archunit.core.domain.JavaMethod method, ConditionEvents events) {
+                        Class<?>[] forbidden = {double.class, Double.class, float.class, Float.class};
+                        for (Class<?> forbiddenType : forbidden) {
+                            if (method.getRawReturnType().isEquivalentTo(forbiddenType)) {
+                                events.add(SimpleConditionEvent.violated(method,
+                                        "Method " + method.getFullName() + " returns " + forbiddenType.getSimpleName()));
+                            }
+                            for (var param : method.getParameters()) {
+                                if (param.getRawType().isEquivalentTo(forbiddenType)) {
+                                    events.add(SimpleConditionEvent.violated(method,
+                                            "Method " + method.getFullName() + " has parameter of type " + forbiddenType.getSimpleName()));
+                                }
+                            }
+                        }
+                    }
+                })
+                .because("Methods in money packages must never accept or return double or float types (Rule R4)");
+        methodRule.check(importedClasses);
+    }
 }

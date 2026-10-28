@@ -77,6 +77,41 @@ public class DevSeedRunner implements ApplicationRunner {
             return u;
         });
 
+        // 1b. Second Admin User (for two-person approval testing)
+        userRepository.findByEmail("admin2@fitflow.local").orElseGet(() -> {
+            User u = userRepository.save(User.builder()
+                    .email("admin2@fitflow.local")
+                    .fullName("Second Administrator")
+                    .passwordHash(passwordEncoder.encode(DEV_DEFAULT_PASSWORD))
+                    .status(User.Status.ACTIVE)
+                    .build());
+
+            userRoleRepository.save(UserRole.builder()
+                    .id(new UserRole.UserRoleId(u.getId(), UserRole.Role.ADMIN))
+                    .build());
+
+            adminPermissionRepository.save(AdminPermission.builder()
+                    .id(new AdminPermission.AdminPermissionId(u.getId(), "PAYOUT_MANAGE"))
+                    .grantedBy(admin.getId())
+                    .grantedAt(now)
+                    .build());
+
+            adminPermissionRepository.save(AdminPermission.builder()
+                    .id(new AdminPermission.AdminPermissionId(u.getId(), "REFUND_APPROVE"))
+                    .grantedBy(admin.getId())
+                    .grantedAt(now)
+                    .build());
+
+            adminPermissionRepository.save(AdminPermission.builder()
+                    .id(new AdminPermission.AdminPermissionId(u.getId(), "USER_READ"))
+                    .grantedBy(admin.getId())
+                    .grantedAt(now)
+                    .build());
+
+            log.info("Seeded dev second admin user admin2@fitflow.local");
+            return u;
+        });
+
         // 2. Trainers
         User alex = userRepository.findByEmail("trainer.alex@fitflow.local").orElseGet(() -> {
             User u = userRepository.save(User.builder()

@@ -5,4 +5,6 @@ public interface EntitlementService {
     Entitlement reserve(Long memberId, Long sessionId, String idempotencyKey);
 
     void restore(Long bookingId, String reason);
+
+    default void restoreEntitlement(Long membershipId, String reason) {}
 }

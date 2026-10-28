@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -31,6 +32,7 @@ public class TrainerService {
     private final UserRepository userRepository;
     private final TrainerAvailabilityValidator trainerAvailabilityValidator;
     private final ObjectMapper objectMapper;
+    private final Optional<TrainerEarningsProvider> earningsProvider;
 
     @Transactional(readOnly = true)
     public List<TrainerPublicResponse> listPublicTrainers() {
@@ -122,8 +124,8 @@ public class TrainerService {
 
     @Transactional(readOnly = true)
     public TrainerSummaryResponse getTrainerSummary(Long userId) {
-        // Documented in CONTRACT.md: earnings is null until Stage 5 payouts engine is introduced
-        return new TrainerSummaryResponse(0, null);
+        Long earnings = earningsProvider.map(p -> p.getTotalEarningsPaise(userId)).orElse(0L);
+        return new TrainerSummaryResponse(0, earnings);
     }
 
     public TrainerProfileResponse toFullResponse(TrainerProfile profile, User user) {

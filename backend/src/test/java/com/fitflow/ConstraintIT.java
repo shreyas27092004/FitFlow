@@ -34,12 +34,21 @@ class ConstraintIT {
         jdbcTemplate = new JdbcTemplate(mysqlDataSource);
 
         // Clean up test data
+        jdbcTemplate.execute("DELETE FROM refund_allocations WHERE refund_id IN (SELECT id FROM refunds WHERE payment_id IN (SELECT id FROM payments WHERE member_id >= 99000))");
+        jdbcTemplate.execute("DELETE FROM refunds WHERE payment_id IN (SELECT id FROM payments WHERE member_id >= 99000)");
+        jdbcTemplate.execute("DELETE FROM invoices WHERE payment_id IN (SELECT id FROM payments WHERE member_id >= 99000)");
+        jdbcTemplate.execute("DELETE FROM pending_membership_changes WHERE member_id >= 99000");
+        jdbcTemplate.execute("DELETE FROM payments WHERE member_id >= 99000");
+        jdbcTemplate.execute("DELETE FROM membership_changes WHERE membership_id IN (SELECT id FROM memberships WHERE member_id >= 99000)");
+        jdbcTemplate.execute("DELETE FROM memberships WHERE member_id >= 99000");
         jdbcTemplate.execute("DELETE FROM waitlist_entries WHERE session_id >= 99000");
         jdbcTemplate.execute("DELETE FROM attendance_records");
-        jdbcTemplate.execute("DELETE FROM trainer_session_earnings WHERE session_id >= 99000");
+        jdbcTemplate.execute("DELETE FROM trainer_session_earnings WHERE session_id >= 99000 OR trainer_id >= 99000");
         jdbcTemplate.execute("DELETE FROM bookings WHERE member_id >= 99000 OR session_id >= 99000");
         jdbcTemplate.execute("DELETE FROM class_sessions WHERE id >= 99000");
         jdbcTemplate.execute("DELETE FROM fitness_classes WHERE id >= 99000");
+        jdbcTemplate.execute("DELETE FROM user_roles WHERE user_id >= 99000");
+        jdbcTemplate.execute("DELETE FROM refresh_tokens WHERE user_id >= 99000");
         jdbcTemplate.execute("DELETE FROM users WHERE id >= 99000");
 
         testUserId = 99001L;

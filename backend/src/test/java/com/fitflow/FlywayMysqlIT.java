@@ -56,7 +56,12 @@ class FlywayMysqlIT {
             "class_feedback",
             "admin_action_log",
             "app_secrets",
-            "app_settings"
+            "app_settings",
+            "idempotency_records",
+            "pending_membership_changes",
+            "refund_allocations",
+            "payment_webhook_events",
+            "job_locks"
     );
 
     @Test
