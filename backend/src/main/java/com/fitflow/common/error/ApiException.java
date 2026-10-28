@@ -26,8 +26,21 @@ public class ApiException extends RuntimeException {
         return new ApiException(ErrorCode.NOT_FOUND, HttpStatus.NOT_FOUND, message);
     }
 
+    public static ApiException badRequest(String message) {
+        return validationFailed(message);
+    }
+
     public static ApiException conflict(String message) {
         return new ApiException(ErrorCode.CONFLICT, HttpStatus.CONFLICT, message);
+    }
+
+    public static ApiException conflict(String code, String message) {
+        ErrorCode ec = ErrorCode.CONFLICT;
+        try {
+            ec = ErrorCode.valueOf(code);
+        } catch (IllegalArgumentException ignored) {
+        }
+        return new ApiException(ec, HttpStatus.CONFLICT, message);
     }
 
     public static ApiException unauthenticated(String message) {

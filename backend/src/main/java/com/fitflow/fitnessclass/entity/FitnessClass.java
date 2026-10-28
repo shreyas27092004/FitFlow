@@ -1,6 +1,8 @@
 package com.fitflow.fitnessclass.entity;
 
 import com.fitflow.common.entity.BaseVersionedAuditedEntity;
+import com.fitflow.fitnessclass.model.ClassImpactLevel;
+import com.fitflow.fitnessclass.model.ClassIntensity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -23,14 +25,6 @@ import java.math.BigDecimal;
 @Table(name = "fitness_classes")
 public class FitnessClass extends BaseVersionedAuditedEntity {
 
-    public enum Intensity {
-        LOW, MODERATE, HIGH
-    }
-
-    public enum ImpactLevel {
-        LOW, MEDIUM, HIGH
-    }
-
     @Column(name = "name", nullable = false, unique = true, length = 120)
     private String name;
 
@@ -45,11 +39,11 @@ public class FitnessClass extends BaseVersionedAuditedEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "intensity", nullable = false)
-    private Intensity intensity;
+    private ClassIntensity intensity;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "impact_level", nullable = false)
-    private ImpactLevel impactLevel;
+    private ClassImpactLevel impactLevel;
 
     @Column(name = "met_value", nullable = false, precision = 4, scale = 1)
     private BigDecimal metValue;

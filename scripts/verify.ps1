@@ -2,6 +2,7 @@
 # FitFlow Verification Script (PowerShell)
 # ==============================================================================
 $ErrorActionPreference = "Stop"
+$ProgressPreference = "SilentlyContinue"
 
 # Ensure PostgreSQL bin is in PATH for this session if installed in standard location
 if (Test-Path "C:\Program Files\PostgreSQL\17\bin") {
@@ -88,7 +89,12 @@ $appProcess = $null
 $healthOk = $false
 
 try {
-    $appProcess = Start-Process -FilePath "java" -ArgumentList "-jar", "target\fitflow-backend-0.0.1-SNAPSHOT.jar", "--spring.profiles.active=dev" -WorkingDirectory "backend" -PassThru
+    $backendDir = Join-Path (Get-Location) "backend"
+    $jarPath = Join-Path $backendDir "target\fitflow-backend-0.0.1-SNAPSHOT.jar"
+    $stdoutPath = Join-Path $backendDir "target\dev-boot.log"
+    $stderrPath = Join-Path $backendDir "target\dev-boot-err.log"
+
+    $appProcess = Start-Process -FilePath "java" -ArgumentList "-jar", $jarPath, "--spring.profiles.active=dev" -WorkingDirectory $backendDir -RedirectStandardOutput $stdoutPath -RedirectStandardError $stderrPath -PassThru
     $maxSeconds = 90
     $elapsed = 0
 
@@ -96,7 +102,7 @@ try {
         Start-Sleep -Seconds 3
         $elapsed += 3
         try {
-            $resp = Invoke-RestMethod -Uri "http://localhost:8080/actuator/health" -Method Get -TimeoutSec 3 -ErrorAction SilentlyContinue
+            $resp = Invoke-RestMethod -Uri "http://127.0.0.1:8080/actuator/health" -Method Get -TimeoutSec 5 -UseBasicParsing -ErrorAction SilentlyContinue
             if ($resp -and $resp.status -eq "UP") {
                 $healthOk = $true
                 break
@@ -110,6 +116,14 @@ try {
         $results["Live Health (/actuator/health UP)"] = "PASS"
     } else {
         $results["Live Health (/actuator/health UP)"] = "FAIL"
+        if (Test-Path "backend\target\dev-boot.log") {
+            Write-Host "--- dev-boot.log ---"
+            Get-Content "backend\target\dev-boot.log" -Tail 30
+        }
+        if (Test-Path "backend\target\dev-boot-err.log") {
+            Write-Host "--- dev-boot-err.log ---"
+            Get-Content "backend\target\dev-boot-err.log" -Tail 30
+        }
     }
 } finally {
     if ($appProcess -and -not $appProcess.HasExited) {

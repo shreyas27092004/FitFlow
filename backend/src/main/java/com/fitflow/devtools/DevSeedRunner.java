@@ -1,6 +1,8 @@
 package com.fitflow.devtools;
 
 import com.fitflow.fitnessclass.entity.FitnessClass;
+import com.fitflow.fitnessclass.model.ClassImpactLevel;
+import com.fitflow.fitnessclass.model.ClassIntensity;
 import com.fitflow.fitnessclass.repository.FitnessClassRepository;
 import com.fitflow.session.entity.ClassSession;
 import com.fitflow.session.repository.ClassSessionRepository;
@@ -131,40 +133,40 @@ public class DevSeedRunner implements ApplicationRunner {
 
     private void seedSampleClasses(Long adminId) {
         createClassIfMissing("Power Vinyasa Yoga", "Dynamic yoga linking breath to vigorous movement", "Yoga", 60,
-                FitnessClass.Intensity.MODERATE, FitnessClass.ImpactLevel.LOW, new BigDecimal("4.0"),
+                ClassIntensity.MODERATE, ClassImpactLevel.LOW, new BigDecimal("4.0"),
                 "[\"KNEE_PAIN\", \"WRIST_PAIN\"]", 14, 25, adminId);
 
         createClassIfMissing("HIIT Blast", "High intensity interval training with plyometric bursts", "Cardio", 45,
-                FitnessClass.Intensity.HIGH, FitnessClass.ImpactLevel.HIGH, new BigDecimal("9.5"),
+                ClassIntensity.HIGH, ClassImpactLevel.HIGH, new BigDecimal("9.5"),
                 "[\"HEART_CONDITION\", \"HYPERTENSION\", \"PREGNANCY\"]", 16, 20, adminId);
 
         createClassIfMissing("Gentle Hatha Flow", "Foundational postures with long holds and alignment focus", "Mobility", 50,
-                FitnessClass.Intensity.LOW, FitnessClass.ImpactLevel.LOW, new BigDecimal("2.5"),
+                ClassIntensity.LOW, ClassImpactLevel.LOW, new BigDecimal("2.5"),
                 "[]", 12, 30, adminId);
 
         createClassIfMissing("Spin & Cadence", "High-energy indoor cycling with sprints and hill climbs", "Cycling", 45,
-                FitnessClass.Intensity.HIGH, FitnessClass.ImpactLevel.LOW, new BigDecimal("8.0"),
+                ClassIntensity.HIGH, ClassImpactLevel.LOW, new BigDecimal("8.0"),
                 "[\"ASTHMA\"]", 14, 25, adminId);
 
         createClassIfMissing("Core & Functional Strength", "Compound functional resistance training", "Strength", 55,
-                FitnessClass.Intensity.MODERATE, FitnessClass.ImpactLevel.MEDIUM, new BigDecimal("5.5"),
+                ClassIntensity.MODERATE, ClassImpactLevel.MEDIUM, new BigDecimal("5.5"),
                 "[\"LOWER_BACK_PAIN\"]", 14, 20, adminId);
 
         createClassIfMissing("BoxFit Circuit", "Non-contact boxing drills and heavy bag combinations", "Combat", 50,
-                FitnessClass.Intensity.HIGH, FitnessClass.ImpactLevel.HIGH, new BigDecimal("8.5"),
+                ClassIntensity.HIGH, ClassImpactLevel.HIGH, new BigDecimal("8.5"),
                 "[\"SHOULDER_IMPINGEMENT\"]", 16, 18, adminId);
 
         createClassIfMissing("Pilates Reform & Mat", "Core stability, pelvic floor, and spine alignment", "Pilates", 45,
-                FitnessClass.Intensity.MODERATE, FitnessClass.ImpactLevel.LOW, new BigDecimal("3.8"),
+                ClassIntensity.MODERATE, ClassImpactLevel.LOW, new BigDecimal("3.8"),
                 "[\"NECK_SPRAIN\"]", 14, 15, adminId);
 
         createClassIfMissing("Deep Stretch & Breathwork", "Restorative myofascial release and pranayama", "Recovery", 40,
-                FitnessClass.Intensity.LOW, FitnessClass.ImpactLevel.LOW, new BigDecimal("1.8"),
+                ClassIntensity.LOW, ClassImpactLevel.LOW, new BigDecimal("1.8"),
                 "[]", 12, 30, adminId);
     }
 
     private void createClassIfMissing(String name, String description, String category, int durationMinutes,
-                                      FitnessClass.Intensity intensity, FitnessClass.ImpactLevel impactLevel,
+                                      ClassIntensity intensity, ClassImpactLevel impactLevel,
                                       BigDecimal metValue, String tags, int minAge, int capacity, Long creatorId) {
         if (!fitnessClassRepository.existsByName(name)) {
             fitnessClassRepository.save(FitnessClass.builder()
