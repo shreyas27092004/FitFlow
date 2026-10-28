@@ -45,6 +45,9 @@ public class OutboxEvent {
     @Column(name = "payload", nullable = false, columnDefinition = "JSON")
     private String payload;
 
+    @Column(name = "payload_secret", columnDefinition = "TEXT")
+    private String payloadSecret;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     @Builder.Default

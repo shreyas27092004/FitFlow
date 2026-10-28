@@ -1,0 +1,7 @@
+Hello [(${firstName})],
+
+Your [(${planName})] membership has expired.
+You can upgrade or renew your membership anytime to continue enjoying classes.
+
+Best regards,
+The FitFlow Team

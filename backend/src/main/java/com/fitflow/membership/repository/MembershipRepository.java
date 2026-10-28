@@ -38,4 +38,16 @@ public interface MembershipRepository extends JpaRepository<Membership, Long> {
     boolean existsByMemberIdAndStatus(Long memberId, MembershipStatus status);
 
     long countByPlanIdAndStatus(Long planId, MembershipStatus status);
+
+    @Query("SELECT m FROM Membership m " +
+            "JOIN com.fitflow.membership.entity.MembershipPlan p ON m.planId = p.id " +
+            "WHERE m.status = com.fitflow.membership.model.MembershipStatus.ACTIVE " +
+            "AND p.code != 'FREE' " +
+            "AND m.endsAt >= :windowStart AND m.endsAt <= :windowEnd " +
+            "AND NOT EXISTS (SELECT n FROM com.fitflow.membership.entity.MembershipNotice n " +
+            "                WHERE n.id.membershipId = m.id AND n.id.kind = :kind)")
+    List<Membership> findActiveExpiringMembershipsNeedingNotice(
+            @Param("windowStart") Instant windowStart,
+            @Param("windowEnd") Instant windowEnd,
+            @Param("kind") String kind);
 }

@@ -94,6 +94,8 @@ public class AdminUserManagementIT {
 
     @BeforeEach
     void setUp() {
+        adminPermissionRepository.deleteAll();
+
         // 1. Super Admin
         superAdminUser = userRepository.save(User.builder()
                 .email("superadmin.it@fitflow.local")

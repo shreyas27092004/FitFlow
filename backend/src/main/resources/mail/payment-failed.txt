@@ -1,0 +1,11 @@
+Hello [(${firstName})],
+
+We were unable to process your payment.
+Invoice Number: [(${invoiceNumber})]
+Amount: [(${amountFormatted})]
+Error: [(${errorMessage})]
+
+Please check your payment method and try again.
+
+Best regards,
+The FitFlow Team

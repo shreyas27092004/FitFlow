@@ -61,7 +61,10 @@ class FlywayMysqlIT {
             "pending_membership_changes",
             "refund_allocations",
             "payment_webhook_events",
-            "job_locks"
+            "job_locks",
+            "processed_events",
+            "booking_reminders",
+            "membership_notices"
     );
 
     @Test

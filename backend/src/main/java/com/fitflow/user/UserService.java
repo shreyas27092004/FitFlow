@@ -3,8 +3,7 @@ package com.fitflow.user;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fitflow.common.error.ApiException;
-import com.fitflow.notification.entity.OutboxEvent;
-import com.fitflow.notification.repository.OutboxEventRepository;
+import com.fitflow.common.event.UserDeletionRequestedEvent;
 import com.fitflow.user.dto.DeleteAccountRequest;
 import com.fitflow.user.dto.NotificationPrefsDto;
 import com.fitflow.user.dto.UpdateProfileRequest;
@@ -34,7 +33,7 @@ public class UserService {
     private final UserRoleRepository userRoleRepository;
     private final RefreshTokenRevoker refreshTokenRevoker;
     private final UserBookingCancellationHandler bookingCancellationHandler;
-    private final OutboxEventRepository outboxEventRepository;
+    private final org.springframework.context.ApplicationEventPublisher eventPublisher;
     private final PasswordEncoder passwordEncoder;
     private final AgeService ageService;
     private final Clock clock;
@@ -149,18 +148,7 @@ public class UserService {
         refreshTokenRevoker.revokeAllForUser(userId);
         bookingCancellationHandler.cancelFutureBookingsForUser(userId);
 
-        String payload = String.format("{\"userId\":%d}", userId);
-        OutboxEvent event = OutboxEvent.builder()
-                .aggregateType("USER")
-                .aggregateId(userId)
-                .eventType("user.deletion_requested")
-                .payload(payload)
-                .status(OutboxEvent.Status.PENDING)
-                .attempts(0)
-                .nextAttemptAt(now)
-                .createdAt(now)
-                .build();
-        outboxEventRepository.save(event);
+        eventPublisher.publishEvent(new UserDeletionRequestedEvent(userId));
 
         log.info("Account deletion executed and outbox event emitted for user id {}", userId);
     }

@@ -52,7 +52,7 @@ public class DevMailController {
                 Address[] from = msg.getFrom();
                 String fromStr = from != null && from.length > 0 ? from[0].toString() : "unknown";
                 String sentDate = msg.getSentDate() != null ? msg.getSentDate().toString() : "";
-                String content = msg.getContent() != null ? msg.getContent().toString() : "";
+                String content = extractContent(msg.getContent());
 
                 list.add(new EmailMessageDto(subject, toList, fromStr, sentDate, content));
             } catch (Exception e) {
@@ -61,6 +61,19 @@ public class DevMailController {
         }
 
         return ResponseEntity.ok(list);
+    }
+
+    private String extractContent(Object content) throws Exception {
+        if (content instanceof String s) {
+            return s;
+        } else if (content instanceof jakarta.mail.Multipart mp) {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < mp.getCount(); i++) {
+                sb.append(extractContent(mp.getBodyPart(i).getContent())).append("\n");
+            }
+            return sb.toString();
+        }
+        return content != null ? content.toString() : "";
     }
 
     @DeleteMapping

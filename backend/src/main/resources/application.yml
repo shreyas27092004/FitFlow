@@ -101,3 +101,6 @@ fitflow:
   payments:
     razorpay:
       base-url: ${RAZORPAY_BASE_URL:https://api.razorpay.com}
+  outbox:
+    poll-interval-ms: 1000
+    batch-size: 50

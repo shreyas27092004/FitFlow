@@ -10,8 +10,7 @@ import com.fitflow.admin.dto.UserSummaryDto;
 import com.fitflow.common.error.ApiException;
 import com.fitflow.common.pagination.PageRequestDto;
 import com.fitflow.common.pagination.PageResponse;
-import com.fitflow.notification.entity.OutboxEvent;
-import com.fitflow.notification.repository.OutboxEventRepository;
+import com.fitflow.notification.OutboxService;
 import com.fitflow.security.PermissionChecker;
 import com.fitflow.security.UserPrincipal;
 import com.fitflow.trainer.entity.TrainerProfile;
@@ -57,7 +56,7 @@ public class AdminUserService {
     private final UserRoleRepository userRoleRepository;
     private final AdminPermissionRepository adminPermissionRepository;
     private final TrainerProfileRepository trainerProfileRepository;
-    private final OutboxEventRepository outboxEventRepository;
+    private final OutboxService outboxService;
     private final RefreshTokenRevoker refreshTokenRevoker;
     private final AdminActionLogger adminActionLogger;
     private final PasswordEncoder passwordEncoder;
@@ -188,25 +187,18 @@ public class AdminUserService {
             }
         }
 
-        // Emit outbox event user.created with tempPassword ONLY in the event payload (never logged)
-        Instant now = clock.instant();
-        String payload = String.format(
-                "{\"userId\":%d,\"role\":\"%s\",\"tempPasswordDeliveredVia\":\"email\",\"tempPassword\":\"%s\"}",
+        // Emit outbox event user.created with tempPassword encrypted in payload_secret (never plain in payload or logged)
+        outboxService.appendWithSecret(
+                "USER",
                 savedUser.getId(),
-                request.role().name(),
-                tempPassword
+                "user.created",
+                Map.of(
+                        "userId", savedUser.getId(),
+                        "role", request.role().name(),
+                        "tempPasswordDeliveredVia", "email"
+                ),
+                Map.of("tempPassword", tempPassword)
         );
-        OutboxEvent event = OutboxEvent.builder()
-                .aggregateType("USER")
-                .aggregateId(savedUser.getId())
-                .eventType("user.created")
-                .payload(payload)
-                .status(OutboxEvent.Status.PENDING)
-                .attempts(0)
-                .nextAttemptAt(now)
-                .createdAt(now)
-                .build();
-        outboxEventRepository.save(event);
 
         log.info("Admin created user successfully with userId={}, role={}", savedUser.getId(), request.role());
 
@@ -302,19 +294,12 @@ public class AdminUserService {
 
         refreshTokenRevoker.revokeAllForUser(id);
 
-        Instant now = clock.instant();
-        String payload = String.format("{\"userId\":%d}", id);
-        OutboxEvent event = OutboxEvent.builder()
-                .aggregateType("USER")
-                .aggregateId(id)
-                .eventType("user.suspended")
-                .payload(payload)
-                .status(OutboxEvent.Status.PENDING)
-                .attempts(0)
-                .nextAttemptAt(now)
-                .createdAt(now)
-                .build();
-        outboxEventRepository.save(event);
+        outboxService.append(
+                "USER",
+                id,
+                "user.suspended",
+                Map.of("userId", id)
+        );
 
         Map<String, Object> afterSummary = Map.of("status", User.Status.SUSPENDED.name());
         adminActionLogger.logAction(

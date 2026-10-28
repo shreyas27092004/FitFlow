@@ -72,6 +72,9 @@ public class PasswordResetIT {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private com.fitflow.security.EncryptionService encryptionService;
+
     @Test
     @DisplayName("POST /forgot-password: always returns 202 with identical body for existing and non-existing email")
     void testForgotPasswordIdenticalBodies() throws Exception {
@@ -120,7 +123,11 @@ public class PasswordResetIT {
 
         JsonNode payload = objectMapper.readTree(event.getPayload());
         assertEquals(user.getId(), payload.get("userId").asLong());
-        String token = payload.get("token").asText();
+        org.junit.jupiter.api.Assertions.assertNull(payload.get("token"), "Raw token must not appear in plain payload");
+
+        assertNotNull(event.getPayloadSecret(), "Encrypted secret must be present in payload_secret");
+        String secretJson = encryptionService.decryptString(event.getPayloadSecret());
+        String token = objectMapper.readTree(secretJson).get("token").asText();
         assertNotNull(token);
 
         // Verify token in DB is stored only as SHA-256 hash
@@ -144,7 +151,8 @@ public class PasswordResetIT {
                 .andExpect(status().isAccepted());
 
         OutboxEvent event = outboxEventRepository.findByAggregateIdAndEventType(user.getId(), "password.reset_requested").get(0);
-        String rawToken = objectMapper.readTree(event.getPayload()).get("token").asText();
+        String secretJson = encryptionService.decryptString(event.getPayloadSecret());
+        String rawToken = objectMapper.readTree(secretJson).get("token").asText();
 
         // Perform reset password
         ResetPasswordRequest resetReq = new ResetPasswordRequest(rawToken, "BrandNewPassword789!");
@@ -178,7 +186,8 @@ public class PasswordResetIT {
                 .andExpect(status().isAccepted());
 
         OutboxEvent event = outboxEventRepository.findByAggregateIdAndEventType(user.getId(), "password.reset_requested").get(0);
-        String rawToken = objectMapper.readTree(event.getPayload()).get("token").asText();
+        String secretJson = encryptionService.decryptString(event.getPayloadSecret());
+        String rawToken = objectMapper.readTree(secretJson).get("token").asText();
 
         // 1st reset: success
         mockMvc.perform(post("/api/v1/auth/reset-password")

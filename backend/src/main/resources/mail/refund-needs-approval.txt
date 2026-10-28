@@ -1,0 +1,11 @@
+Hello [(${firstName})],
+
+A refund requires your administrative approval.
+Refund ID: [(${refundId})]
+Amount: [(${amountFormatted})]
+Reason: [(${reason})]
+
+Please log in to the admin console to review and decide.
+
+Best regards,
+The FitFlow System

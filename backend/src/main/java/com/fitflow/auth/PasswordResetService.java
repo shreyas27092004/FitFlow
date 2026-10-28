@@ -3,8 +3,7 @@ package com.fitflow.auth;
 import com.fitflow.auth.entity.PasswordResetToken;
 import com.fitflow.auth.repository.PasswordResetTokenRepository;
 import com.fitflow.common.error.ApiException;
-import com.fitflow.notification.entity.OutboxEvent;
-import com.fitflow.notification.repository.OutboxEventRepository;
+import com.fitflow.notification.OutboxService;
 import com.fitflow.user.entity.User;
 import com.fitflow.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +26,7 @@ public class PasswordResetService {
 
     private final PasswordResetTokenRepository passwordResetTokenRepository;
     private final UserRepository userRepository;
-    private final OutboxEventRepository outboxEventRepository;
+    private final OutboxService outboxService;
     private final RefreshTokenService refreshTokenService;
     private final PasswordPolicy passwordPolicy;
     private final PasswordEncoder passwordEncoder;
@@ -67,19 +66,14 @@ public class PasswordResetService {
         passwordResetTokenRepository.save(resetToken);
 
         // Store outbox event for Stage 6 email dispatch
-        // Payload contains token; token is never logged in logs
-        String payload = String.format("{\"userId\":%d,\"token\":\"%s\"}", user.getId(), rawToken);
-        OutboxEvent event = OutboxEvent.builder()
-                .aggregateType("USER")
-                .aggregateId(user.getId())
-                .eventType("password.reset_requested")
-                .payload(payload)
-                .status(OutboxEvent.Status.PENDING)
-                .attempts(0)
-                .nextAttemptAt(now)
-                .createdAt(now)
-                .build();
-        outboxEventRepository.save(event);
+        // Sensitive token is stored encrypted in payload_secret, never in payload or logs
+        outboxService.appendWithSecret(
+                "USER",
+                user.getId(),
+                "password.reset_requested",
+                java.util.Map.of("userId", user.getId()),
+                java.util.Map.of("token", rawToken)
+        );
 
         log.info("Password reset token generated and outbox event dispatched for user id {}", user.getId());
     }

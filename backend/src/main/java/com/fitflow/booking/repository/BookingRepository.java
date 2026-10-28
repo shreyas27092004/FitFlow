@@ -50,4 +50,12 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             @Param("from") Instant from,
             @Param("to") Instant to,
             Pageable pageable);
+
+    @Query("SELECT b FROM Booking b JOIN com.fitflow.session.entity.ClassSession s ON b.sessionId = s.id " +
+            "WHERE b.status = com.fitflow.booking.model.BookingStatus.CONFIRMED " +
+            "AND s.startsAt >= :windowStart AND s.startsAt <= :windowEnd " +
+            "AND NOT EXISTS (SELECT r FROM com.fitflow.booking.entity.BookingReminder r WHERE r.bookingId = b.id)")
+    List<Booking> findConfirmedBookingsNeedingReminder(
+            @Param("windowStart") Instant windowStart,
+            @Param("windowEnd") Instant windowEnd);
 }
