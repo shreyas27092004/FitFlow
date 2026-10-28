@@ -28,6 +28,7 @@
         <archunit.version>1.4.0</archunit.version>
         <jacoco.version>0.8.12</jacoco.version>
         <wiremock.version>3.12.1</wiremock.version>
+        <langchain4j.version>1.22.0</langchain4j.version>
     </properties>
 
     <dependencies>
@@ -136,6 +137,18 @@
             <groupId>net.logstash.logback</groupId>
             <artifactId>logstash-logback-encoder</artifactId>
             <version>${logstash.logback.version}</version>
+        </dependency>
+
+        <!-- LangChain4j Multi-Agent Core (Stage 8) -->
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j</artifactId>
+            <version>${langchain4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-google-ai-gemini</artifactId>
+            <version>${langchain4j.version}</version>
         </dependency>
 
         <!-- GreenMail for Dev / Test -->

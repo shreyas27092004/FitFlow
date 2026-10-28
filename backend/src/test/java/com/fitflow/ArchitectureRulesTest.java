@@ -210,4 +210,30 @@ public class ArchitectureRulesTest {
                 .because("Only package com.fitflow.wellness may touch health repositories and HealthDataCodec (Stage 7)");
         rule.check(importedClasses);
     }
+
+    // (k) agent.tools must not depend on repositories or entities (Stage 8)
+    @Test
+    @DisplayName("Gate (k): agent.tools must not depend on repositories or @Entity classes")
+    void ruleK_agentToolsMustNotDependOnRepositoriesOrEntities() {
+        ArchRule rule = noClasses()
+                .that().resideInAPackage("..agent.tools..")
+                .should().dependOnClassesThat().resideInAPackage("..repository..")
+                .orShould().dependOnClassesThat().areAnnotatedWith(Entity.class)
+                .because("agent.tools must call services and handle only DTO records, never entities or repositories directly (Stage 8)");
+        rule.check(importedClasses);
+    }
+
+    // (l) Reflection check: No tool parameter class may contain memberId, userId, adminId, trainerId (Stage 8)
+    @Test
+    @DisplayName("Gate (l): Tool parameter classes must not have caller ID fields")
+    void ruleL_toolParameterClassesMustNotHaveCallerIdFields() {
+        ArchRule rule = noFields()
+                .that().areDeclaredInClassesThat().resideInAPackage("..agent.tools.dto..")
+                .should().haveName("memberId")
+                .orShould().haveName("userId")
+                .orShould().haveName("adminId")
+                .orShould().haveName("trainerId")
+                .because("Tools must never accept caller ID from model arguments; caller context is injected by the runtime (Stage 8)");
+        rule.check(importedClasses);
+    }
 }

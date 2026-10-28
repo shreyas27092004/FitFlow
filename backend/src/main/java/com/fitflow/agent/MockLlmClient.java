@@ -1,8 +1,10 @@
 package com.fitflow.agent;
 
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
+@Profile("test")
 public class MockLlmClient implements LlmClient {
 
     public static final String CANNED_RESPONSE = "FitFlow AI Coach mock deterministic response for: ";

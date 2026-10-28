@@ -16,6 +16,7 @@ import com.fitflow.wellness.dto.BodyMetricResponse;
 import com.fitflow.wellness.dto.DeleteHealthDataRequest;
 import com.fitflow.wellness.dto.FitnessProfile;
 import com.fitflow.wellness.dto.HealthExportResponse;
+import com.fitflow.wellness.dto.LlmSafeProfile;
 import com.fitflow.wellness.dto.ProfileResponse;
 import com.fitflow.wellness.dto.SafeClassesResponse;
 import com.fitflow.wellness.dto.SafeSessionItem;
@@ -190,6 +191,52 @@ public class WellnessProfileService {
         healthAccessService.logAccess(memberId, memberId, HealthAccessAction.READ, "PROFILE_VIEW");
 
         return new ProfileResponse(profile, screening);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<LlmSafeProfile> getLlmSafeProfile(Long memberId) {
+        boolean hasConsent = consentService.hasConsent(memberId, ConsentPurpose.AI_ASSISTANT_PROCESSING);
+        if (!hasConsent) {
+            return Optional.empty();
+        }
+
+        Optional<MemberHealthProfile> entityOpt = profileRepository.findByMemberId(memberId);
+        if (entityOpt.isEmpty()) {
+            return Optional.empty();
+        }
+
+        FitnessProfile profile = healthDataCodec.decode(entityOpt.get().getDataEncrypted());
+        ScreeningResult screening = screeningService.evaluate(profile);
+
+        User user = userRepository.findById(memberId).orElse(null);
+        String ageBand = "UNKNOWN";
+        if (user != null && user.getDateOfBirth() != null) {
+            int age = ageService.calculateAge(user.getDateOfBirth());
+            if (age < 30) ageBand = "18-29";
+            else if (age < 40) ageBand = "30-39";
+            else if (age < 50) ageBand = "40-49";
+            else ageBand = "50+";
+        }
+
+        List<String> injuryCodes = profile.injuries() != null
+                ? profile.injuries().stream().map(i -> i.area() + ":" + i.severity()).toList()
+                : List.of();
+        List<String> conditionCodes = profile.conditions() != null
+                ? profile.conditions().stream().map(Enum::name).toList()
+                : List.of();
+
+        healthAccessService.logAccess(memberId, memberId, HealthAccessAction.READ, "LLM_SAFE_PROFILE");
+
+        return Optional.of(new LlmSafeProfile(
+                ageBand,
+                profile.sex(),
+                profile.experienceLevel(),
+                profile.goals(),
+                injuryCodes,
+                conditionCodes,
+                screening.status(),
+                screening.doctorCheckRecommended()
+        ));
     }
 
     @Transactional

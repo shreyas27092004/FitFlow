@@ -1,12 +1,14 @@
 package com.fitflow.agent;
 
 import com.fitflow.settings.AiConnectionTester;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 /**
- * Stub per Rule R13: Real Google Gemini API client integration is added in Stage 8.
+ * Stub used in test profile to guarantee no network calls occur during automated test suite runs.
  */
 @Component
+@Profile("test")
 public class GeminiClientStub implements AiConnectionTester {
 
     @Override
