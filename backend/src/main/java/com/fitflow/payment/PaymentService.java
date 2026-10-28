@@ -28,6 +28,8 @@ import com.fitflow.payment.repository.RefundAllocationRepository;
 import com.fitflow.payment.repository.RefundRepository;
 import com.fitflow.settings.entity.AppSetting;
 import com.fitflow.settings.repository.AppSettingRepository;
+import com.fitflow.user.entity.User;
+import com.fitflow.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -55,6 +57,7 @@ public class PaymentService {
     private final GatewayRouter gatewayRouter;
     private final PaymentFinalizer paymentFinalizer;
     private final OutboxService outboxService;
+    private final UserRepository userRepository;
     private final Clock clock;
 
     @Transactional
@@ -157,7 +160,7 @@ public class PaymentService {
         }
 
         PaymentGateway gateway = gatewayRouter.getGateway(payment.getGateway());
-        ConfirmResult confirmResult = gateway.confirm(new ConfirmRequest(payment.getGatewayOrderId(), clientPayload));
+        ConfirmResult confirmResult = gateway.confirm(new ConfirmRequest(payment.getGatewayOrderId(), clientPayload, payment.getAmountPaise()));
 
         Payment finalizedPayment = paymentFinalizer.finalizePayment(paymentId, confirmResult);
 
@@ -185,6 +188,37 @@ public class PaymentService {
                 payment.getGateway(),
                 payment.getAmountPaise(),
                 payment.getStatus() == PaymentStatus.SUCCEEDED
+        );
+    }
+
+    @Transactional(readOnly = true)
+    public Map<String, Object> getClientPayload(Long paymentId, Long memberId) {
+        Payment payment = paymentRepository.findById(paymentId)
+                .orElseThrow(() -> ApiException.notFound("Payment not found"));
+
+        if (!payment.getMemberId().equals(memberId)) {
+            throw ApiException.notFound("Payment not found");
+        }
+
+        if (payment.getStatus() != PaymentStatus.PENDING) {
+            throw ApiException.conflict("Payment status is " + payment.getStatus() + ", expected PENDING");
+        }
+
+        User user = userRepository.findById(memberId).orElse(null);
+        String name = user != null ? user.getFullName() : null;
+        String email = user != null ? user.getEmail() : null;
+        String phone = user != null ? user.getPhone() : null;
+
+        PaymentGateway gateway = gatewayRouter.getGateway(payment.getGateway());
+        return gateway.getClientPayload(
+                payment.getGatewayOrderId(),
+                payment.getAmountPaise(),
+                payment.getCurrency(),
+                payment.getId(),
+                memberId,
+                name,
+                email,
+                phone
         );
     }
 

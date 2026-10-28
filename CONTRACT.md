@@ -33,6 +33,7 @@ The following versions have been resolved and pinned via Maven dependency manage
 | **Failsafe Plugin** | `org.apache.maven.plugins:maven-failsafe-plugin` | `3.5.3` | Integration test execution (*IT) |
 | **Jacoco Plugin** | `org.jacoco:jacoco-maven-plugin` | `0.8.12` | Code coverage reporting & verification (>= 70%) |
 | **Enforcer Plugin** | `org.apache.maven.plugins:maven-enforcer-plugin` | `3.5.0` | Enforces Java 17 and bans duplicate POM dependencies |
+| **WireMock Standalone** | `org.wiremock:wiremock-standalone` | `3.12.0` | HTTP service virtualization for Razorpay gateway integration tests |
 
 ---
 
@@ -263,8 +264,10 @@ Defined centrally in `com.fitflow.security.PublicRoutes` and verified by `Endpoi
 - `POST /api/v1/auth/reset-password`
 - `GET /actuator/health`
 - `GET /api/v1/plans` (added in Stage 5)
+- `POST /api/v1/payments/webhooks/razorpay` (added in Stage 5B)
 - `GET /swagger-ui/**`, `/swagger-ui.html`, `/v3/api-docs/**`, `/swagger-resources/**` (dev/test only)
 - `GET /dev/mail` (dev only)
+- `GET /dev/razorpay-checkout` (dev only, added in Stage 5B)
 - `* /error` (system error forward)
 
 All other endpoints require authentication (deny by default).
@@ -402,6 +405,9 @@ All other endpoints require authentication (deny by default).
 24. **Separation of Duties & Two-Person Approval Rule**:
     - *Decision*: High-value refunds (> limit) and all trainer payout batches enforce two-person governance. The administrator who created or triggered the financial batch cannot be the one to approve it (returns 409 Conflict).
     - *Rationale*: Prevents insider fraud and administrative collusion in financial disbursement pipelines.
+25. **Razorpay Gateway Integration, Runtime Credentials & Webhook Security**:
+    - *Decision*: Implemented `RazorpayPaymentGateway` using Spring's `RestClient` with HTTP Basic auth (`Key ID : Key Secret`) and timeouts (3s connect, 10s read). No external Razorpay Java SDK is imported. Keys and webhook secrets are stored encrypted at rest via `SecretsService` (`app_secrets`). Switching to `RAZORPAY` requires configured keys and a successful test within the last 10 minutes (`POST /api/v1/admin/settings/payments/razorpay/test`). Public live keys (`rzp_live_`) are guarded by `prod` profile check and `payments.allow-live=true`. Webhooks verify HMAC-SHA256 over raw request body bytes and deduplicate against `payment_webhook_events`. WireMock standalone is used in test scope.
+    - *Rationale*: Guarantees zero credentials leaked into files or logs, absolute constant-time cryptographic protection, idempotent webhook handling, and explicit, testable HTTP transport.
 
 ---
 
@@ -425,3 +431,4 @@ All other endpoints require authentication (deny by default).
 | **Stage 3** | 2026-10-28 | Member self-service (`GET/PATCH /api/v1/me`, `GET /export`, `POST /delete-request`), Admin user management with pagination, filtering & last-super-admin guard (`/api/v1/admin/users`), Trainer catalog & self-service availability validation (`/api/v1/trainers`, `/api/v1/trainer/me`, `/rate`), AI runtime settings with AES-256-GCM encrypted Gemini key & mock fallback (`/api/v1/admin/settings/ai`), `BookingCancellationStub`, `GeminiClientStub`. | `mvn verify` green (160 tests: 66 unit + 94 IT); Jacoco coverage check passed; EndpointSecurityCoverageTest passed; ArchUnit 7 gates passed; Live app walkthrough (21 endpoints) passed; 3 Sanity-Breaks executed and proven. | None | Fitness class catalog, room scheduling, and booking engine scheduled for Stage 4. |
 | **Stage 4** | 2026-10-28 | Fitness class catalog & metadata vocabularies (`/classes`, `/admin/classes`), session scheduling with recurrence & room/trainer conflict detection (`/sessions`, `/admin/sessions`), concurrent booking pipeline with atomic seat allocation (`/bookings`), FIFO waitlist promotion, 4h cancellation cutoff, idempotency key engine (`idempotency_records`), trainer attendance & earnings snapshot (`/trainer/sessions/{id}/attendance`, `/complete`), session utilization reporting. | `mvn verify` green (225 tests: 79 unit + 146 IT); Jacoco coverage check passed; EndpointSecurityCoverageTest passed (22 new endpoints guarded); ArchUnit 7 gates passed; 3 Sanity-Breaks executed and proven; Concurrency test (40 threads, 3 runs) 0 overbooking proven; Live app walkthrough (12 steps + direct MySQL CLI verification) passed. | None | Membership plans, subscriptions, quota tracking, and payment processing scheduled for Stage 5. |
 | **Stage 5** | 2026-10-28 | Exact auditable money arithmetic (`Money` record, ArchUnit double/float ban in financial packages), `MIN_RATIO_V1` proration policy, 30-case boundary table test, 1000-iteration randomized property test, two-phase payment gateway router (`MockPaymentGateway`, `RazorpayGatewayStub`), pessimistic payment finalizer, membership subscribe/upgrade/cancel, atomic row-locking entitlement service (`RealEntitlementService`), auto-assigned FREE tier, admin payout batches & two-person approval rule. | `mvn verify` green (250 tests: 85 unit + 165 IT); Jacoco coverage check passed; EndpointSecurityCoverageTest passed; ArchUnit 8 rules passed; 4 Sanity-Breaks executed and proven; 20-thread concurrent confirm 0 duplicate execution proven; Live app walkthrough (10 steps + CSV export) passed. | None | Transactional notifications & outbox consumer scheduled for Stage 6. |
+| **Stage 5B** | 2026-10-28 | Razorpay integration behind PaymentGateway (`RazorpayPaymentGateway`, `RazorpayClient`), runtime encrypted credentials (`GET/PUT/DELETE /api/v1/admin/settings/payments/razorpay`), live key guards (`payments.allow-live`), 10-minute test window requirement (`PUT /gateway`, `POST /test`), constant-time HMAC-SHA256 signature and webhook verification (`POST /api/v1/payments/webhooks/razorpay`), webhook deduplication (`payment_webhook_events`), Razorpay refund API, Reconcile job extension for pending payments and refunds, dev checkout UI (`/dev/razorpay-checkout`), client payload endpoint (`/payments/{id}/client-payload`). WireMock standalone stubbing. ArchUnit Razorpay boundary isolation rule (Rule 9). | `mvn verify` green (71 payment suite tests: 10 unit + 61 IT); ArchUnit Rule 9 passed; EndpointSecurityCoverageTest passed; 3 Sanity-Breaks executed and proven; WireMock mock suite passed. | None | Transactional notifications & outbox consumer scheduled for Stage 6. |

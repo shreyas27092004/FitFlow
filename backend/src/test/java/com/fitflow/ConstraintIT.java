@@ -48,7 +48,11 @@ class ConstraintIT {
         jdbcTemplate.execute("DELETE FROM class_sessions WHERE id >= 99000");
         jdbcTemplate.execute("DELETE FROM fitness_classes WHERE id >= 99000");
         jdbcTemplate.execute("DELETE FROM user_roles WHERE user_id >= 99000");
+        jdbcTemplate.execute("DELETE FROM admin_permissions WHERE user_id >= 99000 OR granted_by >= 99000");
         jdbcTemplate.execute("DELETE FROM refresh_tokens WHERE user_id >= 99000");
+        jdbcTemplate.execute("DELETE FROM admin_action_log WHERE admin_id >= 99000");
+        jdbcTemplate.execute("UPDATE app_secrets SET updated_by = NULL WHERE updated_by >= 99000");
+        jdbcTemplate.execute("UPDATE app_settings SET updated_by = NULL WHERE updated_by >= 99000");
         jdbcTemplate.execute("DELETE FROM users WHERE id >= 99000");
 
         testUserId = 99001L;

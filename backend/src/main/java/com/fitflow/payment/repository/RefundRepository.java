@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.Instant;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -17,7 +19,11 @@ public interface RefundRepository extends JpaRepository<Refund, Long> {
 
     Optional<Refund> findByPaymentIdAndIdempotencyKey(Long paymentId, String idempotencyKey);
 
+    Optional<Refund> findByGatewayRefundId(String gatewayRefundId);
+
     List<Refund> findByStatus(RefundStatus status);
+
+    List<Refund> findByStatusAndCreatedAtBefore(RefundStatus status, Instant cutoff);
 
     Page<Refund> findByStatus(RefundStatus status, Pageable pageable);
 

@@ -15,7 +15,8 @@ public final class PublicRoutes {
             "/api/v1/auth/login",
             "/api/v1/auth/refresh",
             "/api/v1/auth/forgot-password",
-            "/api/v1/auth/reset-password"
+            "/api/v1/auth/reset-password",
+            "/api/v1/payments/webhooks/razorpay"
     );
 
     public static final List<String> PUBLIC_GET_ROUTES = List.of(
@@ -31,7 +32,8 @@ public final class PublicRoutes {
     );
 
     public static final List<String> DEV_ROUTES = List.of(
-            "/dev/mail"
+            "/dev/mail",
+            "/dev/razorpay-checkout"
     );
 
     public static final List<String> SYSTEM_ROUTES = List.of(
@@ -67,7 +69,7 @@ public final class PublicRoutes {
                 }
             }
 
-            if (isDev) {
+            if (isDev || isTest) {
                 for (String route : DEV_ROUTES) {
                     if (PATH_MATCHER.match(route, path)) {
                         return true;

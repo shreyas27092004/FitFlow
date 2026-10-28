@@ -110,11 +110,55 @@ The dev runner seeds the following accounts on first boot:
 - **Swagger UI**: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
 - **OpenAPI JSON**: [http://localhost:8080/v3/api-docs](http://localhost:8080/v3/api-docs)
 - **Dev Mail Viewer (GreenMail)**: [http://localhost:8080/dev/mail](http://localhost:8080/dev/mail)
+- **Dev Razorpay Checkout UI**: [http://localhost:8080/dev/razorpay-checkout](http://localhost:8080/dev/razorpay-checkout) (test checkout with Razorpay sandbox keys)
 - **RabbitMQ Management Console**: [http://localhost:15672](http://localhost:15672) (guest / guest)
 
 ---
 
-## 6. Troubleshooting
+## 6. Testing Razorpay Webhooks Locally
+
+Razorpay sends webhook events to an HTTPS URL. When testing locally, use a tunnel like `cloudflared` or `ngrok` to expose your local port 8080:
+
+### Option A: Using Cloudflare Tunnel (`cloudflared`)
+```powershell
+cloudflared tunnel --url http://localhost:8080
+```
+This prints a public URL such as `https://random-words.trycloudflare.com`.
+
+### Option B: Using ngrok
+```powershell
+ngrok http 8080
+```
+This prints a public forwarding URL such as `https://xyz.ngrok-free.app`.
+
+### Configuring the Tunnel URL in Razorpay
+1. In the [Razorpay Dashboard](https://dashboard.razorpay.com) (Test Mode):
+   - Navigate to **Account & Settings** -> **Webhooks**.
+   - Add/edit a webhook with URL: `https://<tunnel-domain>/api/v1/payments/webhooks/razorpay`
+   - Select events: `payment.captured`, `payment.failed`, `order.paid`, `refund.processed`, `refund.failed`.
+   - Set a webhook secret (e.g. `local_wh_secret_12345`).
+2. Configure keys & secret in FitFlow via Admin API:
+   ```powershell
+   # Set keys and webhook secret at runtime
+   $headers = @{ "Authorization" = "Bearer $adminToken"; "Content-Type" = "application/json" }
+   $body = @{
+       keyId = "rzp_test_ScYoa7HPECrM5A"
+       keySecret = "wqgMHBfXKilwkHhZHuutoB7v"
+       webhookSecret = "local_wh_secret_12345"
+   } | ConvertTo-Json
+   Invoke-RestMethod -Uri "http://localhost:8080/api/v1/admin/settings/payments/razorpay" -Method Put -Headers $headers -Body $body
+
+   # Run test connection
+   Invoke-RestMethod -Uri "http://localhost:8080/api/v1/admin/settings/payments/razorpay/test" -Method Post -Headers $headers
+
+   # Switch to Razorpay
+   Invoke-RestMethod -Uri "http://localhost:8080/api/v1/admin/settings/payments/gateway" -Method Put -Headers $headers -Body '{"gateway":"RAZORPAY"}'
+   ```
+3. Use the dev checkout page at [http://localhost:8080/dev/razorpay-checkout](http://localhost:8080/dev/razorpay-checkout) to initiate test payments with Razorpay test cards/UPI and observe live webhooks dispatched to your tunnel.
+
+---
+
+## 7. Troubleshooting
 
 ### Port in Use (e.g. 8080, 3306, 5432)
 Check which PID holds the port:

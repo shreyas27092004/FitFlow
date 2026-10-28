@@ -98,8 +98,8 @@ public class SecurityConfig {
                         }
                     }
 
-                    // Dev tools / GreenMail inspector (dev only)
-                    if (isDev) {
+                    // Dev tools / GreenMail inspector (dev & test)
+                    if (isDev || isTest) {
                         for (String devRoute : PublicRoutes.DEV_ROUTES) {
                             auth.requestMatchers(devRoute).permitAll();
                         }

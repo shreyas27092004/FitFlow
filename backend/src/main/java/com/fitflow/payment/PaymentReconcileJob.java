@@ -3,12 +3,16 @@ package com.fitflow.payment;
 import com.fitflow.common.job.JobLockRepository;
 import com.fitflow.notification.OutboxService;
 import com.fitflow.payment.entity.Payment;
+import com.fitflow.payment.entity.Refund;
 import com.fitflow.payment.gateway.GatewayRouter;
 import com.fitflow.payment.gateway.PaymentGateway;
 import com.fitflow.payment.gateway.PaymentGateway.ConfirmResult;
 import com.fitflow.payment.gateway.PaymentGateway.GatewayPaymentStatus;
+import com.fitflow.payment.gateway.PaymentGateway.RefundResult;
 import com.fitflow.payment.model.PaymentStatus;
+import com.fitflow.payment.model.RefundStatus;
 import com.fitflow.payment.repository.PaymentRepository;
+import com.fitflow.payment.repository.RefundRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -27,6 +31,7 @@ import java.util.UUID;
 public class PaymentReconcileJob {
 
     private final PaymentRepository paymentRepository;
+    private final RefundRepository refundRepository;
     private final GatewayRouter gatewayRouter;
     private final PaymentFinalizer paymentFinalizer;
     private final JobLockRepository jobLockRepository;
@@ -60,10 +65,11 @@ public class PaymentReconcileJob {
         try {
             log.debug("Executing payment reconcile job at {}", now);
 
-            // Reconcile PENDING payments older than 2 minutes
-            Instant twoMinutesAgo = now.minusSeconds(120);
+            // 1. Reconcile PENDING payments older than 15 minutes (or 2 minutes)
+            Instant cutoff = now.minusSeconds(900); // 15 minutes
+            Instant sixtyMinutesAgo = now.minusSeconds(3600); // 60 minutes
             List<Payment> pendingPayments = paymentRepository.findByStatusAndCreatedAtBefore(
-                    PaymentStatus.PENDING, twoMinutesAgo
+                    PaymentStatus.PENDING, cutoff
             );
 
             for (Payment payment : pendingPayments) {
@@ -72,15 +78,71 @@ public class PaymentReconcileJob {
                     PaymentGateway gateway = gatewayRouter.getGateway(payment.getGateway());
                     GatewayPaymentStatus status = gateway.fetchStatus(payment.getGatewayOrderId());
 
-                    if (status.status() != PaymentStatus.PENDING) {
-                        log.info("Reconcile job: Payment id={} resolved to {}", payment.getId(), status.status());
+                    if (status.status() == PaymentStatus.SUCCEEDED) {
+                        log.info("Reconcile job: Payment id={} resolved to SUCCEEDED", payment.getId());
                         paymentFinalizer.finalizePayment(
                                 payment.getId(),
-                                new ConfirmResult(status.status(), status.gatewayPaymentId(), status.failureReason(), status.amountPaise())
+                                new ConfirmResult(PaymentStatus.SUCCEEDED, status.gatewayPaymentId(), null, status.amountPaise())
+                        );
+                    } else if (status.status() == PaymentStatus.FAILED) {
+                        log.info("Reconcile job: Payment id={} resolved to FAILED", payment.getId());
+                        paymentFinalizer.finalizePayment(
+                                payment.getId(),
+                                new ConfirmResult(PaymentStatus.FAILED, status.gatewayPaymentId(), status.failureReason(), status.amountPaise())
+                        );
+                    } else if (status.status() == PaymentStatus.PENDING && payment.getCreatedAt().isBefore(sixtyMinutesAgo)) {
+                        log.info("Reconcile job: Payment id={} expired after >60 minutes in PENDING", payment.getId());
+                        paymentFinalizer.finalizePayment(
+                                payment.getId(),
+                                new ConfirmResult(PaymentStatus.FAILED, status.gatewayPaymentId(), "Payment expired (>60m)", status.amountPaise())
                         );
                     }
                 } catch (Exception e) {
                     log.error("Reconcile failed for payment id={}: {}", payment.getId(), e.getMessage());
+                }
+            }
+
+            // 2. Reconcile APPROVED refunds older than 10 minutes
+            Instant tenMinutesAgo = now.minusSeconds(600);
+            List<Refund> pendingRefunds = refundRepository.findByStatusAndCreatedAtBefore(
+                    RefundStatus.APPROVED, tenMinutesAgo
+            );
+
+            for (Refund refund : pendingRefunds) {
+                if (refund.getGatewayRefundId() == null || refund.getGatewayRefundId().isBlank()) {
+                    continue;
+                }
+                try {
+                    PaymentGateway gateway = gatewayRouter.getGateway(refund.getGateway());
+                    RefundResult result = gateway.fetchRefundStatus(refund.getGatewayRefundId());
+
+                    if (result.status() == RefundStatus.PAID) {
+                        log.info("Reconcile job: Refund id={} resolved to PAID", refund.getId());
+                        refund.setStatus(RefundStatus.PAID);
+                        refundRepository.save(refund);
+
+                        paymentRepository.findById(refund.getPaymentId()).ifPresent(payment -> {
+                            outboxService.append(
+                                    "refund",
+                                    refund.getId(),
+                                    "refund.issued",
+                                    Map.of(
+                                            "refundId", refund.getId(),
+                                            "paymentId", refund.getPaymentId(),
+                                            "memberId", payment.getMemberId(),
+                                            "amountPaise", refund.getAmountPaise(),
+                                            "gatewayRefundId", refund.getGatewayRefundId()
+                                    )
+                            );
+                        });
+                    } else if (result.status() == RefundStatus.FAILED) {
+                        log.info("Reconcile job: Refund id={} resolved to FAILED", refund.getId());
+                        refund.setStatus(RefundStatus.FAILED);
+                        refund.setFailureReason(result.failureReason());
+                        refundRepository.save(refund);
+                    }
+                } catch (Exception e) {
+                    log.error("Reconcile failed for refund id={}: {}", refund.getId(), e.getMessage());
                 }
             }
         } finally {

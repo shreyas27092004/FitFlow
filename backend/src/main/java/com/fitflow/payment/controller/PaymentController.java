@@ -61,6 +61,16 @@ public class PaymentController {
         return ResponseEntity.ok(paymentService.getPayment(paymentId, principal.getId()));
     }
 
+    @GetMapping("/payments/{paymentId}/client-payload")
+    @PreAuthorize("hasRole('MEMBER')")
+    @Operation(summary = "Get client payload for rendering payment checkout")
+    public ResponseEntity<java.util.Map<String, Object>> getClientPayload(
+            @PathVariable Long paymentId,
+            @AuthenticationPrincipal UserPrincipal principal
+    ) {
+        return ResponseEntity.ok(paymentService.getClientPayload(paymentId, principal.getId()));
+    }
+
     @GetMapping("/me/payments")
     @PreAuthorize("hasRole('MEMBER')")
     @Operation(summary = "Get member payments and refunds history")

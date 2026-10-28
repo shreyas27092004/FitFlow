@@ -17,6 +17,23 @@ public interface PaymentGateway {
 
     GatewayPaymentStatus fetchStatus(String gatewayOrderId);
 
+    default RefundResult fetchRefundStatus(String gatewayRefundId) {
+        return new RefundResult(RefundStatus.PAID, gatewayRefundId, null);
+    }
+
+    default Map<String, Object> getClientPayload(
+            String gatewayOrderId,
+            long amountPaise,
+            String currency,
+            Long paymentId,
+            Long memberId,
+            String memberName,
+            String memberEmail,
+            String memberPhone
+    ) {
+        return Map.of("gatewayOrderId", gatewayOrderId != null ? gatewayOrderId : "");
+    }
+
     record CreateIntentRequest(
             long amountPaise,
             String currency,
@@ -34,8 +51,13 @@ public interface PaymentGateway {
 
     record ConfirmRequest(
             String gatewayOrderId,
-            Map<String, Object> clientPayload
-    ) {}
+            Map<String, Object> clientPayload,
+            long amountPaise
+    ) {
+        public ConfirmRequest(String gatewayOrderId, Map<String, Object> clientPayload) {
+            this(gatewayOrderId, clientPayload, 0L);
+        }
+    }
 
     record ConfirmResult(
             PaymentStatus status,

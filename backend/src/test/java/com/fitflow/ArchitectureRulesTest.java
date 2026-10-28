@@ -169,4 +169,28 @@ public class ArchitectureRulesTest {
                 .because("Methods in money packages must never accept or return double or float types (Rule R4)");
         methodRule.check(importedClasses);
     }
+
+    // (i) Only package payment.gateway.razorpay may reference Razorpay base URL or read razorpay secrets
+    @Test
+    @DisplayName("Gate (i): Only package payment.gateway.razorpay may reference Razorpay base URL or read razorpay secrets")
+    void ruleI_razorpayIsolationBoundary() {
+        ArchRule rule = noClasses()
+                .that().resideOutsideOfPackage("..payment.gateway.razorpay..")
+                .should(new ArchCondition<>("reference Razorpay base URL") {
+                    @Override
+                    public void check(com.tngtech.archunit.core.domain.JavaClass clazz, ConditionEvents events) {
+                        for (var field : clazz.getFields()) {
+                            if (field.isAnnotatedWith(org.springframework.beans.factory.annotation.Value.class)) {
+                                String val = field.getAnnotationOfType(org.springframework.beans.factory.annotation.Value.class).value();
+                                if (val.contains("razorpay.base-url")) {
+                                    events.add(SimpleConditionEvent.violated(field,
+                                            "Class " + clazz.getName() + " references razorpay.base-url"));
+                                }
+                            }
+                        }
+                    }
+                })
+                .because("Only package payment.gateway.razorpay may reference the Razorpay base URL or read razorpay secrets");
+        rule.check(importedClasses);
+    }
 }

@@ -103,6 +103,14 @@ public class ApiException extends RuntimeException {
         return new ApiException(ErrorCode.OPTIMISTIC_LOCK, HttpStatus.CONFLICT, message);
     }
 
+    public static ApiException paymentFailed(String message) {
+        return new ApiException(ErrorCode.PAYMENT_FAILED, HttpStatus.BAD_REQUEST, message);
+    }
+
+    public static ApiException paymentSignatureInvalid(String message) {
+        return new ApiException(ErrorCode.PAYMENT_SIGNATURE_INVALID, HttpStatus.BAD_REQUEST, message);
+    }
+
     public static ApiException internalError(String message) {
         return new ApiException(ErrorCode.INTERNAL_ERROR, HttpStatus.INTERNAL_SERVER_ERROR, message);
     }

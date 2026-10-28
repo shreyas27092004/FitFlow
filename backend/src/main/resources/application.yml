@@ -98,3 +98,6 @@ fitflow:
     waitlist-enabled: true
     cancel-cutoff-hours: 4
     no-show-consumes: true
+  payments:
+    razorpay:
+      base-url: ${RAZORPAY_BASE_URL:https://api.razorpay.com}

@@ -27,6 +27,7 @@
         <greenmail.version>2.1.3</greenmail.version>
         <archunit.version>1.4.0</archunit.version>
         <jacoco.version>0.8.12</jacoco.version>
+        <wiremock.version>3.12.1</wiremock.version>
     </properties>
 
     <dependencies>
@@ -172,6 +173,12 @@
         <dependency>
             <groupId>org.awaitility</groupId>
             <artifactId>awaitility</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.wiremock</groupId>
+            <artifactId>wiremock-standalone</artifactId>
+            <version>${wiremock.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
