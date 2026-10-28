@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><title>Welcome to FitFlow</title></head>
+<body>
+    <p>Hello <span th:text="${firstName}">Member</span>,</p>
+    <p>Welcome to FitFlow! Your account has been created.</p>
+    <p>Your temporary password is: <strong th:text="${tempPassword}">temp-pwd</strong></p>
+    <p>Please log in and update your password: <a th:href="${loginUrl}" th:text="${loginUrl}">Login</a></p>
+    <p>Best regards,<br>The FitFlow Team</p>
+</body>
+</html>

@@ -1,0 +1,10 @@
+target/
+node_modules/
+.env
+.local/
+*.key
+*.pem
+.idea/
+.vscode/
+*.log
+*.class

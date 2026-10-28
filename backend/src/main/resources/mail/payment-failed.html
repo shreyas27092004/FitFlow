@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><title>Payment Failed</title></head>
+<body>
+    <p>Hello <span th:text="${firstName}">Member</span>,</p>
+    <p>We were unable to process your payment.</p>
+    <p>Invoice Number: <span th:text="${invoiceNumber}">INV-12345</span></p>
+    <p>Amount: <span th:text="${amountFormatted}">Rs 499.00</span></p>
+    <p th:if="${errorMessage != null}">Error: <span th:text="${errorMessage}">Error details</span></p>
+    <p>Please check your payment method and try again.</p>
+    <p>Best regards,<br>The FitFlow Team</p>
+</body>
+</html>

@@ -1,0 +1,106 @@
+spring:
+  application:
+    name: fitflow
+  jackson:
+    default-property-inclusion: non_null
+    deserialization:
+      fail-on-unknown-properties: true
+  servlet:
+    multipart:
+      max-file-size: 1MB
+      max-request-size: 1MB
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+  mail:
+    host: ${SMTP_HOST:localhost}
+    port: ${SMTP_PORT:1025}
+    username: ${SMTP_USER:}
+    password: ${SMTP_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+
+server:
+  port: ${SERVER_PORT:8080}
+  tomcat:
+    max-swallow-size: 1MB
+  error:
+    include-stacktrace: never
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
+  health:
+    mail:
+      enabled: false
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
+
+fitflow:
+  messaging:
+    mode: ${MESSAGING_MODE:rabbit}
+  clock:
+    zone: UTC
+  display-timezone: Asia/Kolkata
+  datasource:
+    mysql:
+      url: ${MYSQL_URL:jdbc:mysql://localhost:3306/fitflow?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC}
+      jdbc-url: ${MYSQL_URL:jdbc:mysql://localhost:3306/fitflow?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC}
+      username: ${MYSQL_USER:fitflow_app}
+      password: ${MYSQL_PASSWORD:fitflow_pass}
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      pool-name: FitFlow-MySQL-Pool
+      maximum-pool-size: 10
+      minimum-idle: 2
+    postgres:
+      url: ${PG_URL:jdbc:postgresql://localhost:5432/fitflow}
+      jdbc-url: ${PG_URL:jdbc:postgresql://localhost:5432/fitflow}
+      username: ${PG_USER:fitflow_app}
+      password: ${PG_PASSWORD:fitflow_pass}
+      driver-class-name: org.postgresql.Driver
+      pool-name: FitFlow-Postgres-Pool
+      maximum-pool-size: 10
+      minimum-idle: 2
+  security:
+    jwt:
+      secret: ${JWT_SECRET:}
+      access-token-ttl: PT15M
+      refresh-token-ttl: P14D
+      issuer: fitflow
+    login:
+      max-failures: 5
+      lockout: PT15M
+    rate-limit:
+      login:
+        capacity: 10
+        duration: PT1M
+    cors:
+      allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000,http://localhost:5173}
+    master-key: ${APP_MASTER_KEY:}
+  ai:
+    default-model: "gemini-1.5-flash"
+  booking:
+    stub-free-sessions: 3
+    waitlist-enabled: true
+    cancel-cutoff-hours: 4
+    no-show-consumes: true
+  payments:
+    razorpay:
+      base-url: ${RAZORPAY_BASE_URL:https://api.razorpay.com}
+  outbox:
+    poll-interval-ms: 1000
+    batch-size: 50

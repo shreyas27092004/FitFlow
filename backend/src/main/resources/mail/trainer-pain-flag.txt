@@ -1,0 +1,9 @@
+Hello [(${firstName})],
+
+A member who attended your session on [(${sessionDate})] for class [(${className})] reported physical discomfort.
+Reported Area Code: [(${areaCode})]
+
+Please keep this area code in mind when designing modifications for upcoming sessions.
+
+Best regards,
+The FitFlow Safety Team

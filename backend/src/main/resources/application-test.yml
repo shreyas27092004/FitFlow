@@ -1,0 +1,45 @@
+spring:
+  mail:
+    host: localhost
+    port: 3025
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
+
+logging:
+  level:
+    root: WARN
+    com.fitflow: INFO
+    org.springframework.test: WARN
+
+fitflow:
+  messaging:
+    mode: inmemory
+  security:
+    jwt:
+      secret: "c2VjcmV0LWtleS1mb3ItZml0Zmxvdy10ZXN0aW5nLTMyYnl0ZXMhIQ=="
+  datasource:
+    mysql:
+      url: ${MYSQL_TEST_URL:jdbc:mysql://localhost:3306/fitflow_test?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC}
+      jdbc-url: ${MYSQL_TEST_URL:jdbc:mysql://localhost:3306/fitflow_test?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC}
+      username: ${MYSQL_TEST_USER:fitflow_app}
+      password: ${MYSQL_TEST_PASSWORD:fitflow_pass}
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      pool-name: FitFlow-MySQL-Test-Pool
+    postgres:
+      url: ${PG_TEST_URL:jdbc:postgresql://localhost:5432/fitflow_test}
+      jdbc-url: ${PG_TEST_URL:jdbc:postgresql://localhost:5432/fitflow_test}
+      username: ${PG_TEST_USER:fitflow_app}
+      password: ${PG_TEST_PASSWORD:fitflow_pass}
+      driver-class-name: org.postgresql.Driver
+      pool-name: FitFlow-Postgres-Test-Pool
+  flyway:
+    mysql:
+      locations:
+        - classpath:db/migration/mysql
+    postgres:
+      locations:
+        - classpath:db/migration/postgres
