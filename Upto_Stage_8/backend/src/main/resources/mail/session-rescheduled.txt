@@ -1,8 +1,0 @@
-Hello [(${firstName})],
-
-Your session for [(${className})] with [(${trainerName})] has been rescheduled.
-Previous Time: [(${oldStartTime})]
-New Time: [(${newStartTime})]
-
-Best regards,
-The FitFlow Team

@@ -1,7 +1,0 @@
-Hello [(${firstName})],
-
-Great news! A spot opened up and you have been promoted from the waitlist for [(${className})].
-Session Time: [(${sessionStartTime})]
-
-Best regards,
-The FitFlow Team

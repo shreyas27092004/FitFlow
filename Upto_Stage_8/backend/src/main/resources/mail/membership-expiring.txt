@@ -1,7 +1,0 @@
-Hello [(${firstName})],
-
-Your [(${planName})] membership will expire on [(${endsAt})].
-Renew now to keep booking your favorite classes without interruption!
-
-Best regards,
-The FitFlow Team

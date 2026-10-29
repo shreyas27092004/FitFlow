@@ -1,9 +1,0 @@
-Hello [(${firstName})],
-
-We regret to inform you that your upcoming session for [(${className})] scheduled at [(${sessionStartTime})] has been cancelled.
-Reason: [(${reason})]
-
-Any booking entitlement or credit has been returned to your account.
-
-Best regards,
-The FitFlow Team

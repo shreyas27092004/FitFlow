@@ -1,6 +1,0 @@
-Hello [(${firstName})],
-
-Your booking for [(${className})] on [(${sessionStartTime})] has been cancelled.
-
-Best regards,
-The FitFlow Team
