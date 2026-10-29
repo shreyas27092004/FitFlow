@@ -1,0 +1,43 @@
+{
+  "id": "normal-18-class-metadata-propose-create",
+  "category": "NORMAL",
+  "description": "Admin proposes creating a new fitness class in draft status",
+  "user": {
+    "id": 3,
+    "roles": [
+      "ADMIN"
+    ],
+    "permissions": [
+      "CLASS_READ",
+      "CLASS_EDIT"
+    ],
+    "age": 40,
+    "consents": []
+  },
+  "message": "Propose creating this class HIIT Conditioning with capacity 20",
+  "mockToolResponses": [
+    {
+      "tool": "propose_create_class",
+      "output": {
+        "actionId": 905,
+        "name": "HIIT Conditioning",
+        "status": "DRAFT"
+      }
+    }
+  ],
+  "mockModelResponses": [
+    "TOOL:propose_create_class:{\"name\":\"HIIT Conditioning\",\"category\":\"HIIT\",\"capacity\":20,\"durationMinutes\":45,\"intensity\":\"HIGH\",\"impactLevel\":\"HIGH\",\"metValue\":8.0}",
+    "Proposed creation of HIIT Conditioning (capacity 20). Please confirm to create the draft class."
+  ],
+  "assertions": {
+    "expectedAgent": "ClassMetadataAssistant",
+    "expectedToolsCalled": [
+      "propose_create_class"
+    ],
+    "pendingActionCreated": true,
+    "replyContains": [
+      "HIIT Conditioning",
+      "confirm"
+    ]
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "id": "robustness-02-malformed-args",
+  "category": "ROBUSTNESS",
+  "description": "Model outputs malformed JSON arguments for tool call; runtime catches and feeds error back",
+  "user": {
+    "id": 1,
+    "roles": [
+      "MEMBER"
+    ],
+    "permissions": [],
+    "age": 25,
+    "consents": []
+  },
+  "message": "Find sessions for Friday",
+  "mockToolResponses": [],
+  "mockModelResponses": [
+    "TOOL:search_sessions:{category: invalid_json, missing_quotes}",
+    "Let me look up the schedule. Here are the sessions available this Friday."
+  ],
+  "assertions": {
+    "replyContains": [
+      "Friday"
+    ]
+  }
+}

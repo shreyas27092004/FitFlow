@@ -1,0 +1,43 @@
+{
+  "id": "normal-07-propose-weekly-plan",
+  "category": "NORMAL",
+  "description": "Member agrees to candidate sessions and requests plan proposal",
+  "user": {
+    "id": 1,
+    "roles": [
+      "MEMBER"
+    ],
+    "permissions": [],
+    "age": 26,
+    "consents": [
+      "AI_ASSISTANT_PROCESSING",
+      "PERSONALIZED_CLASSES"
+    ]
+  },
+  "message": "Please propose this weekly workout plan with sessions 201 and 202",
+  "mockToolResponses": [
+    {
+      "tool": "propose_weekly_plan",
+      "output": {
+        "planId": 12,
+        "status": "PROPOSED",
+        "actionId": 801
+      }
+    }
+  ],
+  "mockModelResponses": [
+    "TOOL:propose_weekly_plan:{\"weekStart\":\"2026-11-02\",\"sessionIds\":[201,202]}",
+    "Your weekly plan for sessions 201 and 202 has been prepared. Please confirm to finalize your bookings."
+  ],
+  "assertions": {
+    "expectedAgent": "PlanBuilderAgent",
+    "expectedToolsCalled": [
+      "propose_weekly_plan"
+    ],
+    "pendingActionCreated": true,
+    "replyContains": [
+      "confirm",
+      "weekly plan"
+    ]
+  }
+}

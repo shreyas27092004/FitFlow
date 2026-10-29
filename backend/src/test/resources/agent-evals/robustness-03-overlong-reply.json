@@ -1,0 +1,24 @@
+{
+  "id": "robustness-03-overlong-reply",
+  "category": "ROBUSTNESS",
+  "description": "Model produces response that exceeds token limit; runtime truncates cleanly",
+  "user": {
+    "id": 1,
+    "roles": [
+      "MEMBER"
+    ],
+    "permissions": [],
+    "age": 25,
+    "consents": []
+  },
+  "message": "Write a long essay on the benefits of exercise",
+  "mockToolResponses": [],
+  "mockModelResponses": [
+    "Exercise is beneficial for overall health, physical endurance, mental acuity, cardiovascular fitness... Exercise is beneficial for overall health, physical endurance, mental acuity, cardiovascular fitness... Exercise is beneficial for overall health, physical endurance, mental acuity, cardiovascular fitness... Exercise is beneficial for overall health, physical endurance, mental acuity, cardiovascular fitness... Exercise is beneficial for overall health, physical endurance, mental acuity, cardiovascular fitness... Exercise is beneficial for overall health, physical endurance, mental acuity, cardiovascular fitness... Exercise is beneficial for overall health, physical endurance, mental acuity, cardiovascular fitness... Exercise is beneficial for overall health, physical endurance, mental acuity, cardiovascular fitness... Exercise is beneficial for overall health, physical endurance, mental acuity, cardiovascular fitness... Exercise is beneficial for overall health, physical endurance, mental acuity, cardiovascular fitness... Exercise is beneficial for overall health, physical endurance, mental acuity, cardiovascular fitness... Exercise is beneficial for overall health, physical endurance, mental acuity, cardiovascular fitness... Exercise is beneficial for overall health, physical endurance, mental acuity, cardiovascular fitness... Exercise is beneficial for overall health, physical endurance, mental acuity, cardiovascular fitness... Exercise is beneficial for overall health, physical endurance, mental acuity, cardiovascular fitness... "
+  ],
+  "assertions": {
+    "replyContains": [
+      "Exercise is beneficial"
+    ]
+  }
+}

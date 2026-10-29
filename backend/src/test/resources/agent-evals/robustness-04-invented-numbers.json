@@ -1,0 +1,38 @@
+{
+  "id": "robustness-04-invented-numbers",
+  "category": "ROBUSTNESS",
+  "description": "Model hallucinates numbers not in tool output; NumberGuard detects and replaces",
+  "user": {
+    "id": 1,
+    "roles": [
+      "MEMBER"
+    ],
+    "permissions": [],
+    "age": 25,
+    "consents": [
+      "AI_ASSISTANT_PROCESSING",
+      "CALORIE_ESTIMATES"
+    ]
+  },
+  "message": "What is my streak this week?",
+  "mockToolResponses": [
+    {
+      "tool": "get_weekly_progress",
+      "output": {
+        "attendedCount": 2,
+        "bookedCount": 2,
+        "streakWeeks": 3
+      }
+    }
+  ],
+  "mockModelResponses": [
+    "TOOL:get_weekly_progress:{}",
+    "You have an amazing streak of 42 weeks and attended 99 classes!"
+  ],
+  "assertions": {
+    "guardrailTriggered": "G1",
+    "replyContains": [
+      "streak"
+    ]
+  }
+}

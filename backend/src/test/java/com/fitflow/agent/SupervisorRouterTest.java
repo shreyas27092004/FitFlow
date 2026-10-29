@@ -1,9 +1,17 @@
 package com.fitflow.agent;
 
 import com.fitflow.agent.agents.BookingAgent;
+import com.fitflow.agent.agents.ClassMetadataAssistant;
+import com.fitflow.agent.agents.DemandForecastAgent;
 import com.fitflow.agent.agents.IntakeAgent;
 import com.fitflow.agent.agents.MembershipAgent;
+import com.fitflow.agent.agents.NutritionNumbersAgent;
+import com.fitflow.agent.agents.PlanBuilderAgent;
+import com.fitflow.agent.agents.RetentionAgent;
 import com.fitflow.agent.agents.SafeClassMatcherAgent;
+import com.fitflow.agent.agents.TrainerPrepAgent;
+import com.fitflow.agent.agents.TrainerScheduleAgent;
+import com.fitflow.agent.agents.WellnessCoachAgent;
 import com.fitflow.agent.core.IntentClassifier;
 import com.fitflow.agent.core.SupervisorRouter;
 import com.fitflow.agent.port.ChatMessage;
@@ -33,6 +41,14 @@ class SupervisorRouterTest {
     private MembershipAgent membershipAgent;
     private IntakeAgent intakeAgent;
     private SafeClassMatcherAgent safeClassMatcherAgent;
+    private PlanBuilderAgent planBuilderAgent;
+    private WellnessCoachAgent wellnessCoachAgent;
+    private NutritionNumbersAgent nutritionNumbersAgent;
+    private TrainerPrepAgent trainerPrepAgent;
+    private TrainerScheduleAgent trainerScheduleAgent;
+    private RetentionAgent retentionAgent;
+    private ClassMetadataAssistant classMetadataAssistant;
+    private DemandForecastAgent demandForecastAgent;
     private IntentClassifier intentClassifier;
     private SupervisorRouter router;
     private ScriptedChatModel scriptedModel;
@@ -51,30 +67,68 @@ class SupervisorRouterTest {
         safeClassMatcherAgent = Mockito.mock(SafeClassMatcherAgent.class);
         Mockito.when(safeClassMatcherAgent.name()).thenReturn("SafeClassMatcherAgent");
 
+        planBuilderAgent = Mockito.mock(PlanBuilderAgent.class);
+        Mockito.when(planBuilderAgent.name()).thenReturn("PlanBuilderAgent");
+
+        wellnessCoachAgent = Mockito.mock(WellnessCoachAgent.class);
+        Mockito.when(wellnessCoachAgent.name()).thenReturn("WellnessCoachAgent");
+
+        nutritionNumbersAgent = Mockito.mock(NutritionNumbersAgent.class);
+        Mockito.when(nutritionNumbersAgent.name()).thenReturn("NutritionNumbersAgent");
+
+        trainerPrepAgent = Mockito.mock(TrainerPrepAgent.class);
+        Mockito.when(trainerPrepAgent.name()).thenReturn("TrainerPrepAgent");
+
+        trainerScheduleAgent = Mockito.mock(TrainerScheduleAgent.class);
+        Mockito.when(trainerScheduleAgent.name()).thenReturn("TrainerScheduleAgent");
+
+        retentionAgent = Mockito.mock(RetentionAgent.class);
+        Mockito.when(retentionAgent.name()).thenReturn("RetentionAgent");
+
+        classMetadataAssistant = Mockito.mock(ClassMetadataAssistant.class);
+        Mockito.when(classMetadataAssistant.name()).thenReturn("ClassMetadataAssistant");
+
+        demandForecastAgent = Mockito.mock(DemandForecastAgent.class);
+        Mockito.when(demandForecastAgent.name()).thenReturn("DemandForecastAgent");
+
         intentClassifier = new IntentClassifier();
-        router = new SupervisorRouter(bookingAgent, membershipAgent, intakeAgent, safeClassMatcherAgent, intentClassifier);
+        router = new SupervisorRouter(
+                bookingAgent, membershipAgent, intakeAgent, safeClassMatcherAgent,
+                planBuilderAgent, wellnessCoachAgent, nutritionNumbersAgent,
+                trainerPrepAgent, trainerScheduleAgent,
+                retentionAgent, classMetadataAssistant, demandForecastAgent,
+                intentClassifier
+        );
         scriptedModel = new ScriptedChatModel();
     }
 
     @Test
-    @DisplayName("Role Gate: MEMBER role maps strictly to 4 allowed member intents")
+    @DisplayName("Role Gate: MEMBER role maps strictly to 7 allowed member intents in Stage 9")
     void memberRoleAllowedIntents() {
         Set<IntentClassifier.Intent> intents = router.getAllowedIntentsForRoles(Set.of("MEMBER"));
-        assertEquals(4, intents.size());
+        assertEquals(7, intents.size());
         assertTrue(intents.contains(IntentClassifier.Intent.BOOKING));
         assertTrue(intents.contains(IntentClassifier.Intent.MEMBERSHIP));
         assertTrue(intents.contains(IntentClassifier.Intent.INTAKE));
         assertTrue(intents.contains(IntentClassifier.Intent.SAFE_CLASS_MATCHER));
+        assertTrue(intents.contains(IntentClassifier.Intent.PLAN_BUILDER));
+        assertTrue(intents.contains(IntentClassifier.Intent.WELLNESS_COACH));
+        assertTrue(intents.contains(IntentClassifier.Intent.NUTRITION_NUMBERS));
     }
 
     @Test
-    @DisplayName("Role Gate: Non-member roles receive no allowed agents in Stage 8")
-    void nonMemberReceivesNoAgents() {
+    @DisplayName("Role Gate: TRAINER and ADMIN have specialist agents in Stage 9")
+    void nonMemberReceivesStage9Agents() {
         Set<IntentClassifier.Intent> trainer = router.getAllowedIntentsForRoles(Set.of("TRAINER"));
-        assertTrue(trainer.isEmpty());
+        assertEquals(2, trainer.size());
+        assertTrue(trainer.contains(IntentClassifier.Intent.TRAINER_PREP));
+        assertTrue(trainer.contains(IntentClassifier.Intent.TRAINER_SCHEDULE));
 
         Set<IntentClassifier.Intent> admin = router.getAllowedIntentsForRoles(Set.of("ADMIN"));
-        assertTrue(admin.isEmpty());
+        assertEquals(3, admin.size());
+        assertTrue(admin.contains(IntentClassifier.Intent.RETENTION));
+        assertTrue(admin.contains(IntentClassifier.Intent.CLASS_METADATA_ASSISTANT));
+        assertTrue(admin.contains(IntentClassifier.Intent.DEMAND_FORECAST));
 
         SupervisorRouter.RouteResult res = router.route(1L, Set.of("GUEST"), Set.of(), "hello", scriptedModel);
         assertFalse(res.hasAgent());

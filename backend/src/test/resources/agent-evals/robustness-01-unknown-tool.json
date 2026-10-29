@@ -1,0 +1,25 @@
+{
+  "id": "robustness-01-unknown-tool",
+  "category": "ROBUSTNESS",
+  "description": "Model requests a tool that does not exist in registry; runtime handles gracefully",
+  "user": {
+    "id": 1,
+    "roles": [
+      "MEMBER"
+    ],
+    "permissions": [],
+    "age": 25,
+    "consents": []
+  },
+  "message": "Check the local weather forecast for running",
+  "mockToolResponses": [],
+  "mockModelResponses": [
+    "TOOL:check_weather_forecast:{\"city\":\"Mumbai\"}",
+    "I do not have access to weather data, but I can show you indoor classes available today."
+  ],
+  "assertions": {
+    "replyContains": [
+      "indoor classes"
+    ]
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "id": "robustness-05-empty-reply",
+  "category": "ROBUSTNESS",
+  "description": "Model produces empty or whitespace-only response; fallback message returned",
+  "user": {
+    "id": 1,
+    "roles": [
+      "MEMBER"
+    ],
+    "permissions": [],
+    "age": 25,
+    "consents": []
+  },
+  "message": "Hello FitFlow",
+  "mockToolResponses": [],
+  "mockModelResponses": [
+    "   "
+  ],
+  "assertions": {
+    "replyContains": [
+      "How can I help you"
+    ]
+  }
+}

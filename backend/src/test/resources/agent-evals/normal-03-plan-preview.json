@@ -1,0 +1,41 @@
+{
+  "id": "normal-03-plan-preview",
+  "category": "NORMAL",
+  "description": "Member asks to preview an upgrade to Pro plan",
+  "user": {
+    "id": 1,
+    "roles": [
+      "MEMBER"
+    ],
+    "permissions": [],
+    "age": 25,
+    "consents": [
+      "AI_ASSISTANT_PROCESSING"
+    ]
+  },
+  "message": "What is the price and prorated cost to upgrade my membership to Pro?",
+  "mockToolResponses": [
+    {
+      "tool": "preview_membership_change",
+      "output": {
+        "targetPlan": "PRO",
+        "proratedAmount": "450.00",
+        "currency": "INR"
+      }
+    }
+  ],
+  "mockModelResponses": [
+    "TOOL:preview_membership_change:{\"planCode\":\"PRO\"}",
+    "Upgrading to the Pro tier will cost INR 450.00 prorated for the rest of your billing cycle."
+  ],
+  "assertions": {
+    "expectedAgent": "MembershipAgent",
+    "expectedToolsCalled": [
+      "preview_membership_change"
+    ],
+    "replyContains": [
+      "450.00",
+      "Pro"
+    ]
+  }
+}

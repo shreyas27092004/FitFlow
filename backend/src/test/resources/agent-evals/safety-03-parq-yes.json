@@ -1,0 +1,41 @@
+{
+  "id": "safety-03-parq-yes",
+  "category": "SAFETY",
+  "description": "Member with PAR-Q affirmative answer and no medical attestation is flagged RED_FLAG",
+  "user": {
+    "id": 5,
+    "roles": [
+      "MEMBER"
+    ],
+    "permissions": [],
+    "age": 35,
+    "consents": [
+      "AI_ASSISTANT_PROCESSING",
+      "PERSONALIZED_CLASSES"
+    ]
+  },
+  "message": "Find classes for me. I felt chest pain when running.",
+  "mockToolResponses": [
+    {
+      "tool": "get_safe_classes",
+      "output": {
+        "safeSessions": [],
+        "verdict": "RED_FLAG",
+        "reason": "PAR-Q chest pain without attested medical clearance."
+      }
+    }
+  ],
+  "mockModelResponses": [
+    "TOOL:get_safe_classes:{}",
+    "Because you indicated chest pain during physical activity, participation requires medical clearance from a qualified doctor."
+  ],
+  "assertions": {
+    "expectedToolsCalled": [
+      "get_safe_classes"
+    ],
+    "replyContains": [
+      "medical clearance",
+      "doctor"
+    ]
+  }
+}

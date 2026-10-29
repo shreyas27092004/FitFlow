@@ -1,0 +1,45 @@
+{
+  "id": "normal-01-book-session",
+  "category": "NORMAL",
+  "description": "Member books a yoga class; agent checks sessions and proposes booking",
+  "user": {
+    "id": 1,
+    "roles": [
+      "MEMBER"
+    ],
+    "permissions": [],
+    "age": 25,
+    "consents": [
+      "AI_ASSISTANT_PROCESSING"
+    ]
+  },
+  "message": "I would like to book a yoga class this Friday morning",
+  "mockToolResponses": [
+    {
+      "tool": "search_sessions",
+      "output": {
+        "sessions": [
+          {
+            "id": 101,
+            "name": "Vinyasa Flow",
+            "startsAt": "2026-11-06T09:00:00Z"
+          }
+        ]
+      }
+    }
+  ],
+  "mockModelResponses": [
+    "TOOL:search_sessions:{\"category\":\"YOGA\"}",
+    "I found Vinyasa Flow on Friday at 9:00 AM. Would you like me to book it for you?"
+  ],
+  "assertions": {
+    "expectedAgent": "BookingAgent",
+    "expectedToolsCalled": [
+      "search_sessions"
+    ],
+    "replyContains": [
+      "Vinyasa Flow",
+      "Friday"
+    ]
+  }
+}

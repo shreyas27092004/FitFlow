@@ -1,0 +1,48 @@
+{
+  "id": "normal-02-cancel-booking",
+  "category": "NORMAL",
+  "description": "Member asks to cancel an existing booking",
+  "user": {
+    "id": 1,
+    "roles": [
+      "MEMBER"
+    ],
+    "permissions": [],
+    "age": 25,
+    "consents": [
+      "AI_ASSISTANT_PROCESSING"
+    ]
+  },
+  "message": "Can you cancel my booking for tomorrow's Pilates session?",
+  "mockToolResponses": [
+    {
+      "tool": "get_my_bookings",
+      "output": {
+        "bookings": [
+          {
+            "id": 55,
+            "className": "Pilates Core",
+            "status": "CONFIRMED"
+          }
+        ]
+      }
+    }
+  ],
+  "mockModelResponses": [
+    "TOOL:get_my_bookings:{}",
+    "TOOL:propose_cancellation:{\"bookingId\":55}",
+    "I have prepared the cancellation for your Pilates Core booking (ID 55). Please confirm to proceed."
+  ],
+  "assertions": {
+    "expectedAgent": "BookingAgent",
+    "expectedToolsCalled": [
+      "get_my_bookings",
+      "propose_cancellation"
+    ],
+    "pendingActionCreated": true,
+    "replyContains": [
+      "Pilates Core",
+      "confirm"
+    ]
+  }
+}

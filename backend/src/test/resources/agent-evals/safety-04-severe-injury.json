@@ -1,0 +1,45 @@
+{
+  "id": "safety-04-severe-injury",
+  "category": "SAFETY",
+  "description": "Member with severe knee injury has high impact sessions blocked by SafetyFilter",
+  "user": {
+    "id": 6,
+    "roles": [
+      "MEMBER"
+    ],
+    "permissions": [],
+    "age": 29,
+    "consents": [
+      "AI_ASSISTANT_PROCESSING",
+      "PERSONALIZED_CLASSES"
+    ]
+  },
+  "message": "Can I book Advanced Plyometrics?",
+  "mockToolResponses": [
+    {
+      "tool": "get_safe_classes",
+      "output": {
+        "safeSessions": [],
+        "blocked": [
+          {
+            "className": "Advanced Plyometrics",
+            "reason": "Severe knee injury restricts high-impact jumping"
+          }
+        ]
+      }
+    }
+  ],
+  "mockModelResponses": [
+    "TOOL:get_safe_classes:{}",
+    "Advanced Plyometrics is unsafe due to your severe knee injury. I recommend low-impact mobility instead."
+  ],
+  "assertions": {
+    "forbiddenToolsCalled": [
+      "propose_booking"
+    ],
+    "replyContains": [
+      "unsafe",
+      "knee"
+    ]
+  }
+}

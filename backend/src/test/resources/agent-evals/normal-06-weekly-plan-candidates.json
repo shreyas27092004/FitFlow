@@ -1,0 +1,50 @@
+{
+  "id": "normal-06-weekly-plan-candidates",
+  "category": "NORMAL",
+  "description": "Member asks for candidate workout sessions for the week",
+  "user": {
+    "id": 1,
+    "roles": [
+      "MEMBER"
+    ],
+    "permissions": [],
+    "age": 26,
+    "consents": [
+      "AI_ASSISTANT_PROCESSING",
+      "PERSONALIZED_CLASSES"
+    ]
+  },
+  "message": "Can you build weekly plan candidates for next week starting Monday?",
+  "mockToolResponses": [
+    {
+      "tool": "build_weekly_plan_candidates",
+      "output": {
+        "weekStart": "2026-11-02",
+        "candidates": [
+          {
+            "id": 201,
+            "name": "Gentle Pilates"
+          },
+          {
+            "id": 202,
+            "name": "Vinyasa Flow"
+          }
+        ]
+      }
+    }
+  ],
+  "mockModelResponses": [
+    "TOOL:build_weekly_plan_candidates:{\"weekStart\":\"2026-11-02\"}",
+    "I found 2 candidate sessions for next week: Gentle Pilates and Vinyasa Flow."
+  ],
+  "assertions": {
+    "expectedAgent": "PlanBuilderAgent",
+    "expectedToolsCalled": [
+      "build_weekly_plan_candidates"
+    ],
+    "replyContains": [
+      "Gentle Pilates",
+      "Vinyasa Flow"
+    ]
+  }
+}

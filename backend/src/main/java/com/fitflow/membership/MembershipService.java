@@ -17,6 +17,7 @@ import com.fitflow.membership.dto.MemberMembershipSummaryResponse;
 import com.fitflow.membership.dto.PlanDto;
 import com.fitflow.membership.dto.SubscribeRequest;
 import com.fitflow.membership.dto.UpdatePlanRequest;
+import com.fitflow.membership.entity.FreeSessionGrant;
 import com.fitflow.membership.entity.Membership;
 import com.fitflow.membership.entity.MembershipChange;
 import com.fitflow.membership.entity.MembershipPlan;
@@ -27,6 +28,7 @@ import com.fitflow.membership.model.PendingChangeStatus;
 import com.fitflow.membership.proration.ProrationInput;
 import com.fitflow.membership.proration.ProrationResult;
 import com.fitflow.membership.proration.ProrationService;
+import com.fitflow.membership.repository.FreeSessionGrantRepository;
 import com.fitflow.membership.repository.MembershipChangeRepository;
 import com.fitflow.membership.repository.MembershipPlanRepository;
 import com.fitflow.membership.repository.MembershipRepository;
@@ -61,6 +63,7 @@ public class MembershipService implements PaymentCompletionHandler {
     private final PaymentService paymentService;
     private final ProrationService prorationService;
     private final AppSettingRepository appSettingRepository;
+    private final FreeSessionGrantRepository freeSessionGrantRepository;
     private final JobLockRepository jobLockRepository;
     private final OutboxService outboxService;
     private final ObjectMapper objectMapper;
@@ -801,6 +804,36 @@ public class MembershipService implements PaymentCompletionHandler {
                         .filter(p -> Boolean.TRUE.equals(p.getIsFree()))
                         .findFirst()
                         .orElseThrow(() -> ApiException.internalError("Default FREE plan not found")));
+    }
+
+    @Transactional
+    public com.fitflow.membership.entity.FreeSessionGrant grantFreeSession(Long memberId, int sessions, String reason, Long adminId) {
+        Instant now = clock.instant();
+        Instant ninetyDaysAgo = now.minus(Duration.ofDays(90));
+        int alreadyGranted = freeSessionGrantRepository.countSessionsGrantedSince(memberId, ninetyDaysAgo);
+        if (alreadyGranted + sessions > 2) {
+            throw ApiException.conflict("Member has reached maximum limit of 2 free sessions per 90 days (already granted " + alreadyGranted + ")");
+        }
+
+        com.fitflow.membership.entity.FreeSessionGrant grant = com.fitflow.membership.entity.FreeSessionGrant.builder()
+                .memberId(memberId)
+                .sessions(sessions)
+                .reason(reason)
+                .grantedBy(adminId)
+                .createdAt(now)
+                .build();
+        grant = freeSessionGrantRepository.save(grant);
+
+        List<Membership> activeList = membershipRepository.findByMemberIdAndStatus(memberId, MembershipStatus.ACTIVE);
+        if (!activeList.isEmpty()) {
+            Membership membership = activeList.get(0);
+            if (membership.getSessionsTotal() != null) {
+                membership.setSessionsTotal(membership.getSessionsTotal() + sessions);
+                membership.setUpdatedAt(now);
+                membershipRepository.save(membership);
+            }
+        }
+        return grant;
     }
 
     private BigDecimal getCancelFeePercent() {

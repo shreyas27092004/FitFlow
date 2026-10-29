@@ -47,7 +47,9 @@ public class RabbitMqTopologyConfig {
             "refund.pending_approval",
             "refund.issued",
             "payout.approved",
-            "feedback.pain_reported"
+            "feedback.pain_reported",
+            "weekly.summary",
+            "retention.nudge"
     );
 
     public static final List<String> AGENT_EVENT_ROUTING_KEYS = List.of(

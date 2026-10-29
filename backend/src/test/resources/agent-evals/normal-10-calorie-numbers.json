@@ -1,0 +1,44 @@
+{
+  "id": "normal-10-calorie-numbers",
+  "category": "NORMAL",
+  "description": "Member asks for their daily calorie burn estimates",
+  "user": {
+    "id": 1,
+    "roles": [
+      "MEMBER"
+    ],
+    "permissions": [],
+    "age": 27,
+    "consents": [
+      "AI_ASSISTANT_PROCESSING",
+      "CALORIE_ESTIMATES"
+    ]
+  },
+  "message": "What are my estimated calorie burn numbers?",
+  "mockToolResponses": [
+    {
+      "tool": "get_calorie_numbers",
+      "output": {
+        "available": true,
+        "bmr": 1650,
+        "tdee": 2200,
+        "disclaimer": "Wellness suggestions, not medical advice."
+      }
+    }
+  ],
+  "mockModelResponses": [
+    "TOOL:get_calorie_numbers:{}",
+    "Your estimated BMR is 1650 kcal and your estimated TDEE is 2200 kcal. Wellness suggestions, not medical advice."
+  ],
+  "assertions": {
+    "expectedAgent": "NutritionNumbersAgent",
+    "expectedToolsCalled": [
+      "get_calorie_numbers"
+    ],
+    "replyContains": [
+      "1650",
+      "2200",
+      "Wellness suggestions, not medical advice"
+    ]
+  }
+}

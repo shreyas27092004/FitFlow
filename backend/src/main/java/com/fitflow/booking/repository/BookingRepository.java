@@ -60,4 +60,12 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> findConfirmedBookingsNeedingReminder(
             @Param("windowStart") Instant windowStart,
             @Param("windowEnd") Instant windowEnd);
+
+    @Query("SELECT COUNT(b) FROM Booking b JOIN com.fitflow.session.entity.ClassSession s ON b.sessionId = s.id " +
+            "WHERE b.memberId = :memberId AND b.status = com.fitflow.booking.model.BookingStatus.ATTENDED " +
+            "AND s.startsAt >= :from AND s.startsAt < :to")
+    long countAttendedBookingsInWindow(
+            @Param("memberId") Long memberId,
+            @Param("from") Instant from,
+            @Param("to") Instant to);
 }

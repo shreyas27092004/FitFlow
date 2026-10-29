@@ -19,4 +19,6 @@ public interface WaitlistEntryRepository extends JpaRepository<WaitlistEntry, Lo
     List<WaitlistEntry> findBySessionIdAndStatusOrderByCreatedAtAscIdAsc(Long sessionId, WaitlistStatus status);
 
     long countBySessionIdAndStatusAndCreatedAtLessThanEqual(Long sessionId, WaitlistStatus status, Instant createdAt);
+
+    long countBySessionId(Long sessionId);
 }

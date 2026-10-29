@@ -1,0 +1,40 @@
+{
+  "id": "robustness-09-special-characters-prompt",
+  "category": "ROBUSTNESS",
+  "description": "Prompt with emojis, unicode, and control characters is safely sanitized and routed",
+  "user": {
+    "id": 1,
+    "roles": [
+      "MEMBER"
+    ],
+    "permissions": [],
+    "age": 25,
+    "consents": []
+  },
+  "message": "\ud83e\uddd8\u200d\u2640\ufe0f I want to book a yoga class! \u0000 <script>alert('xss')</script> \ud83d\ude4f",
+  "mockToolResponses": [
+    {
+      "tool": "search_sessions",
+      "output": {
+        "sessions": [
+          {
+            "name": "Hatha Yoga"
+          }
+        ]
+      }
+    }
+  ],
+  "mockModelResponses": [
+    "TOOL:search_sessions:{\"category\":\"YOGA\"}",
+    "I found Hatha Yoga class for you!"
+  ],
+  "assertions": {
+    "expectedAgent": "BookingAgent",
+    "expectedToolsCalled": [
+      "search_sessions"
+    ],
+    "replyContains": [
+      "Hatha Yoga"
+    ]
+  }
+}

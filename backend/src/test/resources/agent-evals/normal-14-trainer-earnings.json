@@ -1,0 +1,39 @@
+{
+  "id": "normal-14-trainer-earnings",
+  "category": "NORMAL",
+  "description": "Trainer asks for their monthly earnings report",
+  "user": {
+    "id": 2,
+    "roles": [
+      "TRAINER"
+    ],
+    "permissions": [],
+    "age": 31,
+    "consents": []
+  },
+  "message": "Show me my earnings for the past month",
+  "mockToolResponses": [
+    {
+      "tool": "get_my_earnings",
+      "output": {
+        "sessionsTaught": 15,
+        "totalAmount": "22500.00",
+        "currency": "INR"
+      }
+    }
+  ],
+  "mockModelResponses": [
+    "TOOL:get_my_earnings:{}",
+    "You taught 15 sessions with total earnings of INR 22500.00."
+  ],
+  "assertions": {
+    "expectedAgent": "TrainerScheduleAgent",
+    "expectedToolsCalled": [
+      "get_my_earnings"
+    ],
+    "replyContains": [
+      "15 sessions",
+      "22500.00"
+    ]
+  }
+}

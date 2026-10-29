@@ -64,4 +64,15 @@ public class AgentUsageService {
 
         usageRepository.incrementUsage(userId, today);
     }
+
+    @Transactional(value = "postgresTransactionManager", readOnly = true)
+    public int getRemainingDailyCalls(Long userId) {
+        if (userId == null) {
+            return dailyCallLimit;
+        }
+        LocalDate today = LocalDate.now(clock);
+        AgentUsage usage = usageRepository.findByUserIdAndDay(userId, today).orElse(null);
+        int currentCalls = usage != null ? usage.getCalls() : 0;
+        return Math.max(0, dailyCallLimit - currentCalls);
+    }
 }

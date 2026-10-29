@@ -80,6 +80,36 @@ public class FitnessClassService {
     }
 
     @Transactional
+    public ClassDetailResponse createDraftClass(CreateClassRequest request, Long createdBy) {
+        if (fitnessClassRepository.existsByName(request.name().trim())) {
+            throw ApiException.conflict("Fitness class with name '" + request.name().trim() + "' already exists");
+        }
+
+        List<String> validatedTags = validateAndCleanTags(request.contraindicationTags());
+        String tagsJson = serializeTags(validatedTags);
+
+        FitnessClass fitnessClass = FitnessClass.builder()
+                .name(request.name().trim())
+                .description(request.description())
+                .category(request.category().name())
+                .durationMinutes(request.durationMinutes())
+                .intensity(request.intensity())
+                .impactLevel(request.impactLevel())
+                .metValue(request.metValue())
+                .contraindicationTags(tagsJson)
+                .minAge(request.minAge() != null ? request.minAge() : 14)
+                .defaultCapacity(request.defaultCapacity() != null ? request.defaultCapacity() : 20)
+                .active(true)
+                .metadataReviewed(false)
+                .createdBy(createdBy)
+                .build();
+
+        FitnessClass saved = fitnessClassRepository.save(fitnessClass);
+        log.info("Draft fitness class created id={} name='{}' by user id={} with metadata_reviewed=false", saved.getId(), saved.getName(), createdBy);
+        return toDetailResponse(saved);
+    }
+
+    @Transactional
     public ClassDetailResponse updateClass(Long id, UpdateClassRequest request) {
         FitnessClass existing = fitnessClassRepository.findById(id)
                 .orElseThrow(() -> ApiException.notFound("Fitness class not found with id: " + id));

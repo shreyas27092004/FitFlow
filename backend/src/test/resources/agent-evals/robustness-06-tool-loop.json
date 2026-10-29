@@ -1,0 +1,40 @@
+{
+  "id": "robustness-06-tool-loop",
+  "category": "ROBUSTNESS",
+  "description": "Model gets trapped in repetitive tool calling; max turns prevents infinite loop",
+  "user": {
+    "id": 1,
+    "roles": [
+      "MEMBER"
+    ],
+    "permissions": [],
+    "age": 25,
+    "consents": []
+  },
+  "message": "Keep searching sessions forever",
+  "mockToolResponses": [
+    {
+      "tool": "search_sessions",
+      "output": {
+        "sessions": []
+      }
+    }
+  ],
+  "mockModelResponses": [
+    "TOOL:search_sessions:{}",
+    "TOOL:search_sessions:{}",
+    "TOOL:search_sessions:{}",
+    "TOOL:search_sessions:{}",
+    "TOOL:search_sessions:{}",
+    "TOOL:search_sessions:{}",
+    "TOOL:search_sessions:{}",
+    "TOOL:search_sessions:{}",
+    "I checked the schedule multiple times, but no additional sessions were found."
+  ],
+  "assertions": {
+    "replyContains": [
+      "checked",
+      "schedule"
+    ]
+  }
+}

@@ -564,5 +564,10 @@ public class BookingService implements SessionBookingHandler {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
+    public long countAttendedBookingsInWindow(Long memberId, Instant from, Instant to) {
+        return bookingRepository.countAttendedBookingsInWindow(memberId, from, to);
+    }
+
     public record BookingResult(int status, Object body, boolean cached) {}
 }

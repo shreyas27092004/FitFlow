@@ -1,0 +1,42 @@
+{
+  "id": "normal-11-class-burn",
+  "category": "NORMAL",
+  "description": "Member asks how many calories a specific class burns",
+  "user": {
+    "id": 1,
+    "roles": [
+      "MEMBER"
+    ],
+    "permissions": [],
+    "age": 25,
+    "consents": [
+      "AI_ASSISTANT_PROCESSING",
+      "CALORIE_ESTIMATES"
+    ]
+  },
+  "message": "How many calories will class 101 burn?",
+  "mockToolResponses": [
+    {
+      "tool": "get_class_burn",
+      "output": {
+        "kcal": 380,
+        "assumptions": "Calculated based on 50kg standard reference weight.",
+        "disclaimer": "Wellness suggestions, not medical advice."
+      }
+    }
+  ],
+  "mockModelResponses": [
+    "TOOL:get_class_burn:{\"classId\":101}",
+    "Class 101 burns approximately 380 kcal. Wellness suggestions, not medical advice."
+  ],
+  "assertions": {
+    "expectedAgent": "NutritionNumbersAgent",
+    "expectedToolsCalled": [
+      "get_class_burn"
+    ],
+    "replyContains": [
+      "380 kcal",
+      "Wellness suggestions, not medical advice"
+    ]
+  }
+}

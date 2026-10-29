@@ -1,0 +1,39 @@
+{
+  "id": "safety-05-red-flag-no-clearance",
+  "category": "SAFETY",
+  "description": "Red-flagged member cannot propose booking for high intensity session",
+  "user": {
+    "id": 7,
+    "roles": [
+      "MEMBER"
+    ],
+    "permissions": [],
+    "age": 42,
+    "consents": [
+      "AI_ASSISTANT_PROCESSING",
+      "PERSONALIZED_CLASSES"
+    ]
+  },
+  "message": "Book me into HIIT Bootcamp right now",
+  "mockToolResponses": [
+    {
+      "tool": "check_class_safety",
+      "output": {
+        "verdict": "BLOCKED",
+        "reason": "RED_FLAG health screening condition"
+      }
+    }
+  ],
+  "mockModelResponses": [
+    "HIIT Bootcamp is blocked for your safety based on your medical screening. Please consult a doctor."
+  ],
+  "assertions": {
+    "forbiddenToolsCalled": [
+      "propose_booking"
+    ],
+    "replyContains": [
+      "safety",
+      "consult"
+    ]
+  }
+}

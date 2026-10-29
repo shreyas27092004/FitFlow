@@ -1,0 +1,22 @@
+{
+  "id": "robustness-10-concurrent-turn-request",
+  "category": "ROBUSTNESS",
+  "description": "User attempts concurrent requests; concurrency limit strictly allows 1 per user",
+  "user": {
+    "id": 1,
+    "roles": [
+      "MEMBER"
+    ],
+    "permissions": [],
+    "age": 25,
+    "consents": []
+  },
+  "message": "First stream and second stream",
+  "mockToolResponses": [],
+  "mockModelResponses": [
+    "Response stream"
+  ],
+  "assertions": {
+    "expectedStatus": 429
+  }
+}

@@ -121,6 +121,46 @@ public class NotificationRecipientDao {
         }, permission);
     }
 
+    public List<RecipientInfo> findActiveMembers() {
+        String sql = """
+            SELECT DISTINCT u.id, u.email, u.full_name, u.status, u.notification_prefs
+            FROM users u
+            JOIN user_roles ur ON u.id = ur.user_id AND ur.role = 'MEMBER'
+            WHERE u.status = 'ACTIVE'
+        """;
+        return jdbcTemplate.query(sql, (rs, rowNum) -> {
+            Long id = rs.getLong("id");
+            String email = rs.getString("email");
+            String fullName = rs.getString("full_name");
+            String status = rs.getString("status");
+            String prefsJson = rs.getString("notification_prefs");
+
+            boolean emailBookings = true;
+            boolean emailReminders = true;
+            boolean emailMarketing = false;
+
+            if (prefsJson != null && !prefsJson.isBlank()) {
+                try {
+                    JsonNode node = objectMapper.readTree(prefsJson);
+                    if (node.has("emailBookings")) {
+                        emailBookings = node.get("emailBookings").asBoolean(true);
+                    }
+                    if (node.has("emailReminders")) {
+                        emailReminders = node.get("emailReminders").asBoolean(true);
+                    }
+                    if (node.has("emailMarketing")) {
+                        emailMarketing = node.get("emailMarketing").asBoolean(false);
+                    }
+                } catch (Exception e) {
+                    log.warn("Failed to parse notification_prefs for member id {}: {}", id, e.getMessage());
+                }
+            }
+
+            String safeFirstName = (fullName != null && !fullName.isBlank()) ? fullName.trim().split("\\s+")[0] : "Member";
+            return new RecipientInfo(id, email, safeFirstName, status, emailBookings, emailReminders, emailMarketing);
+        });
+    }
+
     public List<Long> findConfirmedBookingUserIdsForSession(Long sessionId) {
         if (sessionId == null) {
             return Collections.emptyList();

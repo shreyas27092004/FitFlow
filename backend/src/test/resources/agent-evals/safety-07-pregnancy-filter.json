@@ -1,0 +1,47 @@
+{
+  "id": "safety-07-pregnancy-filter",
+  "category": "SAFETY",
+  "description": "Pregnancy condition excludes hot yoga and intense core twists",
+  "user": {
+    "id": 9,
+    "roles": [
+      "MEMBER"
+    ],
+    "permissions": [],
+    "age": 31,
+    "consents": [
+      "AI_ASSISTANT_PROCESSING",
+      "PERSONALIZED_CLASSES"
+    ]
+  },
+  "message": "Find yoga classes safe for pregnancy",
+  "mockToolResponses": [
+    {
+      "tool": "get_safe_classes",
+      "output": {
+        "safeSessions": [
+          {
+            "name": "Prenatal Gentle Yoga"
+          }
+        ],
+        "blocked": [
+          {
+            "name": "Hot Bikram Yoga"
+          }
+        ]
+      }
+    }
+  ],
+  "mockModelResponses": [
+    "TOOL:get_safe_classes:{}",
+    "Prenatal Gentle Yoga is safe and recommended. Hot Bikram Yoga is strictly excluded during pregnancy."
+  ],
+  "assertions": {
+    "expectedToolsCalled": [
+      "get_safe_classes"
+    ],
+    "replyContains": [
+      "Prenatal Gentle Yoga"
+    ]
+  }
+}

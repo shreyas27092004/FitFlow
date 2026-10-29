@@ -27,7 +27,15 @@ public class IntentClassifier {
         BOOKING,
         MEMBERSHIP,
         INTAKE,
-        SAFE_CLASS_MATCHER
+        SAFE_CLASS_MATCHER,
+        PLAN_BUILDER,
+        WELLNESS_COACH,
+        NUTRITION_NUMBERS,
+        TRAINER_PREP,
+        TRAINER_SCHEDULE,
+        RETENTION,
+        CLASS_METADATA_ASSISTANT,
+        DEMAND_FORECAST
     }
 
     private final Map<Intent, List<String>> intentKeywords = new HashMap<>();
@@ -77,6 +85,14 @@ public class IntentClassifier {
         intentKeywords.put(Intent.MEMBERSHIP, List.of("membership", "plan", "plans", "upgrade", "downgrade", "pricing"));
         intentKeywords.put(Intent.INTAKE, List.of("intake", "questionnaire", "par-q", "parq", "onboard"));
         intentKeywords.put(Intent.SAFE_CLASS_MATCHER, List.of("safe", "suitable", "knee friendly", "back friendly"));
+        intentKeywords.put(Intent.PLAN_BUILDER, List.of("weekly plan", "build plan", "plan builder", "routine", "workout schedule"));
+        intentKeywords.put(Intent.WELLNESS_COACH, List.of("coach", "progress", "weekly progress", "streak", "missed session"));
+        intentKeywords.put(Intent.NUTRITION_NUMBERS, List.of("calories", "calorie", "burn", "energy expenditure", "bmr"));
+        intentKeywords.put(Intent.TRAINER_PREP, List.of("prep", "prep summary", "attendees", "modifications"));
+        intentKeywords.put(Intent.TRAINER_SCHEDULE, List.of("my schedule", "my sessions", "earnings", "payout"));
+        intentKeywords.put(Intent.RETENTION, List.of("retention", "at risk", "at-risk", "churn", "nudge"));
+        intentKeywords.put(Intent.CLASS_METADATA_ASSISTANT, List.of("metadata", "draft class", "create class"));
+        intentKeywords.put(Intent.DEMAND_FORECAST, List.of("demand", "forecast", "insights", "fill rate"));
     }
 
     /**
@@ -96,7 +112,7 @@ public class IntentClassifier {
             List<Pattern> patterns = intentPatterns.get(intent);
             if (patterns != null) {
                 for (Pattern p : patterns) {
-                    if (p.matcher(message).matches()) {
+                    if (p.matcher(message).find()) {
                         matchedIntents.add(intent);
                         break;
                     }

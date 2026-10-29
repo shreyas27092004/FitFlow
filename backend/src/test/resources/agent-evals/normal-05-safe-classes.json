@@ -1,0 +1,45 @@
+{
+  "id": "normal-05-safe-classes",
+  "category": "NORMAL",
+  "description": "Member inquires about classes that are safe for lower back pain",
+  "user": {
+    "id": 1,
+    "roles": [
+      "MEMBER"
+    ],
+    "permissions": [],
+    "age": 30,
+    "consents": [
+      "AI_ASSISTANT_PROCESSING",
+      "PERSONALIZED_CLASSES"
+    ]
+  },
+  "message": "Which classes are safe for my lower back pain?",
+  "mockToolResponses": [
+    {
+      "tool": "get_safe_classes",
+      "output": {
+        "safeSessions": [
+          {
+            "name": "Restorative Yoga",
+            "verdict": "ALLOWED"
+          }
+        ]
+      }
+    }
+  ],
+  "mockModelResponses": [
+    "TOOL:get_safe_classes:{}",
+    "Based on your profile, Restorative Yoga is verified safe for your lower back."
+  ],
+  "assertions": {
+    "expectedAgent": "SafeClassMatcherAgent",
+    "expectedToolsCalled": [
+      "get_safe_classes"
+    ],
+    "replyContains": [
+      "Restorative Yoga",
+      "safe"
+    ]
+  }
+}

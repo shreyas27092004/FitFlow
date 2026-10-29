@@ -1,0 +1,42 @@
+{
+  "id": "normal-17-class-metadata-draft",
+  "category": "NORMAL",
+  "description": "Admin drafts class metadata with MET ranges",
+  "user": {
+    "id": 3,
+    "roles": [
+      "ADMIN"
+    ],
+    "permissions": [
+      "CLASS_READ"
+    ],
+    "age": 40,
+    "consents": []
+  },
+  "message": "Draft class metadata for a new HIIT conditioning workout",
+  "mockToolResponses": [
+    {
+      "tool": "draft_class_metadata",
+      "output": {
+        "category": "HIIT",
+        "metValue": 8.0,
+        "intensity": "HIGH",
+        "impactLevel": "HIGH"
+      }
+    }
+  ],
+  "mockModelResponses": [
+    "TOOL:draft_class_metadata:{\"name\":\"HIIT Conditioning\",\"category\":\"HIIT\",\"intensity\":\"HIGH\",\"impactLevel\":\"HIGH\"}",
+    "Drafted metadata: Category HIIT, Intensity HIGH, MET value 8.0."
+  ],
+  "assertions": {
+    "expectedAgent": "ClassMetadataAssistant",
+    "expectedToolsCalled": [
+      "draft_class_metadata"
+    ],
+    "replyContains": [
+      "HIIT",
+      "8.0"
+    ]
+  }
+}

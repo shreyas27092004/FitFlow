@@ -1,0 +1,44 @@
+{
+  "id": "normal-08-weekly-progress",
+  "category": "NORMAL",
+  "description": "Member inquires about workout streak and weekly attendance",
+  "user": {
+    "id": 1,
+    "roles": [
+      "MEMBER"
+    ],
+    "permissions": [],
+    "age": 29,
+    "consents": [
+      "AI_ASSISTANT_PROCESSING",
+      "CALORIE_ESTIMATES"
+    ]
+  },
+  "message": "How is my workout streak and progress this week?",
+  "mockToolResponses": [
+    {
+      "tool": "get_weekly_progress",
+      "output": {
+        "attendedCount": 3,
+        "bookedCount": 3,
+        "streakWeeks": 4,
+        "estimatedKcalBurned": 850
+      }
+    }
+  ],
+  "mockModelResponses": [
+    "TOOL:get_weekly_progress:{}",
+    "Great job! You attended 3 of 3 classes this week with an active streak of 4 weeks and burned approximately 850 kcal."
+  ],
+  "assertions": {
+    "expectedAgent": "WellnessCoachAgent",
+    "expectedToolsCalled": [
+      "get_weekly_progress"
+    ],
+    "replyContains": [
+      "3 of 3",
+      "4 weeks",
+      "850 kcal"
+    ]
+  }
+}

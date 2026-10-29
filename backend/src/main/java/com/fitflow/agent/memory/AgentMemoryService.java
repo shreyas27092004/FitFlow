@@ -88,6 +88,21 @@ public class AgentMemoryService {
         messageRepository.save(msg);
     }
 
+    @Transactional(readOnly = true, transactionManager = "postgresTransactionManager")
+    public org.springframework.data.domain.Page<com.fitflow.agent.dto.AgentConversationDto> getConversations(Long userId, org.springframework.data.domain.Pageable pageable) {
+        return conversationRepository.findByUserIdOrderByLastActiveAtDesc(userId, pageable)
+                .map(c -> new com.fitflow.agent.dto.AgentConversationDto(c.getId(), c.getUserId(), c.getRole(), c.getCreatedAt(), c.getLastActiveAt()));
+    }
+
+    @Transactional(readOnly = true, transactionManager = "postgresTransactionManager")
+    public List<com.fitflow.agent.dto.AgentMessageDto> getMessages(Long conversationId, Long userId) {
+        conversationRepository.findByIdAndUserId(conversationId, userId)
+                .orElseThrow(() -> ApiException.notFound("Conversation not found with id: " + conversationId));
+        return messageRepository.findByConversationIdOrderByCreatedAtAsc(conversationId).stream()
+                .map(m -> new com.fitflow.agent.dto.AgentMessageDto(m.getId(), m.getConversationId(), m.getSender(), m.getContent(), m.getCreatedAt()))
+                .toList();
+    }
+
     @Transactional("postgresTransactionManager")
     public void deleteConversation(Long conversationId, Long userId) {
         AgentConversation conv = conversationRepository.findByIdAndUserId(conversationId, userId)

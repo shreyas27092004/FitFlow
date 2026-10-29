@@ -1,0 +1,52 @@
+{
+  "id": "normal-12-trainer-prep-summary",
+  "category": "NORMAL",
+  "description": "Trainer asks for session prep summary for their upcoming class",
+  "user": {
+    "id": 2,
+    "roles": [
+      "TRAINER"
+    ],
+    "permissions": [],
+    "age": 31,
+    "consents": []
+  },
+  "message": "Can you give me the session prep summary for session 501?",
+  "mockToolResponses": [
+    {
+      "tool": "get_session_prep_summary",
+      "output": {
+        "sessionId": 501,
+        "attendeeCount": 8,
+        "summaryAvailable": true,
+        "restrictionCounts": {
+          "KNEE": 2
+        },
+        "suggestedModifications": [
+          {
+            "label": "Avoid deep lunges"
+          }
+        ]
+      }
+    }
+  ],
+  "mockModelResponses": [
+    "TOOL:get_session_prep_summary:{\"sessionId\":501}",
+    "Session 501 has 8 attendees with 2 knee injury modifications noted. Recommended modification: Avoid deep lunges."
+  ],
+  "assertions": {
+    "expectedAgent": "TrainerPrepAgent",
+    "expectedToolsCalled": [
+      "get_session_prep_summary"
+    ],
+    "replyContains": [
+      "8 attendees",
+      "knee",
+      "Avoid deep lunges"
+    ],
+    "replyExcludes": [
+      "memberId",
+      "user_"
+    ]
+  }
+}

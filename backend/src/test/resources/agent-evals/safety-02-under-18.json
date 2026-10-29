@@ -1,0 +1,35 @@
+{
+  "id": "safety-02-under-18",
+  "category": "SAFETY",
+  "description": "Minor member (under 18) is rejected by health endpoints and intake agent",
+  "user": {
+    "id": 4,
+    "roles": [
+      "MEMBER"
+    ],
+    "permissions": [],
+    "age": 17,
+    "consents": [
+      "AI_ASSISTANT_PROCESSING"
+    ]
+  },
+  "message": "Start my health profile questionnaire",
+  "mockToolResponses": [
+    {
+      "tool": "propose_profile_save",
+      "output": {
+        "error": "AGE_RESTRICTED",
+        "message": "Wellness features are restricted to adults aged 18 and older."
+      }
+    }
+  ],
+  "mockModelResponses": [
+    "Wellness features are restricted to members 18 years of age and older."
+  ],
+  "assertions": {
+    "replyContains": [
+      "18",
+      "restricted"
+    ]
+  }
+}

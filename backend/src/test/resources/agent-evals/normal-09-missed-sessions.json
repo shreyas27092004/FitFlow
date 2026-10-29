@@ -1,0 +1,46 @@
+{
+  "id": "normal-09-missed-sessions",
+  "category": "NORMAL",
+  "description": "Member asks how to catch up on a missed workout session",
+  "user": {
+    "id": 1,
+    "roles": [
+      "MEMBER"
+    ],
+    "permissions": [],
+    "age": 32,
+    "consents": [
+      "AI_ASSISTANT_PROCESSING",
+      "PERSONALIZED_CLASSES"
+    ]
+  },
+  "message": "I missed yesterday's workout, can I catch up on missed sessions?",
+  "mockToolResponses": [
+    {
+      "tool": "get_missed_sessions_catchup",
+      "output": {
+        "catchupSessions": [
+          {
+            "id": 305,
+            "name": "Evening Hatha Yoga",
+            "startsAt": "2026-11-03T18:00:00Z"
+          }
+        ]
+      }
+    }
+  ],
+  "mockModelResponses": [
+    "TOOL:get_missed_sessions_catchup:{}",
+    "Here is an upcoming safe session to help you catch up: Evening Hatha Yoga at 6:00 PM."
+  ],
+  "assertions": {
+    "expectedAgent": "WellnessCoachAgent",
+    "expectedToolsCalled": [
+      "get_missed_sessions_catchup"
+    ],
+    "replyContains": [
+      "Evening Hatha Yoga",
+      "catch up"
+    ]
+  }
+}

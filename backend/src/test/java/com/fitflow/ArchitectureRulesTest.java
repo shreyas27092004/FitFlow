@@ -236,4 +236,21 @@ public class ArchitectureRulesTest {
                 .because("Tools must never accept caller ID from model arguments; caller context is injected by the runtime (Stage 8)");
         rule.check(importedClasses);
     }
+
+    // (m) ArchUnit rule asserts no admin tool returns any class from com.fitflow.wellness.. (Stage 9)
+    @Test
+    @DisplayName("Gate (m): Admin tools must never return health data (com.fitflow.wellness..)")
+    void ruleM_adminToolsMustNotReturnHealthData() {
+        ArchRule rule = noClasses()
+                .that().haveSimpleNameEndingWith("Tool")
+                .and().haveSimpleNameStartingWith("ListAtRisk")
+                .or().haveSimpleNameStartingWith("ProposeRetention")
+                .or().haveSimpleNameStartingWith("DraftClassMetadata")
+                .or().haveSimpleNameStartingWith("ProposeCreateClass")
+                .or().haveSimpleNameStartingWith("GetDemand")
+                .or().haveSimpleNameStartingWith("ProposeAddSession")
+                .should().dependOnClassesThat().resideInAPackage("..wellness..")
+                .because("Admin agents and tools never receive health data in any form (Stage 9)");
+        rule.check(importedClasses);
+    }
 }

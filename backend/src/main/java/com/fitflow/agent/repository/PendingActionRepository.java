@@ -11,5 +11,7 @@ import java.util.Optional;
 public interface PendingActionRepository extends JpaRepository<PendingAction, Long> {
     Optional<PendingAction> findByIdAndUserId(Long id, Long userId);
     List<PendingAction> findByUserIdAndStatus(Long userId, String status);
+    List<PendingAction> findByUserIdAndStatusAndExpiresAtAfter(Long userId, String status, java.time.Instant now);
+    List<PendingAction> findByStatusAndExpiresAtBefore(String status, java.time.Instant now);
     List<PendingAction> findByConversationId(Long conversationId);
 }

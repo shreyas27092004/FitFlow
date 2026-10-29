@@ -1,0 +1,8 @@
+Hello [(${firstName})],
+
+[(${summaryText})]
+
+Keep up the great momentum!
+
+Best regards,
+The FitFlow Team

@@ -111,14 +111,28 @@ class IntakeAgentE2ETest {
 
         BookingService bookingService = mock(BookingService.class);
         MembershipService membershipService = mock(MembershipService.class);
+        com.fitflow.user.repository.AdminPermissionRepository adminPermissionRepository = mock(com.fitflow.user.repository.AdminPermissionRepository.class);
+        com.fitflow.agent.service.WeeklyPlanService weeklyPlanService = mock(com.fitflow.agent.service.WeeklyPlanService.class);
+        com.fitflow.agent.service.AtRiskService atRiskService = mock(com.fitflow.agent.service.AtRiskService.class);
+        com.fitflow.fitnessclass.FitnessClassService fitnessClassService = mock(com.fitflow.fitnessclass.FitnessClassService.class);
+        com.fitflow.session.ClassSessionService sessionService = mock(com.fitflow.session.ClassSessionService.class);
+        com.fitflow.agent.service.DemandService demandService = mock(com.fitflow.agent.service.DemandService.class);
+        com.fitflow.notification.OutboxService outboxService = mock(com.fitflow.notification.OutboxService.class);
 
         pendingActionService = new PendingActionService(
                 pendingActionRepository,
                 userRepository,
                 userRoleRepository,
+                adminPermissionRepository,
                 bookingService,
                 membershipService,
                 wellnessProfileService,
+                weeklyPlanService,
+                atRiskService,
+                fitnessClassService,
+                sessionService,
+                demandService,
+                outboxService,
                 fixedClock,
                 objectMapper
         );
@@ -285,7 +299,9 @@ class IntakeAgentE2ETest {
                 .build();
 
         when(pendingActionRepository.findById(777L)).thenReturn(Optional.of(savedAction));
-        when(userRepository.findById(42L)).thenReturn(Optional.of(new User()));
+        User testUser = new User();
+        testUser.setId(42L);
+        when(userRepository.findById(42L)).thenReturn(Optional.of(testUser));
         when(userRoleRepository.existsByIdUserIdAndIdRole(42L, UserRole.Role.MEMBER)).thenReturn(true);
 
         ProfileResponse pr = new ProfileResponse(

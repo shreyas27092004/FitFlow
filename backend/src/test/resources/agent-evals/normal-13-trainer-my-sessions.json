@@ -1,0 +1,42 @@
+{
+  "id": "normal-13-trainer-my-sessions",
+  "category": "NORMAL",
+  "description": "Trainer asks for their scheduled classes",
+  "user": {
+    "id": 2,
+    "roles": [
+      "TRAINER"
+    ],
+    "permissions": [],
+    "age": 31,
+    "consents": []
+  },
+  "message": "What are my upcoming scheduled sessions this week?",
+  "mockToolResponses": [
+    {
+      "tool": "get_my_sessions",
+      "output": {
+        "sessions": [
+          {
+            "id": 501,
+            "name": "Power Yoga",
+            "startsAt": "2026-11-04T10:00:00Z"
+          }
+        ]
+      }
+    }
+  ],
+  "mockModelResponses": [
+    "TOOL:get_my_sessions:{}",
+    "You have Power Yoga scheduled on Wednesday at 10:00 AM."
+  ],
+  "assertions": {
+    "expectedAgent": "TrainerScheduleAgent",
+    "expectedToolsCalled": [
+      "get_my_sessions"
+    ],
+    "replyContains": [
+      "Power Yoga"
+    ]
+  }
+}

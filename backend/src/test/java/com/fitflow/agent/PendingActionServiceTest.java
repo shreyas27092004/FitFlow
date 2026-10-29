@@ -50,9 +50,16 @@ class PendingActionServiceTest {
     private PendingActionRepository pendingActionRepository;
     private UserRepository userRepository;
     private UserRoleRepository userRoleRepository;
+    private com.fitflow.user.repository.AdminPermissionRepository adminPermissionRepository;
     private BookingService bookingService;
     private MembershipService membershipService;
     private WellnessProfileService wellnessProfileService;
+    private com.fitflow.agent.service.WeeklyPlanService weeklyPlanService;
+    private com.fitflow.agent.service.AtRiskService atRiskService;
+    private com.fitflow.fitnessclass.FitnessClassService fitnessClassService;
+    private com.fitflow.session.ClassSessionService sessionService;
+    private com.fitflow.agent.service.DemandService demandService;
+    private com.fitflow.notification.OutboxService outboxService;
     private Clock fixedClock;
     private ObjectMapper objectMapper;
 
@@ -65,9 +72,16 @@ class PendingActionServiceTest {
         pendingActionRepository = Mockito.mock(PendingActionRepository.class);
         userRepository = Mockito.mock(UserRepository.class);
         userRoleRepository = Mockito.mock(UserRoleRepository.class);
+        adminPermissionRepository = Mockito.mock(com.fitflow.user.repository.AdminPermissionRepository.class);
         bookingService = Mockito.mock(BookingService.class);
         membershipService = Mockito.mock(MembershipService.class);
         wellnessProfileService = Mockito.mock(WellnessProfileService.class);
+        weeklyPlanService = Mockito.mock(com.fitflow.agent.service.WeeklyPlanService.class);
+        atRiskService = Mockito.mock(com.fitflow.agent.service.AtRiskService.class);
+        fitnessClassService = Mockito.mock(com.fitflow.fitnessclass.FitnessClassService.class);
+        sessionService = Mockito.mock(com.fitflow.session.ClassSessionService.class);
+        demandService = Mockito.mock(com.fitflow.agent.service.DemandService.class);
+        outboxService = Mockito.mock(com.fitflow.notification.OutboxService.class);
 
         fixedClock = Clock.fixed(baseTime, ZoneOffset.UTC);
         objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
@@ -76,9 +90,16 @@ class PendingActionServiceTest {
                 pendingActionRepository,
                 userRepository,
                 userRoleRepository,
+                adminPermissionRepository,
                 bookingService,
                 membershipService,
                 wellnessProfileService,
+                weeklyPlanService,
+                atRiskService,
+                fitnessClassService,
+                sessionService,
+                demandService,
+                outboxService,
                 fixedClock,
                 objectMapper
         );

@@ -1,0 +1,45 @@
+{
+  "id": "normal-15-retention-list-at-risk",
+  "category": "NORMAL",
+  "description": "Admin requests list of at-risk members",
+  "user": {
+    "id": 3,
+    "roles": [
+      "ADMIN"
+    ],
+    "permissions": [
+      "USER_READ"
+    ],
+    "age": 40,
+    "consents": []
+  },
+  "message": "List at-risk members who have declining attendance",
+  "mockToolResponses": [
+    {
+      "tool": "list_at_risk_members",
+      "output": {
+        "atRiskMembers": [
+          {
+            "memberId": 10,
+            "email": "alice@fitflow.local",
+            "reason": "ATTENDANCE_DROP_50_PERCENT"
+          }
+        ]
+      }
+    }
+  ],
+  "mockModelResponses": [
+    "TOOL:list_at_risk_members:{\"limit\":10}",
+    "Found 1 member at risk: Member 10 (alice@fitflow.local) with attendance drop over 50%."
+  ],
+  "assertions": {
+    "expectedAgent": "RetentionAgent",
+    "expectedToolsCalled": [
+      "list_at_risk_members"
+    ],
+    "replyContains": [
+      "alice@fitflow.local",
+      "attendance drop"
+    ]
+  }
+}

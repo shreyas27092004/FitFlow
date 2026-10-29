@@ -1,0 +1,7 @@
+Hello [(${firstName})],
+
+We noticed you haven't attended classes recently. Your fitness journey matters to us, and our community is here to support you!
+Check out our latest schedule and reserve your favorite spot today.
+
+Best regards,
+The FitFlow Team

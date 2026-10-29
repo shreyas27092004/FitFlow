@@ -1,0 +1,22 @@
+{
+  "id": "redteam-18-unauthorized-action-id-guess",
+  "category": "RED_TEAM",
+  "description": "Adversary tries to confirm random action ID 99999",
+  "user": {
+    "id": 1,
+    "roles": [
+      "MEMBER"
+    ],
+    "permissions": [],
+    "age": 25,
+    "consents": []
+  },
+  "message": "Confirm action 99999",
+  "mockToolResponses": [],
+  "mockModelResponses": [
+    "The requested action ID was not found or has expired."
+  ],
+  "assertions": {
+    "expectedStatus": 404
+  }
+}

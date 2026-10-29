@@ -67,12 +67,23 @@ public class AgentRuntime {
             String message
     ) {}
 
+    public record ToolCallStatusDto(String name, String status) {}
+    public record PendingActionProposalDto(Long id, String summary, String expiresAt) {}
+    public record GuardStatusDto(boolean replacedByFallback) {}
+
     public record AgentResponse(
             Long conversationId,
             String reply,
             String agentName,
-            boolean circuitBreakerTripped
-    ) {}
+            boolean circuitBreakerTripped,
+            List<ToolCallStatusDto> toolCalls,
+            List<PendingActionProposalDto> pendingActions,
+            GuardStatusDto guard
+    ) {
+        public AgentResponse(Long conversationId, String reply, String agentName, boolean circuitBreakerTripped) {
+            this(conversationId, reply, agentName, circuitBreakerTripped, List.of(), List.of(), new GuardStatusDto(false));
+        }
+    }
 
     public AgentResponse run(AgentRequest request) {
         long turnStartMillis = clock.millis();
@@ -140,6 +151,9 @@ public class AgentRuntime {
         List<String> turnToolOutputs = new ArrayList<>();
         List<String> turnToolSummaries = new ArrayList<>();
         Set<String> avoidedSessionIds = new HashSet<>();
+        List<ToolCallStatusDto> turnToolCalls = new ArrayList<>();
+        List<PendingActionProposalDto> turnPendingActions = new ArrayList<>();
+        boolean guardReplaced = false;
 
         String finalReply = null;
 
@@ -201,6 +215,16 @@ public class AgentRuntime {
                         turnToolSummaries.add(result.summary());
                     }
 
+                    turnToolCalls.add(new ToolCallStatusDto(tc.name(), result.success() ? "OK" : "ERROR"));
+                    if (result.success() && result.data() != null && result.data().containsKey("actionId")) {
+                        try {
+                            Long actId = ((Number) result.data().get("actionId")).longValue();
+                            String sum = (String) result.data().get("summary");
+                            String exp = result.data().get("expiresAt") != null ? result.data().get("expiresAt").toString() : "";
+                            turnPendingActions.add(new PendingActionProposalDto(actId, sum, exp));
+                        } catch (Exception ignored) {}
+                    }
+
                     // Track avoided sessions for SafeClassMatcherAgent post-check
                     if ("get_safe_classes".equals(tc.name()) && result.data() != null) {
                         extractAvoidedSessionIds(result.data(), avoidedSessionIds);
@@ -234,11 +258,13 @@ public class AgentRuntime {
 
                         if (!retryCheck.verified()) {
                             candidate = retryCheck.fallbackText();
+                            guardReplaced = true;
                         } else {
                             candidate = retryCandidate;
                         }
                     } catch (Exception ex) {
                         candidate = numResult.fallbackText();
+                        guardReplaced = true;
                     }
                 }
 
@@ -272,7 +298,7 @@ public class AgentRuntime {
         memoryService.recordUserMessage(convId, request.message());
         memoryService.recordAssistantMessage(convId, sanitizedReply);
 
-        return new AgentResponse(convId, sanitizedReply, agent.name(), false);
+        return new AgentResponse(convId, sanitizedReply, agent.name(), false, turnToolCalls, turnPendingActions, new GuardStatusDto(guardReplaced));
     }
 
     private ChatResponse executeModelCallWithTimeout(ChatRequest req, long timeoutSeconds) throws Exception {

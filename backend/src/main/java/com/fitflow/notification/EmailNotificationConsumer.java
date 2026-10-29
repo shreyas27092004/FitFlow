@@ -65,6 +65,8 @@ public class EmailNotificationConsumer implements EventHandler {
             case "refund.issued" -> handleRefundIssued(envelope, payload);
             case "payout.approved" -> handlePayoutApproved(envelope, payload);
             case "feedback.pain_reported" -> handleFeedbackPainReported(envelope, payload);
+            case "weekly.summary" -> handleWeeklySummary(envelope, payload);
+            case "retention.nudge" -> handleRetentionNudge(envelope, payload);
             default -> log.warn("Unhandled notification event type: {}", eventType);
         }
     }
@@ -320,6 +322,20 @@ public class EmailNotificationConsumer implements EventHandler {
 
     private void sendNotification(Long userId, String template, String subject, Category category, Map<String, Object> variables, Long eventId) {
         sendNotificationInternal(userId, template, subject, category, variables, eventId, false);
+    }
+
+    private void handleWeeklySummary(EventEnvelope envelope, Map<String, Object> payload) {
+        Long memberId = getLong(payload, "memberId");
+        if (memberId == null) return;
+        String text = (String) payload.get("summaryText");
+        if (text == null) text = "Here is your weekly workout summary.";
+        sendNotification(memberId, "weekly-summary", "Your Weekly Workout Summary", Category.REMINDERS, Map.of("summaryText", text), envelope.eventId());
+    }
+
+    private void handleRetentionNudge(EventEnvelope envelope, Map<String, Object> payload) {
+        Long memberId = getLong(payload, "memberId");
+        if (memberId == null) return;
+        sendNotification(memberId, "retention-nudge", "We Miss You at FitFlow!", Category.MARKETING, Map.of(), envelope.eventId());
     }
 
     private void sendNotificationInternal(Long userId, String template, String subject, Category category, Map<String, Object> variables, Long eventId, boolean allowSuspended) {

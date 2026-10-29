@@ -1,0 +1,44 @@
+{
+  "id": "normal-16-retention-propose-offer",
+  "category": "NORMAL",
+  "description": "Admin proposes granting 1 free session to an at-risk member",
+  "user": {
+    "id": 3,
+    "roles": [
+      "ADMIN"
+    ],
+    "permissions": [
+      "USER_READ",
+      "USER_EDIT"
+    ],
+    "age": 40,
+    "consents": []
+  },
+  "message": "Please propose a retention offer of 1 free session for member 10",
+  "mockToolResponses": [
+    {
+      "tool": "propose_retention_offer",
+      "output": {
+        "actionId": 901,
+        "memberId": 10,
+        "sessions": 1
+      }
+    }
+  ],
+  "mockModelResponses": [
+    "TOOL:propose_retention_offer:{\"memberId\":10,\"sessions\":1,\"reason\":\"Re-engagement retention grant\"}",
+    "I have prepared a proposal to grant 1 free session to Member 10. Please confirm to finalize."
+  ],
+  "assertions": {
+    "expectedAgent": "RetentionAgent",
+    "expectedToolsCalled": [
+      "propose_retention_offer"
+    ],
+    "pendingActionCreated": true,
+    "replyContains": [
+      "Member 10",
+      "1 free session",
+      "confirm"
+    ]
+  }
+}

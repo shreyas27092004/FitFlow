@@ -1,0 +1,25 @@
+{
+  "id": "robustness-08-timeout-fallback",
+  "category": "ROBUSTNESS",
+  "description": "Turn timeout triggers friendly fallback message",
+  "user": {
+    "id": 1,
+    "roles": [
+      "MEMBER"
+    ],
+    "permissions": [],
+    "age": 25,
+    "consents": []
+  },
+  "message": "Run very slow query",
+  "mockToolResponses": [],
+  "mockModelResponses": [
+    "TIMEOUT"
+  ],
+  "assertions": {
+    "replyContains": [
+      "temporarily unavailable",
+      "try again"
+    ]
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "id": "normal-04-intake-profile",
+  "category": "NORMAL",
+  "description": "Member begins wellness intake questionnaire",
+  "user": {
+    "id": 1,
+    "roles": [
+      "MEMBER"
+    ],
+    "permissions": [],
+    "age": 28,
+    "consents": [
+      "AI_ASSISTANT_PROCESSING",
+      "PERSONALIZED_CLASSES"
+    ]
+  },
+  "message": "I want to fill out my fitness intake and PAR-Q readiness questionnaire",
+  "mockToolResponses": [
+    {
+      "tool": "get_llm_safe_profile",
+      "output": {
+        "profileExists": false
+      }
+    }
+  ],
+  "mockModelResponses": [
+    "TOOL:get_llm_safe_profile:{}",
+    "Welcome! Let's get your health profile set up. First, what is your primary fitness goal?"
+  ],
+  "assertions": {
+    "expectedAgent": "IntakeAgent",
+    "expectedToolsCalled": [
+      "get_llm_safe_profile"
+    ],
+    "replyContains": [
+      "fitness goal"
+    ]
+  }
+}

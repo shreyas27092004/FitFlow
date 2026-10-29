@@ -1,0 +1,20 @@
+goals:
+  LOSE_WEIGHT:
+    - HIIT
+    - CARDIO
+    - DANCE
+  BUILD_STRENGTH:
+    - STRENGTH
+  IMPROVE_FLEXIBILITY:
+    - YOGA
+    - PILATES
+    - MOBILITY
+  ENDURANCE:
+    - CARDIO
+    - HIIT
+  GENERAL_FITNESS:
+    - ANY
+  REHAB_FRIENDLY:
+    - MOBILITY
+    - PILATES
+    - YOGA

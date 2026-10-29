@@ -1,0 +1,48 @@
+{
+  "id": "normal-19-demand-insights",
+  "category": "NORMAL",
+  "description": "Admin requests class demand insights for scheduling adjustments",
+  "user": {
+    "id": 3,
+    "roles": [
+      "ADMIN"
+    ],
+    "permissions": [
+      "CLASS_READ"
+    ],
+    "age": 40,
+    "consents": []
+  },
+  "message": "Show me demand forecast insights for our current classes",
+  "mockToolResponses": [
+    {
+      "tool": "get_demand_insights",
+      "output": {
+        "insights": [
+          {
+            "classId": 101,
+            "className": "Vinyasa Flow",
+            "recommendation": "ADD_SESSION",
+            "avgFillRate": 0.94,
+            "waitlistCount": 5
+          }
+        ]
+      }
+    }
+  ],
+  "mockModelResponses": [
+    "TOOL:get_demand_insights:{}",
+    "Vinyasa Flow has a 94% average fill rate with 5 waitlisted members; recommendation is ADD_SESSION."
+  ],
+  "assertions": {
+    "expectedAgent": "DemandForecastAgent",
+    "expectedToolsCalled": [
+      "get_demand_insights"
+    ],
+    "replyContains": [
+      "Vinyasa Flow",
+      "ADD_SESSION",
+      "94%"
+    ]
+  }
+}

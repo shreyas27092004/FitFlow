@@ -1,0 +1,43 @@
+{
+  "id": "normal-20-demand-propose-add-session",
+  "category": "NORMAL",
+  "description": "Admin proposes adding a high-demand session",
+  "user": {
+    "id": 3,
+    "roles": [
+      "ADMIN"
+    ],
+    "permissions": [
+      "CLASS_READ",
+      "CLASS_EDIT"
+    ],
+    "age": 40,
+    "consents": []
+  },
+  "message": "Propose adding a session for Vinyasa Flow on Saturday at 11am with trainer 2",
+  "mockToolResponses": [
+    {
+      "tool": "propose_add_session",
+      "output": {
+        "actionId": 910,
+        "classId": 101,
+        "trainerId": 2
+      }
+    }
+  ],
+  "mockModelResponses": [
+    "TOOL:propose_add_session:{\"classId\":101,\"trainerId\":2,\"startsAt\":\"2026-11-07T11:00:00Z\",\"room\":\"Studio A\"}",
+    "I have prepared the proposal to add a Saturday 11:00 AM Vinyasa Flow session. Please confirm to publish."
+  ],
+  "assertions": {
+    "expectedAgent": "DemandForecastAgent",
+    "expectedToolsCalled": [
+      "propose_add_session"
+    ],
+    "pendingActionCreated": true,
+    "replyContains": [
+      "confirm",
+      "Vinyasa Flow"
+    ]
+  }
+}
