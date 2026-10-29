@@ -1,9 +1,0 @@
-Hello [(${firstName})],
-
-Thank you for your payment!
-Invoice Number: [(${invoiceNumber})]
-Total Paid: [(${amountFormatted})]
-Description: [(${description})]
-
-Best regards,
-The FitFlow Team

@@ -1,9 +1,0 @@
-Hello [(${firstName})],
-
-Your [(${planName})] membership is now active!
-Valid until: [(${endsAt})]
-
-Enjoy your workouts!
-
-Best regards,
-The FitFlow Team
