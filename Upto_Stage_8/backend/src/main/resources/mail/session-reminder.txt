@@ -1,0 +1,7 @@
+Hello [(${firstName})],
+
+This is a reminder that you have a session for [(${className})] tomorrow at [(${sessionStartTime})].
+We look forward to seeing you!
+
+Best regards,
+The FitFlow Team

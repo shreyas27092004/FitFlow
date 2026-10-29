@@ -1,0 +1,10 @@
+Hello [(${firstName})],
+
+Your refund has been successfully processed.
+Refund Amount: [(${amountFormatted})]
+Reason: [(${reason})]
+
+It may take 5-7 business days to reflect in your account.
+
+Best regards,
+The FitFlow Team

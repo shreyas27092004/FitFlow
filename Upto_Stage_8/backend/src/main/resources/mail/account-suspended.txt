@@ -1,0 +1,7 @@
+Hello [(${firstName})],
+
+Your FitFlow account has been suspended.
+If you believe this is in error, please contact support.
+
+Best regards,
+The FitFlow Team

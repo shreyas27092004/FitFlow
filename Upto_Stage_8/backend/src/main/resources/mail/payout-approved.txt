@@ -1,0 +1,8 @@
+Hello [(${firstName})],
+
+Your payout has been approved and processed!
+Payout Amount: [(${amountFormatted})]
+Period: [(${periodStart})] to [(${periodEnd})]
+
+Best regards,
+The FitFlow Team

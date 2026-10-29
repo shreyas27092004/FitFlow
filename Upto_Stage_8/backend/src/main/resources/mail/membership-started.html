@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><title>Membership Active</title></head>
+<body>
+    <p>Hello <span th:text="${firstName}">Member</span>,</p>
+    <p>Your <strong th:text="${planName}">PRO</strong> membership is now active!</p>
+    <p th:if="${endsAt != null}">Valid until: <span th:text="${endsAt}">Date</span></p>
+    <p>Enjoy your workouts!</p>
+    <p>Best regards,<br>The FitFlow Team</p>
+</body>
+</html>

@@ -1,0 +1,34 @@
+# Wellness suggestions, not medical advice. Rules are illustrative and must be reviewed by a qualified professional before real use.
+
+modifications:
+  KNEE:
+    - code: LOW_IMPACT_ALTERNATIVE
+      label: Low-impact alternative movements
+    - code: REDUCE_DEPTH
+      label: Reduce flexion depth in squats and lunges
+  LOWER_BACK:
+    - code: AVOID_HEAVY_LOAD
+      label: Avoid heavy compressive axial loading
+    - code: NEUTRAL_SPINE_CUES
+      label: Cue neutral spine alignment
+  SHOULDER:
+    - code: AVOID_OVERHEAD_LOAD
+      label: Avoid heavy overhead loading
+  WRIST:
+    - code: PADDED_OR_FIST_ALTERNATIVE
+      label: Use padded surface or fist alternatives for floor weight
+  ANKLE:
+    - code: STABLE_SURFACE_ONLY
+      label: Exercise on stable surfaces only
+  HIP:
+    - code: REDUCE_RANGE
+      label: Reduce range of motion in hip extension and rotation
+  UPPER_BACK:
+    - code: AVOID_INVERSIONS
+      label: Avoid inversions and thoracic compression
+  NECK:
+    - code: AVOID_INVERSIONS
+      label: Avoid neck flexion under load and inversions
+  ELBOW:
+    - code: LIGHT_LOAD
+      label: Use lighter resistance and avoid locking elbows

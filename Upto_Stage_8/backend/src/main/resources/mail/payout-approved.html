@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><title>Payout Approved</title></head>
+<body>
+    <p>Hello <span th:text="${firstName}">Trainer</span>,</p>
+    <p>Your payout has been approved and processed!</p>
+    <p>Payout Amount: <strong th:text="${amountFormatted}">Rs 25000.00</strong></p>
+    <p th:if="${periodStart != null}">Period: <span th:text="${periodStart}">Start</span> to <span th:text="${periodEnd}">End</span></p>
+    <p>Best regards,<br>The FitFlow Team</p>
+</body>
+</html>

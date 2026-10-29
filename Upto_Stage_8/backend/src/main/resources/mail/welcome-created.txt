@@ -1,0 +1,9 @@
+Hello [(${firstName})],
+
+Welcome to FitFlow! Your account has been created.
+Your temporary password is: [(${tempPassword})]
+
+Please log in and update your password: [(${loginUrl})]
+
+Best regards,
+The FitFlow Team
