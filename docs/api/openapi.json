@@ -1,0 +1,7747 @@
+{
+  "components": {
+    "schemas": {
+      "AcceptProposalRequest": {
+        "properties": {
+          "severity": {
+            "enum": [
+              "MILD",
+              "MODERATE",
+              "SEVERE"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "severity"
+        ],
+        "type": "object"
+      },
+      "AdminCancelBookingRequest": {
+        "properties": {
+          "reason": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "type": "object"
+      },
+      "AdminCreateUserRequest": {
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "fullName": {
+            "maxLength": 150,
+            "minLength": 0,
+            "type": "string"
+          },
+          "permissions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "phone": {
+            "maxLength": 30,
+            "minLength": 0,
+            "type": "string"
+          },
+          "ratePerSessionPaise": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "role": {
+            "enum": [
+              "MEMBER",
+              "TRAINER",
+              "ADMIN"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "email",
+          "fullName",
+          "role"
+        ],
+        "type": "object"
+      },
+      "AdminPermissionsRequest": {
+        "properties": {
+          "permissions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "permissions"
+        ],
+        "type": "object"
+      },
+      "AdminRefundResponse": {
+        "properties": {
+          "amountPaise": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "approvedBy": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "gatewayRefundId": {
+            "type": "string"
+          },
+          "paymentId": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "refundId": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "status": {
+            "enum": [
+              "PENDING_APPROVAL",
+              "APPROVED",
+              "PAID",
+              "REJECTED",
+              "FAILED"
+            ],
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "AdminUpdateUserRequest": {
+        "properties": {
+          "fullName": {
+            "maxLength": 150,
+            "minLength": 0,
+            "type": "string"
+          },
+          "phone": {
+            "maxLength": 30,
+            "minLength": 0,
+            "type": "string"
+          },
+          "version": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "version"
+        ],
+        "type": "object"
+      },
+      "AdminUserDetailResponse": {
+        "properties": {
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "dateOfBirth": {
+            "format": "date",
+            "type": "string"
+          },
+          "deletedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "failedLoginCount": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "fullName": {
+            "type": "string"
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "lockedUntil": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "mustChangePassword": {
+            "type": "boolean"
+          },
+          "permissions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "roles": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "status": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "version": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "AgentChatRequestDto": {
+        "properties": {
+          "conversationId": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "message": {
+            "maxLength": 2000,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "type": "object"
+      },
+      "AgentChatResponseDto": {
+        "properties": {
+          "agentName": {
+            "type": "string"
+          },
+          "circuitBreakerTripped": {
+            "type": "boolean"
+          },
+          "conversationId": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "guard": {
+            "$ref": "#/components/schemas/GuardStatusDto"
+          },
+          "pendingActions": {
+            "items": {
+              "$ref": "#/components/schemas/PendingActionProposalDto"
+            },
+            "type": "array"
+          },
+          "reply": {
+            "type": "string"
+          },
+          "toolCalls": {
+            "items": {
+              "$ref": "#/components/schemas/ToolCallStatusDto"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "AgentConversationDto": {
+        "properties": {
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "lastActiveAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "userId": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "AgentInfoDto": {
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "AgentMessageDto": {
+        "properties": {
+          "content": {
+            "type": "string"
+          },
+          "conversationId": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "sender": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "AgentStatusResponse": {
+        "properties": {
+          "agents": {
+            "items": {
+              "$ref": "#/components/schemas/AgentInfoDto"
+            },
+            "type": "array"
+          },
+          "configured": {
+            "type": "boolean"
+          },
+          "dailyCallsRemaining": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "mode": {
+            "type": "string"
+          },
+          "model": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "AiSettingsResponse": {
+        "properties": {
+          "configured": {
+            "type": "boolean"
+          },
+          "maskedLast4": {
+            "type": "string"
+          },
+          "mode": {
+            "type": "string"
+          },
+          "model": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "updatedBy": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "AiTestResponse": {
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "ok": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "AttendanceRecordDto": {
+        "properties": {
+          "bookingId": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "status": {
+            "enum": [
+              "ATTENDED",
+              "NO_SHOW"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "bookingId",
+          "status"
+        ],
+        "type": "object"
+      },
+      "AuthResponse": {
+        "properties": {
+          "accessToken": {
+            "type": "string"
+          },
+          "expiresInSeconds": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "refreshToken": {
+            "type": "string"
+          },
+          "user": {
+            "$ref": "#/components/schemas/UserDto"
+          }
+        },
+        "type": "object"
+      },
+      "AvailabilitySlotDto": {
+        "properties": {
+          "dayOfWeek": {
+            "format": "int32",
+            "maximum": 7,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "end": {
+            "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
+            "type": "string"
+          },
+          "start": {
+            "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "end",
+          "start"
+        ],
+        "type": "object"
+      },
+      "BodyMetricRequest": {
+        "properties": {
+          "heightCm": {
+            "maximum": 230,
+            "minimum": 120,
+            "type": "number"
+          },
+          "recordedOn": {
+            "format": "date",
+            "type": "string"
+          },
+          "weightKg": {
+            "maximum": 250,
+            "minimum": 30,
+            "type": "number"
+          }
+        },
+        "required": [
+          "recordedOn",
+          "weightKg"
+        ],
+        "type": "object"
+      },
+      "BodyMetricResponse": {
+        "properties": {
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "heightCm": {
+            "type": "number"
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "recordedOn": {
+            "format": "date",
+            "type": "string"
+          },
+          "weightKg": {
+            "type": "number"
+          }
+        },
+        "type": "object"
+      },
+      "CancelBookingResponse": {
+        "properties": {
+          "bookingId": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "status": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "CancelSessionRequest": {
+        "properties": {
+          "reason": {
+            "maxLength": 250,
+            "minLength": 0,
+            "type": "string"
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "type": "object"
+      },
+      "ChangeMembershipRequest": {
+        "properties": {
+          "expectedAmountDuePaise": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "targetPlanCode": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "expectedAmountDuePaise",
+          "targetPlanCode"
+        ],
+        "type": "object"
+      },
+      "ChangePasswordRequest": {
+        "properties": {
+          "currentPassword": {
+            "type": "string"
+          },
+          "newPassword": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "currentPassword",
+          "newPassword"
+        ],
+        "type": "object"
+      },
+      "ChangePreviewRequest": {
+        "properties": {
+          "action": {
+            "type": "string"
+          },
+          "targetPlanCode": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ChangePreviewResponse": {
+        "properties": {
+          "amountDuePaise": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "amountPaidPaise": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "cappedByCashPaise": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "creditPaise": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "currentPlan": {
+            "type": "string"
+          },
+          "daysRatio": {
+            "type": "number"
+          },
+          "daysRemaining": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "explanation": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "policy": {
+            "type": "string"
+          },
+          "refundPaise": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "refundableFraction": {
+            "type": "number"
+          },
+          "sessionsRatio": {
+            "type": "number"
+          },
+          "sessionsRemaining": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "sessionsTotal": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "targetPlan": {
+            "type": "string"
+          },
+          "totalDays": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "ClassBurnResponse": {
+        "properties": {
+          "assumptions": {
+            "type": "string"
+          },
+          "disclaimer": {
+            "type": "string"
+          },
+          "kcal": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "ClassDetailResponse": {
+        "properties": {
+          "active": {
+            "type": "boolean"
+          },
+          "category": {
+            "enum": [
+              "YOGA",
+              "PILATES",
+              "HIIT",
+              "STRENGTH",
+              "CARDIO",
+              "DANCE",
+              "MOBILITY",
+              "BOXING"
+            ],
+            "type": "string"
+          },
+          "contraindicationTags": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "createdBy": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "defaultCapacity": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "description": {
+            "type": "string"
+          },
+          "durationMinutes": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "impactLevel": {
+            "enum": [
+              "LOW",
+              "MEDIUM",
+              "HIGH"
+            ],
+            "type": "string"
+          },
+          "intensity": {
+            "enum": [
+              "LOW",
+              "MODERATE",
+              "HIGH"
+            ],
+            "type": "string"
+          },
+          "metValue": {
+            "type": "number"
+          },
+          "metadataReviewed": {
+            "type": "boolean"
+          },
+          "minAge": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "version": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "ClassFeedbackRequest": {
+        "properties": {
+          "comment": {
+            "maxLength": 500,
+            "minLength": 0,
+            "type": "string"
+          },
+          "feltPain": {
+            "type": "boolean"
+          },
+          "painArea": {
+            "enum": [
+              "KNEE",
+              "ANKLE",
+              "HIP",
+              "LOWER_BACK",
+              "UPPER_BACK",
+              "NECK",
+              "SHOULDER",
+              "ELBOW",
+              "WRIST"
+            ],
+            "type": "string"
+          },
+          "rating": {
+            "format": "int32",
+            "maximum": 5,
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "rating"
+        ],
+        "type": "object"
+      },
+      "ClassMetadataResponse": {
+        "properties": {
+          "categories": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "contraindicationTags": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "impactLevel": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "intensity": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "ClassUtilizationDto": {
+        "properties": {
+          "classId": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "className": {
+            "type": "string"
+          },
+          "totalBooked": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "totalCapacity": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "totalSessions": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "utilizationPercent": {
+            "format": "double",
+            "type": "number"
+          }
+        },
+        "type": "object"
+      },
+      "CompleteSessionRequest": {
+        "properties": {
+          "noAttendees": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "CompleteSessionResponse": {
+        "properties": {
+          "earningsPaise": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "sessionId": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "status": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ConfirmPaymentRequest": {
+        "properties": {
+          "clientPayload": {
+            "additionalProperties": {
+              "type": "object"
+            },
+            "type": "object"
+          }
+        },
+        "type": "object"
+      },
+      "ConsentInfoResponse": {
+        "properties": {
+          "eligible": {
+            "type": "boolean"
+          },
+          "granted": {
+            "items": {
+              "$ref": "#/components/schemas/GrantedPurposeDto"
+            },
+            "type": "array"
+          },
+          "purposes": {
+            "items": {
+              "enum": [
+                "PERSONALIZED_CLASSES",
+                "CALORIE_ESTIMATES",
+                "SHARE_TRAINER_SUMMARY",
+                "AI_ASSISTANT_PROCESSING"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "text": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "CreateBookingRequest": {
+        "properties": {
+          "sessionId": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "sessionId"
+        ],
+        "type": "object"
+      },
+      "CreateClassRequest": {
+        "properties": {
+          "category": {
+            "enum": [
+              "YOGA",
+              "PILATES",
+              "HIIT",
+              "STRENGTH",
+              "CARDIO",
+              "DANCE",
+              "MOBILITY",
+              "BOXING"
+            ],
+            "type": "string"
+          },
+          "contraindicationTags": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "defaultCapacity": {
+            "format": "int32",
+            "maximum": 200,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "description": {
+            "maxLength": 2000,
+            "minLength": 0,
+            "type": "string"
+          },
+          "durationMinutes": {
+            "format": "int32",
+            "maximum": 180,
+            "minimum": 15,
+            "type": "integer"
+          },
+          "impactLevel": {
+            "enum": [
+              "LOW",
+              "MEDIUM",
+              "HIGH"
+            ],
+            "type": "string"
+          },
+          "intensity": {
+            "enum": [
+              "LOW",
+              "MODERATE",
+              "HIGH"
+            ],
+            "type": "string"
+          },
+          "metValue": {
+            "maximum": 20,
+            "minimum": 1,
+            "type": "number"
+          },
+          "minAge": {
+            "format": "int32",
+            "maximum": 99,
+            "minimum": 14,
+            "type": "integer"
+          },
+          "name": {
+            "maxLength": 120,
+            "minLength": 0,
+            "type": "string"
+          }
+        },
+        "required": [
+          "category",
+          "durationMinutes",
+          "impactLevel",
+          "intensity",
+          "metValue",
+          "name"
+        ],
+        "type": "object"
+      },
+      "CreatePayoutBatchRequest": {
+        "properties": {
+          "periodEnd": {
+            "format": "date",
+            "type": "string"
+          },
+          "periodStart": {
+            "format": "date",
+            "type": "string"
+          }
+        },
+        "required": [
+          "periodEnd",
+          "periodStart"
+        ],
+        "type": "object"
+      },
+      "CreatePlanRequest": {
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "durationDays": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "freeSessions": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "isFree": {
+            "type": "boolean"
+          },
+          "name": {
+            "type": "string"
+          },
+          "pricePaise": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "sessionQuota": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "sortOrder": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "code",
+          "name",
+          "pricePaise"
+        ],
+        "type": "object"
+      },
+      "CreateSessionRequest": {
+        "properties": {
+          "capacity": {
+            "format": "int32",
+            "maximum": 200,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "classId": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "recurrence": {
+            "$ref": "#/components/schemas/RecurrenceRuleDto"
+          },
+          "room": {
+            "maxLength": 60,
+            "minLength": 0,
+            "type": "string"
+          },
+          "startsAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "trainerId": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "classId",
+          "room",
+          "startsAt",
+          "trainerId"
+        ],
+        "type": "object"
+      },
+      "DayAvailability": {
+        "properties": {
+          "dayOfWeek": {
+            "format": "int32",
+            "maximum": 7,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "from": {
+            "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
+            "type": "string"
+          },
+          "to": {
+            "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "from",
+          "to"
+        ],
+        "type": "object"
+      },
+      "DeleteAccountRequest": {
+        "properties": {
+          "password": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "password"
+        ],
+        "type": "object"
+      },
+      "DeleteHealthDataRequest": {
+        "properties": {
+          "confirm": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "confirm"
+        ],
+        "type": "object"
+      },
+      "DlqReplayResponse": {
+        "properties": {
+          "queue": {
+            "type": "string"
+          },
+          "replayedCount": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "EmailMessageDto": {
+        "properties": {
+          "content": {
+            "type": "string"
+          },
+          "from": {
+            "type": "string"
+          },
+          "sentDate": {
+            "type": "string"
+          },
+          "subject": {
+            "type": "string"
+          },
+          "to": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "ExportAccessLogItem": {
+        "properties": {
+          "action": {
+            "type": "string"
+          },
+          "actorUserId": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "purpose": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ExportConsentItem": {
+        "properties": {
+          "consentVersion": {
+            "type": "string"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "grantedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "purpose": {
+            "type": "string"
+          },
+          "revokedAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ExportFeedbackItem": {
+        "properties": {
+          "bookingId": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "comment": {
+            "type": "string"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "feltPain": {
+            "type": "boolean"
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "painAreaCode": {
+            "type": "string"
+          },
+          "rating": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "ExportProgressItem": {
+        "properties": {
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "logDate": {
+            "type": "string"
+          },
+          "note": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "FeedbackResponse": {
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "proposalId": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "FitnessProfile": {
+        "properties": {
+          "availability": {
+            "items": {
+              "$ref": "#/components/schemas/DayAvailability"
+            },
+            "type": "array"
+          },
+          "conditions": {
+            "items": {
+              "enum": [
+                "HYPERTENSION",
+                "ASTHMA",
+                "DIABETES",
+                "OSTEOPOROSIS",
+                "JOINT_ARTHRITIS",
+                "HEART_CONDITION",
+                "PREGNANCY",
+                "OTHER_CONSULT_DOCTOR"
+              ],
+              "type": "string"
+            },
+            "type": "array",
+            "uniqueItems": true
+          },
+          "dietPreference": {
+            "enum": [
+              "VEG",
+              "NON_VEG",
+              "EGG",
+              "VEGAN"
+            ],
+            "type": "string"
+          },
+          "experienceLevel": {
+            "enum": [
+              "BEGINNER",
+              "INTERMEDIATE",
+              "ADVANCED"
+            ],
+            "type": "string"
+          },
+          "goals": {
+            "items": {
+              "enum": [
+                "LOSE_WEIGHT",
+                "BUILD_STRENGTH",
+                "IMPROVE_FLEXIBILITY",
+                "ENDURANCE",
+                "GENERAL_FITNESS",
+                "REHAB_FRIENDLY"
+              ],
+              "type": "string"
+            },
+            "maxItems": 3,
+            "minItems": 1,
+            "type": "array"
+          },
+          "heightCm": {
+            "maximum": 230,
+            "minimum": 120,
+            "type": "number"
+          },
+          "injuries": {
+            "items": {
+              "$ref": "#/components/schemas/InjuryDto"
+            },
+            "type": "array"
+          },
+          "medicalClearanceAttested": {
+            "type": "boolean"
+          },
+          "parq": {
+            "additionalProperties": {
+              "type": "boolean"
+            },
+            "type": "object"
+          },
+          "pastExperienceNote": {
+            "maxLength": 300,
+            "minLength": 0,
+            "type": "string"
+          },
+          "sessionsPerWeekPlanned": {
+            "format": "int32",
+            "maximum": 14,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "sex": {
+            "enum": [
+              "MALE",
+              "FEMALE",
+              "UNSPECIFIED"
+            ],
+            "type": "string"
+          },
+          "version": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "weightKg": {
+            "maximum": 250,
+            "minimum": 30,
+            "type": "number"
+          }
+        },
+        "required": [
+          "experienceLevel",
+          "goals",
+          "heightCm",
+          "sessionsPerWeekPlanned",
+          "sex",
+          "weightKg"
+        ],
+        "type": "object"
+      },
+      "ForgotPasswordRequest": {
+        "properties": {
+          "email": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "email"
+        ],
+        "type": "object"
+      },
+      "ForgotPasswordResponse": {
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "GrantConsentRequest": {
+        "properties": {
+          "purposes": {
+            "items": {
+              "enum": [
+                "PERSONALIZED_CLASSES",
+                "CALORIE_ESTIMATES",
+                "SHARE_TRAINER_SUMMARY",
+                "AI_ASSISTANT_PROCESSING"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "version": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "purposes",
+          "version"
+        ],
+        "type": "object"
+      },
+      "GrantedPurposeDto": {
+        "properties": {
+          "grantedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "purpose": {
+            "enum": [
+              "PERSONALIZED_CLASSES",
+              "CALORIE_ESTIMATES",
+              "SHARE_TRAINER_SUMMARY",
+              "AI_ASSISTANT_PROCESSING"
+            ],
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "GuardStatusDto": {
+        "properties": {
+          "replacedByFallback": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "HealthExportResponse": {
+        "properties": {
+          "accessLogs": {
+            "items": {
+              "$ref": "#/components/schemas/ExportAccessLogItem"
+            },
+            "type": "array"
+          },
+          "consentHistory": {
+            "items": {
+              "$ref": "#/components/schemas/ExportConsentItem"
+            },
+            "type": "array"
+          },
+          "feedback": {
+            "items": {
+              "$ref": "#/components/schemas/ExportFeedbackItem"
+            },
+            "type": "array"
+          },
+          "metrics": {
+            "items": {
+              "$ref": "#/components/schemas/BodyMetricResponse"
+            },
+            "type": "array"
+          },
+          "profile": {
+            "$ref": "#/components/schemas/FitnessProfile"
+          },
+          "progress": {
+            "items": {
+              "$ref": "#/components/schemas/ExportProgressItem"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "InjuryDto": {
+        "properties": {
+          "area": {
+            "enum": [
+              "KNEE",
+              "ANKLE",
+              "HIP",
+              "LOWER_BACK",
+              "UPPER_BACK",
+              "NECK",
+              "SHOULDER",
+              "ELBOW",
+              "WRIST"
+            ],
+            "type": "string"
+          },
+          "severity": {
+            "enum": [
+              "MILD",
+              "MODERATE",
+              "SEVERE"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "area",
+          "severity"
+        ],
+        "type": "object"
+      },
+      "InvoiceDetailResponse": {
+        "properties": {
+          "invoiceId": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "invoiceNumber": {
+            "type": "string"
+          },
+          "issuedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "paymentId": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "totalPaise": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "LoginRequest": {
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ],
+        "type": "object"
+      },
+      "LogoutRequest": {
+        "properties": {
+          "refreshToken": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "refreshToken"
+        ],
+        "type": "object"
+      },
+      "MarkAttendanceRequest": {
+        "properties": {
+          "records": {
+            "items": {
+              "$ref": "#/components/schemas/AttendanceRecordDto"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "records"
+        ],
+        "type": "object"
+      },
+      "MarkAttendanceResponse": {
+        "properties": {
+          "markedCount": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "sessionId": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "MemberBookingResponse": {
+        "properties": {
+          "bookedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "bookingId": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "cancelledAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "className": {
+            "type": "string"
+          },
+          "endsAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "room": {
+            "type": "string"
+          },
+          "sessionId": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "startsAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "trainerName": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "MemberMembershipSummaryResponse": {
+        "properties": {
+          "freeSessionsRemaining": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "paid": {
+            "$ref": "#/components/schemas/PaidMembershipDto"
+          }
+        },
+        "type": "object"
+      },
+      "MemberPaymentSummaryDto": {
+        "properties": {
+          "amountPaise": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "gateway": {
+            "type": "string"
+          },
+          "paymentId": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "refunds": {
+            "items": {
+              "$ref": "#/components/schemas/RefundSummaryDto"
+            },
+            "type": "array"
+          },
+          "status": {
+            "enum": [
+              "PENDING",
+              "SUCCEEDED",
+              "FAILED"
+            ],
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "MissedSessionDto": {
+        "properties": {
+          "className": {
+            "type": "string"
+          },
+          "sessionId": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "startsAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "NotificationPrefsDto": {
+        "properties": {
+          "emailBookings": {
+            "type": "boolean"
+          },
+          "emailMarketing": {
+            "type": "boolean"
+          },
+          "emailReminders": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "NutritionNumbersResponse": {
+        "properties": {
+          "available": {
+            "type": "boolean"
+          },
+          "bmr": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "disclaimer": {
+            "type": "string"
+          },
+          "floorApplied": {
+            "type": "boolean"
+          },
+          "notes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "targetCalories": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "tdee": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "OutboxEventSummaryResponse": {
+        "properties": {
+          "aggregateId": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "aggregateType": {
+            "type": "string"
+          },
+          "attempts": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "eventType": {
+            "type": "string"
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "lastError": {
+            "type": "string"
+          },
+          "nextAttemptAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "sentAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "PageAgentConversationDto": {
+        "properties": {
+          "content": {
+            "items": {
+              "$ref": "#/components/schemas/AgentConversationDto"
+            },
+            "type": "array"
+          },
+          "empty": {
+            "type": "boolean"
+          },
+          "first": {
+            "type": "boolean"
+          },
+          "last": {
+            "type": "boolean"
+          },
+          "number": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "numberOfElements": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "pageable": {
+            "$ref": "#/components/schemas/PageableObject"
+          },
+          "size": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/SortObject"
+          },
+          "totalElements": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "totalPages": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "PageRequestDto": {
+        "properties": {
+          "page": {
+            "format": "int32",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "size": {
+            "format": "int32",
+            "maximum": 100,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "sort": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "PageResponseAdminRefundResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/AdminRefundResponse"
+            },
+            "type": "array"
+          },
+          "page": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "size": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "totalElements": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "totalPages": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "PageResponseClassDetailResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ClassDetailResponse"
+            },
+            "type": "array"
+          },
+          "page": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "size": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "totalElements": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "totalPages": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "PageResponseMemberBookingResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/MemberBookingResponse"
+            },
+            "type": "array"
+          },
+          "page": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "size": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "totalElements": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "totalPages": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "PageResponseMemberPaymentSummaryDto": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/MemberPaymentSummaryDto"
+            },
+            "type": "array"
+          },
+          "page": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "size": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "totalElements": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "totalPages": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "PageResponseOutboxEventSummaryResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/OutboxEventSummaryResponse"
+            },
+            "type": "array"
+          },
+          "page": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "size": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "totalElements": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "totalPages": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "PageResponseSessionDetailResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/SessionDetailResponse"
+            },
+            "type": "array"
+          },
+          "page": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "size": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "totalElements": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "totalPages": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "PageResponseUserSummaryDto": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/UserSummaryDto"
+            },
+            "type": "array"
+          },
+          "page": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "size": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "totalElements": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "totalPages": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "PageableObject": {
+        "properties": {
+          "offset": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "pageNumber": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "pageSize": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "paged": {
+            "type": "boolean"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/SortObject"
+          },
+          "unpaged": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "PaidMembershipDto": {
+        "properties": {
+          "daysRemaining": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "endsAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "planCode": {
+            "type": "string"
+          },
+          "planName": {
+            "type": "string"
+          },
+          "sessionsRemaining": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "startedAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "PaymentDetailResponse": {
+        "properties": {
+          "amountPaise": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "gateway": {
+            "type": "string"
+          },
+          "membershipChangeApplied": {
+            "type": "boolean"
+          },
+          "paymentId": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "status": {
+            "enum": [
+              "PENDING",
+              "SUCCEEDED",
+              "FAILED"
+            ],
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "PaymentIntentResponse": {
+        "properties": {
+          "amountPaise": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "clientPayload": {
+            "additionalProperties": {
+              "type": "object"
+            },
+            "type": "object"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "expiresAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "gateway": {
+            "type": "string"
+          },
+          "gatewayOrderId": {
+            "type": "string"
+          },
+          "paymentId": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "status": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "PaymentSettingsResponse": {
+        "properties": {
+          "gateway": {
+            "type": "string"
+          },
+          "razorpay": {
+            "$ref": "#/components/schemas/RazorpaySettingsDto"
+          },
+          "webhookUrlHint": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "PayoutBatchResponse": {
+        "properties": {
+          "approvedBy": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "createdBy": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "periodEnd": {
+            "format": "date",
+            "type": "string"
+          },
+          "periodStart": {
+            "format": "date",
+            "type": "string"
+          },
+          "sessionCount": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "status": {
+            "enum": [
+              "DRAFT",
+              "APPROVED",
+              "PAID"
+            ],
+            "type": "string"
+          },
+          "totalPaise": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "version": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "PendingActionProposal": {
+        "properties": {
+          "expiresAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "toolName": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "PendingActionProposalDto": {
+        "properties": {
+          "expiresAt": {
+            "type": "string"
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "summary": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "PermissionsResponse": {
+        "properties": {
+          "permissions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "roles": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "PlanDto": {
+        "properties": {
+          "active": {
+            "type": "boolean"
+          },
+          "code": {
+            "type": "string"
+          },
+          "durationDays": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "freeSessions": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "isFree": {
+            "type": "boolean"
+          },
+          "name": {
+            "type": "string"
+          },
+          "pricePaise": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "sessionQuota": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "sortOrder": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "ProfileResponse": {
+        "properties": {
+          "profile": {
+            "$ref": "#/components/schemas/FitnessProfile"
+          },
+          "screening": {
+            "$ref": "#/components/schemas/ScreeningResult"
+          }
+        },
+        "type": "object"
+      },
+      "QueueDepthResponse": {
+        "properties": {
+          "mode": {
+            "type": "string"
+          },
+          "queues": {
+            "items": {
+              "$ref": "#/components/schemas/QueueInfo"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "QueueInfo": {
+        "properties": {
+          "consumerCount": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "messageCount": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "RazorpaySettingsDto": {
+        "properties": {
+          "configured": {
+            "type": "boolean"
+          },
+          "keyId": {
+            "type": "string"
+          },
+          "keySecretMaskedLast4": {
+            "type": "string"
+          },
+          "mode": {
+            "type": "string"
+          },
+          "webhookSecretConfigured": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "RazorpayTestResponse": {
+        "properties": {
+          "httpStatus": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "message": {
+            "type": "string"
+          },
+          "ok": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "RecurrenceRuleDto": {
+        "properties": {
+          "daysOfWeek": {
+            "items": {
+              "format": "int32",
+              "type": "integer"
+            },
+            "type": "array"
+          },
+          "until": {
+            "format": "date",
+            "type": "string"
+          }
+        },
+        "required": [
+          "daysOfWeek",
+          "until"
+        ],
+        "type": "object"
+      },
+      "RefreshRequest": {
+        "properties": {
+          "refreshToken": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "refreshToken"
+        ],
+        "type": "object"
+      },
+      "RefundSummaryDto": {
+        "properties": {
+          "amountPaise": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "refundId": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "status": {
+            "enum": [
+              "PENDING_APPROVAL",
+              "APPROVED",
+              "PAID",
+              "REJECTED",
+              "FAILED"
+            ],
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "RegisterRequest": {
+        "properties": {
+          "dateOfBirth": {
+            "format": "date",
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "fullName": {
+            "maxLength": 150,
+            "minLength": 0,
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "phone": {
+            "maxLength": 30,
+            "minLength": 0,
+            "type": "string"
+          }
+        },
+        "required": [
+          "dateOfBirth",
+          "email",
+          "fullName",
+          "password"
+        ],
+        "type": "object"
+      },
+      "RegisterResponse": {
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "fullName": {
+            "type": "string"
+          },
+          "userId": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "RescheduleSessionRequest": {
+        "properties": {
+          "startsAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "version": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "startsAt",
+          "version"
+        ],
+        "type": "object"
+      },
+      "ResetPasswordRequest": {
+        "properties": {
+          "newPassword": {
+            "type": "string"
+          },
+          "token": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "newPassword",
+          "token"
+        ],
+        "type": "object"
+      },
+      "RestrictionProposalDto": {
+        "properties": {
+          "area": {
+            "enum": [
+              "KNEE",
+              "ANKLE",
+              "HIP",
+              "LOWER_BACK",
+              "UPPER_BACK",
+              "NECK",
+              "SHOULDER",
+              "ELBOW",
+              "WRIST"
+            ],
+            "type": "string"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "status": {
+            "type": "string"
+          },
+          "suggestedSeverity": {
+            "enum": [
+              "MILD",
+              "MODERATE",
+              "SEVERE"
+            ],
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "SafeClassesResponse": {
+        "properties": {
+          "avoid": {
+            "items": {
+              "$ref": "#/components/schemas/SafeSessionItem"
+            },
+            "type": "array"
+          },
+          "disclaimer": {
+            "type": "string"
+          },
+          "doctorCheckRecommended": {
+            "type": "boolean"
+          },
+          "eligible": {
+            "items": {
+              "$ref": "#/components/schemas/SafeSessionItem"
+            },
+            "type": "array"
+          },
+          "note": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "SafeSessionItem": {
+        "properties": {
+          "humanReasons": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "reasonCodes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "session": {
+            "$ref": "#/components/schemas/SessionDetailResponse"
+          },
+          "verdict": {
+            "enum": [
+              "ALLOWED",
+              "CAUTION",
+              "BLOCKED"
+            ],
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "SafetyVerdict": {
+        "properties": {
+          "disclaimer": {
+            "type": "string"
+          },
+          "humanReasons": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "reasonCodes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "verdict": {
+            "enum": [
+              "ALLOWED",
+              "CAUTION",
+              "BLOCKED"
+            ],
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ScreeningResult": {
+        "properties": {
+          "doctorCheckRecommended": {
+            "type": "boolean"
+          },
+          "reasons": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "status": {
+            "enum": [
+              "CLEAR",
+              "CAUTION",
+              "RED_FLAG"
+            ],
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "SessionDetailResponse": {
+        "properties": {
+          "bookedCount": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "capacity": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "category": {
+            "type": "string"
+          },
+          "classId": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "className": {
+            "type": "string"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "durationMinutes": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "endsAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "impactLevel": {
+            "type": "string"
+          },
+          "intensity": {
+            "type": "string"
+          },
+          "myBookingStatus": {
+            "type": "string"
+          },
+          "room": {
+            "type": "string"
+          },
+          "seatsLeft": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "seriesId": {
+            "type": "string"
+          },
+          "startsAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "SCHEDULED",
+              "CANCELLED",
+              "COMPLETED"
+            ],
+            "type": "string"
+          },
+          "trainerId": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "trainerName": {
+            "type": "string"
+          },
+          "trainerRateSnapshotPaise": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "version": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "SetAiKeyRequest": {
+        "properties": {
+          "apiKey": {
+            "maxLength": 200,
+            "minLength": 20,
+            "pattern": "^AIza[^\\s]*$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "apiKey"
+        ],
+        "type": "object"
+      },
+      "SetAiModelRequest": {
+        "properties": {
+          "model": {
+            "pattern": "^[a-zA-Z0-9._-]{3,60}$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "model"
+        ],
+        "type": "object"
+      },
+      "SetRazorpayKeysRequest": {
+        "properties": {
+          "keyId": {
+            "pattern": "^rzp_(test|live)_[A-Za-z0-9]{8,40}$",
+            "type": "string"
+          },
+          "keySecret": {
+            "pattern": "^[^\\s]{16,80}$",
+            "type": "string"
+          },
+          "webhookSecret": {
+            "pattern": "^(|[^\\s]{8,100})$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "keyId",
+          "keySecret"
+        ],
+        "type": "object"
+      },
+      "SortObject": {
+        "properties": {
+          "empty": {
+            "type": "boolean"
+          },
+          "sorted": {
+            "type": "boolean"
+          },
+          "unsorted": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "SseEmitter": {
+        "properties": {
+          "timeout": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "SubscribeRequest": {
+        "properties": {
+          "planCode": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "planCode"
+        ],
+        "type": "object"
+      },
+      "SuggestedModificationDto": {
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "SwitchGatewayRequest": {
+        "properties": {
+          "gateway": {
+            "pattern": "^(?i)(MOCK|RAZORPAY)$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "gateway"
+        ],
+        "type": "object"
+      },
+      "ToolCallStatusDto": {
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "TrainerAttendeeDto": {
+        "properties": {
+          "bookingId": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "TrainerEarningItemDto": {
+        "properties": {
+          "amountPaise": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "payoutId": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "sessionId": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "status": {
+            "enum": [
+              "PENDING",
+              "IN_BATCH",
+              "PAID"
+            ],
+            "type": "string"
+          },
+          "trainerId": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "TrainerEarningsResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/TrainerEarningItemDto"
+            },
+            "type": "array"
+          },
+          "paidPaise": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "pendingPaise": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "totalPaise": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "TrainerPrepResponse": {
+        "properties": {
+          "attendeeCount": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "note": {
+            "type": "string"
+          },
+          "restrictionCounts": {
+            "additionalProperties": {
+              "format": "int32",
+              "type": "integer"
+            },
+            "type": "object"
+          },
+          "suggestedModifications": {
+            "items": {
+              "$ref": "#/components/schemas/SuggestedModificationDto"
+            },
+            "type": "array"
+          },
+          "summaryAvailable": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "TrainerProfileResponse": {
+        "properties": {
+          "active": {
+            "type": "boolean"
+          },
+          "availability": {
+            "items": {
+              "$ref": "#/components/schemas/AvailabilitySlotDto"
+            },
+            "type": "array"
+          },
+          "bio": {
+            "type": "string"
+          },
+          "certifications": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "email": {
+            "type": "string"
+          },
+          "fullName": {
+            "type": "string"
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "ratePerSessionPaise": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "specialties": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "version": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "TrainerPublicResponse": {
+        "properties": {
+          "bio": {
+            "type": "string"
+          },
+          "fullName": {
+            "type": "string"
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "specialties": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "TrainerSessionResponse": {
+        "properties": {
+          "attendees": {
+            "items": {
+              "$ref": "#/components/schemas/TrainerAttendeeDto"
+            },
+            "type": "array"
+          },
+          "bookedCount": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "capacity": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "classId": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "className": {
+            "type": "string"
+          },
+          "confirmedAttendeeCount": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "endsAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "room": {
+            "type": "string"
+          },
+          "startsAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "SCHEDULED",
+              "CANCELLED",
+              "COMPLETED"
+            ],
+            "type": "string"
+          },
+          "trainerRateSnapshotPaise": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "TrainerSummaryResponse": {
+        "properties": {
+          "earnings": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "upcomingSessionsCount": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "UpdateClassRequest": {
+        "properties": {
+          "category": {
+            "enum": [
+              "YOGA",
+              "PILATES",
+              "HIIT",
+              "STRENGTH",
+              "CARDIO",
+              "DANCE",
+              "MOBILITY",
+              "BOXING"
+            ],
+            "type": "string"
+          },
+          "contraindicationTags": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "defaultCapacity": {
+            "format": "int32",
+            "maximum": 200,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "description": {
+            "maxLength": 2000,
+            "minLength": 0,
+            "type": "string"
+          },
+          "durationMinutes": {
+            "format": "int32",
+            "maximum": 180,
+            "minimum": 15,
+            "type": "integer"
+          },
+          "impactLevel": {
+            "enum": [
+              "LOW",
+              "MEDIUM",
+              "HIGH"
+            ],
+            "type": "string"
+          },
+          "intensity": {
+            "enum": [
+              "LOW",
+              "MODERATE",
+              "HIGH"
+            ],
+            "type": "string"
+          },
+          "metValue": {
+            "maximum": 20,
+            "minimum": 1,
+            "type": "number"
+          },
+          "minAge": {
+            "format": "int32",
+            "maximum": 99,
+            "minimum": 14,
+            "type": "integer"
+          },
+          "name": {
+            "maxLength": 120,
+            "minLength": 0,
+            "type": "string"
+          },
+          "version": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "category",
+          "durationMinutes",
+          "impactLevel",
+          "intensity",
+          "metValue",
+          "name",
+          "version"
+        ],
+        "type": "object"
+      },
+      "UpdatePlanRequest": {
+        "properties": {
+          "active": {
+            "type": "boolean"
+          },
+          "durationDays": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "pricePaise": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "sessionQuota": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "sortOrder": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "version": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "version"
+        ],
+        "type": "object"
+      },
+      "UpdateProfileRequest": {
+        "properties": {
+          "dateOfBirth": {
+            "format": "date",
+            "type": "string"
+          },
+          "fullName": {
+            "maxLength": 150,
+            "minLength": 0,
+            "type": "string"
+          },
+          "notificationPrefs": {
+            "$ref": "#/components/schemas/NotificationPrefsDto"
+          },
+          "phone": {
+            "maxLength": 30,
+            "minLength": 0,
+            "type": "string"
+          },
+          "version": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "version"
+        ],
+        "type": "object"
+      },
+      "UpdateTrainerProfileRequest": {
+        "properties": {
+          "availability": {
+            "items": {
+              "$ref": "#/components/schemas/AvailabilitySlotDto"
+            },
+            "type": "array"
+          },
+          "bio": {
+            "type": "string"
+          },
+          "certifications": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "ratePerSessionPaise": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "specialties": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "version": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "version"
+        ],
+        "type": "object"
+      },
+      "UpdateTrainerRateRequest": {
+        "properties": {
+          "ratePerSessionPaise": {
+            "format": "int64",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "version": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "ratePerSessionPaise",
+          "version"
+        ],
+        "type": "object"
+      },
+      "UserDataExportResponse": {
+        "properties": {
+          "bookings": {
+            "items": {
+              "additionalProperties": {
+                "type": "object"
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "memberships": {
+            "items": {
+              "additionalProperties": {
+                "type": "object"
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "payments": {
+            "items": {
+              "additionalProperties": {
+                "type": "object"
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "profile": {
+            "$ref": "#/components/schemas/UserProfileResponse"
+          }
+        },
+        "type": "object"
+      },
+      "UserDto": {
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "fullName": {
+            "type": "string"
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "mustChangePassword": {
+            "type": "boolean"
+          },
+          "permissions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "roles": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "UserProfileResponse": {
+        "properties": {
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "dateOfBirth": {
+            "format": "date",
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "fullName": {
+            "type": "string"
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "notificationPrefs": {
+            "$ref": "#/components/schemas/NotificationPrefsDto"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "roles": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "status": {
+            "type": "string"
+          },
+          "version": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "UserSummaryDto": {
+        "properties": {
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "fullName": {
+            "type": "string"
+          },
+          "id": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "roles": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "status": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "UtilizationReportResponse": {
+        "properties": {
+          "classUtilization": {
+            "items": {
+              "$ref": "#/components/schemas/ClassUtilizationDto"
+            },
+            "type": "array"
+          },
+          "weeklyUtilization": {
+            "items": {
+              "$ref": "#/components/schemas/WeeklyUtilizationDto"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "WeeklyProgressResponse": {
+        "properties": {
+          "attendedCount": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "bookedCount": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "estimatedKcalBurned": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "missedSessions": {
+            "items": {
+              "$ref": "#/components/schemas/MissedSessionDto"
+            },
+            "type": "array"
+          },
+          "noShowCount": {
+            "format": "int32",
+            "type": "integer"
+          },
+          "streakWeeks": {
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "WeeklyUtilizationDto": {
+        "properties": {
+          "totalBooked": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "totalCapacity": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "totalSessions": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "utilizationPercent": {
+            "format": "double",
+            "type": "number"
+          },
+          "weekLabel": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "WellnessMetadataResponse": {
+        "properties": {
+          "conditions": {
+            "items": {
+              "enum": [
+                "HYPERTENSION",
+                "ASTHMA",
+                "DIABETES",
+                "OSTEOPOROSIS",
+                "JOINT_ARTHRITIS",
+                "HEART_CONDITION",
+                "PREGNANCY",
+                "OTHER_CONSULT_DOCTOR"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "dietPreferences": {
+            "items": {
+              "enum": [
+                "VEG",
+                "NON_VEG",
+                "EGG",
+                "VEGAN"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "experienceLevels": {
+            "items": {
+              "enum": [
+                "BEGINNER",
+                "INTERMEDIATE",
+                "ADVANCED"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "goals": {
+            "items": {
+              "enum": [
+                "LOSE_WEIGHT",
+                "BUILD_STRENGTH",
+                "IMPROVE_FLEXIBILITY",
+                "ENDURANCE",
+                "GENERAL_FITNESS",
+                "REHAB_FRIENDLY"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "injuryAreas": {
+            "items": {
+              "enum": [
+                "KNEE",
+                "ANKLE",
+                "HIP",
+                "LOWER_BACK",
+                "UPPER_BACK",
+                "NECK",
+                "SHOULDER",
+                "ELBOW",
+                "WRIST"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "injurySeverities": {
+            "items": {
+              "enum": [
+                "MILD",
+                "MODERATE",
+                "SEVERE"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "parqQuestions": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "sexes": {
+            "items": {
+              "enum": [
+                "MALE",
+                "FEMALE",
+                "UNSPECIFIED"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "bearerFormat": "JWT",
+        "name": "bearerAuth",
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  },
+  "info": {
+    "contact": {
+      "email": "platform@fitflow.local",
+      "name": "FitFlow Platform Team"
+    },
+    "description": "Gen AI Fitness Class Scheduler API - Modular Monolith",
+    "title": "FitFlow API",
+    "version": "v1.0.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/v1/admin/bookings/{id}/cancel": {
+      "post": {
+        "operationId": "adminCancelBooking",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminCancelBookingRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CancelBookingResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "admin-booking-controller"
+        ]
+      }
+    },
+    "/api/v1/admin/classes": {
+      "post": {
+        "operationId": "createClass",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateClassRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClassDetailResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Create a new fitness class",
+        "tags": [
+          "Admin Classes"
+        ]
+      }
+    },
+    "/api/v1/admin/classes/{id}": {
+      "put": {
+        "operationId": "updateClass",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateClassRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClassDetailResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Update an existing fitness class",
+        "tags": [
+          "Admin Classes"
+        ]
+      }
+    },
+    "/api/v1/admin/classes/{id}/activate": {
+      "post": {
+        "operationId": "activateClass",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClassDetailResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Activate a fitness class",
+        "tags": [
+          "Admin Classes"
+        ]
+      }
+    },
+    "/api/v1/admin/classes/{id}/confirm-metadata": {
+      "post": {
+        "operationId": "confirmMetadata",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClassDetailResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Confirm fitness class metadata review",
+        "tags": [
+          "Admin Classes"
+        ]
+      }
+    },
+    "/api/v1/admin/classes/{id}/deactivate": {
+      "post": {
+        "operationId": "deactivateClass",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClassDetailResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Deactivate a fitness class",
+        "tags": [
+          "Admin Classes"
+        ]
+      }
+    },
+    "/api/v1/admin/messaging/dlq/{queue}/replay": {
+      "post": {
+        "operationId": "replayDlq",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "queue",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "format": "int32",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/DlqReplayResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Replay messages from a DLQ back to its primary queue (SUPER_ADMIN only)",
+        "tags": [
+          "Admin Messaging"
+        ]
+      }
+    },
+    "/api/v1/admin/messaging/outbox": {
+      "get": {
+        "operationId": "getOutbox",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "format": "int32",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "size",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "format": "int32",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageResponseOutboxEventSummaryResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "List outbox events with status and retry metadata (payloads are omitted)",
+        "tags": [
+          "Admin Messaging"
+        ]
+      }
+    },
+    "/api/v1/admin/messaging/outbox/{id}/retry": {
+      "post": {
+        "operationId": "retryOutboxEvent",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/OutboxEventSummaryResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Retry a FAILED outbox event",
+        "tags": [
+          "Admin Messaging"
+        ]
+      }
+    },
+    "/api/v1/admin/messaging/queues": {
+      "get": {
+        "operationId": "getQueues",
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueueDepthResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Get queue and DLQ depth status",
+        "tags": [
+          "Admin Messaging"
+        ]
+      }
+    },
+    "/api/v1/admin/payouts": {
+      "post": {
+        "operationId": "createPayoutBatch",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePayoutBatchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PayoutBatchResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "admin-payout-controller"
+        ]
+      }
+    },
+    "/api/v1/admin/payouts/{id}": {
+      "get": {
+        "operationId": "getPayoutBatch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PayoutBatchResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "admin-payout-controller"
+        ]
+      }
+    },
+    "/api/v1/admin/payouts/{id}/approve": {
+      "post": {
+        "operationId": "approvePayoutBatch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PayoutBatchResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "admin-payout-controller"
+        ]
+      }
+    },
+    "/api/v1/admin/payouts/{id}/export.csv": {
+      "get": {
+        "operationId": "exportPayoutCsv",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "text/csv": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "admin-payout-controller"
+        ]
+      }
+    },
+    "/api/v1/admin/payouts/{id}/mark-paid": {
+      "post": {
+        "operationId": "markPayoutPaid",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PayoutBatchResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "admin-payout-controller"
+        ]
+      }
+    },
+    "/api/v1/admin/plans": {
+      "post": {
+        "operationId": "createPlan",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePlanRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlanDto"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "admin-plan-controller"
+        ]
+      }
+    },
+    "/api/v1/admin/plans/{id}": {
+      "put": {
+        "operationId": "updatePlan",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePlanRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlanDto"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "admin-plan-controller"
+        ]
+      }
+    },
+    "/api/v1/admin/refunds": {
+      "get": {
+        "operationId": "getRefunds",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "enum": [
+                "PENDING_APPROVAL",
+                "APPROVED",
+                "PAID",
+                "REJECTED",
+                "FAILED"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageRequest",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/PageRequestDto"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageResponseAdminRefundResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "List refunds by status",
+        "tags": [
+          "Admin Refunds"
+        ]
+      }
+    },
+    "/api/v1/admin/refunds/{id}/approve": {
+      "post": {
+        "operationId": "approveRefund",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminRefundResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Approve a pending refund",
+        "tags": [
+          "Admin Refunds"
+        ]
+      }
+    },
+    "/api/v1/admin/refunds/{id}/reject": {
+      "post": {
+        "operationId": "rejectRefund",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminRefundResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Reject a pending refund",
+        "tags": [
+          "Admin Refunds"
+        ]
+      }
+    },
+    "/api/v1/admin/reports/utilization": {
+      "get": {
+        "operationId": "getUtilization",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "from",
+            "required": false,
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "to",
+            "required": false,
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/UtilizationReportResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Get class and weekly session utilization report",
+        "tags": [
+          "Admin Reports"
+        ]
+      }
+    },
+    "/api/v1/admin/sessions": {
+      "post": {
+        "operationId": "createSessions",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSessionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/SessionDetailResponse"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Schedule one or recurring class sessions",
+        "tags": [
+          "Admin Sessions"
+        ]
+      }
+    },
+    "/api/v1/admin/sessions/{id}/cancel": {
+      "post": {
+        "operationId": "cancelSession",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CancelSessionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionDetailResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Cancel a class session and restore member entitlements",
+        "tags": [
+          "Admin Sessions"
+        ]
+      }
+    },
+    "/api/v1/admin/sessions/{id}/reschedule": {
+      "patch": {
+        "operationId": "rescheduleSession",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RescheduleSessionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionDetailResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Reschedule a class session",
+        "tags": [
+          "Admin Sessions"
+        ]
+      }
+    },
+    "/api/v1/admin/settings/ai": {
+      "get": {
+        "operationId": "getSettings_1",
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiSettingsResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Get current AI model configuration and masked key status",
+        "tags": [
+          "AI Settings"
+        ]
+      }
+    },
+    "/api/v1/admin/settings/ai/key": {
+      "delete": {
+        "operationId": "deleteKey",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "summary": "Remove runtime Gemini API key (reverts to mock mode unless env variable is set)",
+        "tags": [
+          "AI Settings"
+        ]
+      },
+      "put": {
+        "operationId": "setKey",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetAiKeyRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiSettingsResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Configure runtime Gemini API key (encrypted at rest)",
+        "tags": [
+          "AI Settings"
+        ]
+      }
+    },
+    "/api/v1/admin/settings/ai/model": {
+      "put": {
+        "operationId": "setModel",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetAiModelRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiSettingsResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Configure active Gemini model name",
+        "tags": [
+          "AI Settings"
+        ]
+      }
+    },
+    "/api/v1/admin/settings/ai/test": {
+      "post": {
+        "operationId": "testAi",
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiTestResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Test AI connection with current key configuration",
+        "tags": [
+          "AI Settings"
+        ]
+      }
+    },
+    "/api/v1/admin/settings/payments": {
+      "get": {
+        "operationId": "getSettings",
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentSettingsResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Get current payment gateway configuration and masked Razorpay status",
+        "tags": [
+          "Payment Settings"
+        ]
+      }
+    },
+    "/api/v1/admin/settings/payments/gateway": {
+      "put": {
+        "operationId": "switchGateway",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SwitchGatewayRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentSettingsResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Switch active payment gateway (MOCK or RAZORPAY)",
+        "tags": [
+          "Payment Settings"
+        ]
+      }
+    },
+    "/api/v1/admin/settings/payments/razorpay": {
+      "delete": {
+        "operationId": "deleteRazorpayKeys",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "summary": "Delete Razorpay credentials and fallback to MOCK if active",
+        "tags": [
+          "Payment Settings"
+        ]
+      },
+      "put": {
+        "operationId": "setRazorpayKeys",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetRazorpayKeysRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentSettingsResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Configure runtime Razorpay API keys (encrypted at rest)",
+        "tags": [
+          "Payment Settings"
+        ]
+      }
+    },
+    "/api/v1/admin/settings/payments/razorpay/test": {
+      "post": {
+        "operationId": "testRazorpay",
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/RazorpayTestResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Test Razorpay connection using configured credentials",
+        "tags": [
+          "Payment Settings"
+        ]
+      }
+    },
+    "/api/v1/admin/trainers/{id}/rate": {
+      "patch": {
+        "operationId": "updateTrainerRate",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateTrainerRateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrainerProfileResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Update trainer per-session pay rate in paise (affects future sessions)",
+        "tags": [
+          "Admin Trainers"
+        ]
+      }
+    },
+    "/api/v1/admin/users": {
+      "get": {
+        "operationId": "listUsers",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "role",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "format": "int32",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "size",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "format": "int32",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "sort",
+            "required": false,
+            "schema": {
+              "default": "createdAt,desc",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageResponseUserSummaryDto"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "List users with filters (q, role, status) and pagination",
+        "tags": [
+          "Admin Users"
+        ]
+      },
+      "post": {
+        "operationId": "createUser",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminCreateUserRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserSummaryDto"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Create a new user (TRAINER or ADMIN) with temporary password",
+        "tags": [
+          "Admin Users"
+        ]
+      }
+    },
+    "/api/v1/admin/users/{id}": {
+      "get": {
+        "operationId": "getUser",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminUserDetailResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Get detailed user view by id",
+        "tags": [
+          "Admin Users"
+        ]
+      },
+      "patch": {
+        "operationId": "updateUser",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminUpdateUserRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminUserDetailResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Update user details with optimistic locking",
+        "tags": [
+          "Admin Users"
+        ]
+      }
+    },
+    "/api/v1/admin/users/{id}/permissions": {
+      "put": {
+        "operationId": "replacePermissions",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminPermissionsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "object"
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Replace administrative permissions for an admin user",
+        "tags": [
+          "Admin Users"
+        ]
+      }
+    },
+    "/api/v1/admin/users/{id}/reactivate": {
+      "post": {
+        "operationId": "reactivateUser",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Reactivate a suspended user",
+        "tags": [
+          "Admin Users"
+        ]
+      }
+    },
+    "/api/v1/admin/users/{id}/suspend": {
+      "post": {
+        "operationId": "suspendUser",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Suspend an active user and revoke active tokens",
+        "tags": [
+          "Admin Users"
+        ]
+      }
+    },
+    "/api/v1/agent/actions/pending": {
+      "get": {
+        "operationId": "getPendingActions",
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PendingActionProposal"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Get user's pending, non-expired actions",
+        "tags": [
+          "Agent Chat"
+        ]
+      }
+    },
+    "/api/v1/agent/actions/{id}/confirm": {
+      "post": {
+        "operationId": "confirmAction",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "object"
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Confirm pending action (human-in-the-loop confirmation)",
+        "tags": [
+          "Agent Chat"
+        ]
+      }
+    },
+    "/api/v1/agent/actions/{id}/reject": {
+      "post": {
+        "operationId": "rejectAction",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "object"
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Reject pending action",
+        "tags": [
+          "Agent Chat"
+        ]
+      }
+    },
+    "/api/v1/agent/chat": {
+      "post": {
+        "operationId": "chat",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgentChatRequestDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentChatResponseDto"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Send message to specialist agent",
+        "tags": [
+          "Agent Chat"
+        ]
+      }
+    },
+    "/api/v1/agent/chat/stream": {
+      "get": {
+        "operationId": "chatStreamGet",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "conversationId",
+            "required": false,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "message",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "text/event-stream": {
+                "schema": {
+                  "$ref": "#/components/schemas/SseEmitter"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Server-Sent Events streaming chat endpoint (GET)",
+        "tags": [
+          "Agent Chat"
+        ]
+      },
+      "post": {
+        "operationId": "chatStreamPost",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgentChatRequestDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "text/event-stream": {
+                "schema": {
+                  "$ref": "#/components/schemas/SseEmitter"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Server-Sent Events streaming chat endpoint (POST)",
+        "tags": [
+          "Agent Chat"
+        ]
+      }
+    },
+    "/api/v1/agent/conversations": {
+      "get": {
+        "operationId": "getConversations",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "format": "int32",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "size",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "format": "int32",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageAgentConversationDto"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Get current user's conversations (paginated)",
+        "tags": [
+          "Agent Chat"
+        ]
+      }
+    },
+    "/api/v1/agent/conversations/{id}": {
+      "delete": {
+        "operationId": "deleteConversation",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "object"
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Delete conversation and messages (own only)",
+        "tags": [
+          "Agent Chat"
+        ]
+      }
+    },
+    "/api/v1/agent/conversations/{id}/messages": {
+      "get": {
+        "operationId": "getMessages",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AgentMessageDto"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Get messages for a conversation (own only)",
+        "tags": [
+          "Agent Chat"
+        ]
+      }
+    },
+    "/api/v1/agent/status": {
+      "get": {
+        "operationId": "getStatus",
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentStatusResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Get current AI agent status (mode, model, available agents for role, and daily calls remaining)",
+        "tags": [
+          "Agent Status"
+        ]
+      }
+    },
+    "/api/v1/auth/change-password": {
+      "post": {
+        "operationId": "changePassword",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangePasswordRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "summary": "Change password for the authenticated user and revoke active tokens",
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
+    "/api/v1/auth/forgot-password": {
+      "post": {
+        "operationId": "forgotPassword",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ForgotPasswordRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForgotPasswordResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Request password reset token (always returns 202)",
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "operationId": "login",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Authenticate user credentials and issue JWT tokens",
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
+    "/api/v1/auth/logout": {
+      "post": {
+        "operationId": "logout",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LogoutRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "summary": "Revoke active token family",
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
+    "/api/v1/auth/refresh": {
+      "post": {
+        "operationId": "refresh",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Rotate refresh token and issue new access token",
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
+    "/api/v1/auth/register": {
+      "post": {
+        "operationId": "register",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegisterResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Register a new member account",
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
+    "/api/v1/auth/reset-password": {
+      "post": {
+        "operationId": "resetPassword",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetPasswordRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "summary": "Reset password using valid single-use token",
+        "tags": [
+          "Authentication"
+        ]
+      }
+    },
+    "/api/v1/bookings": {
+      "post": {
+        "operationId": "createBooking",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBookingRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "booking-controller"
+        ]
+      }
+    },
+    "/api/v1/bookings/{bookingId}/feedback": {
+      "post": {
+        "operationId": "submitFeedback",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "bookingId",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClassFeedbackRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeedbackResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Submit post-session rating, encrypted comments, and report pain symptoms",
+        "tags": [
+          "Wellness Feedback & Progress"
+        ]
+      }
+    },
+    "/api/v1/bookings/{id}": {
+      "delete": {
+        "operationId": "cancelBooking",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "booking-controller"
+        ]
+      }
+    },
+    "/api/v1/classes": {
+      "get": {
+        "operationId": "getClasses",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "category",
+            "required": false,
+            "schema": {
+              "enum": [
+                "YOGA",
+                "PILATES",
+                "HIIT",
+                "STRENGTH",
+                "CARDIO",
+                "DANCE",
+                "MOBILITY",
+                "BOXING"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "intensity",
+            "required": false,
+            "schema": {
+              "enum": [
+                "LOW",
+                "MODERATE",
+                "HIGH"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "impactLevel",
+            "required": false,
+            "schema": {
+              "enum": [
+                "LOW",
+                "MEDIUM",
+                "HIGH"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "format": "int32",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "size",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "format": "int32",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageResponseClassDetailResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "List fitness classes with optional filters",
+        "tags": [
+          "Fitness Classes"
+        ]
+      }
+    },
+    "/api/v1/classes/metadata": {
+      "get": {
+        "operationId": "getMetadata_1",
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClassMetadataResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Get class vocabularies and metadata enums",
+        "tags": [
+          "Fitness Classes"
+        ]
+      }
+    },
+    "/api/v1/classes/{id}": {
+      "get": {
+        "operationId": "getClassById",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClassDetailResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Get fitness class details by ID",
+        "tags": [
+          "Fitness Classes"
+        ]
+      }
+    },
+    "/api/v1/me": {
+      "get": {
+        "operationId": "getProfile_1",
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserProfileResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Get current authenticated user profile",
+        "tags": [
+          "Current User"
+        ]
+      },
+      "patch": {
+        "operationId": "updateProfile",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProfileRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserProfileResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Update current authenticated user profile",
+        "tags": [
+          "Current User"
+        ]
+      }
+    },
+    "/api/v1/me/bookings": {
+      "get": {
+        "operationId": "getMyBookings",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "enum": [
+                "CONFIRMED",
+                "CANCELLED",
+                "ATTENDED",
+                "NO_SHOW"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "from",
+            "required": false,
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "to",
+            "required": false,
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "format": "int32",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "size",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "format": "int32",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageResponseMemberBookingResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "booking-controller"
+        ]
+      }
+    },
+    "/api/v1/me/delete-request": {
+      "post": {
+        "operationId": "requestDelete",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteAccountRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "summary": "Request soft deletion of member account",
+        "tags": [
+          "Current User"
+        ]
+      }
+    },
+    "/api/v1/me/export": {
+      "get": {
+        "operationId": "exportData",
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDataExportResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Export current user account data (profile, bookings, memberships, payments)",
+        "tags": [
+          "Current User"
+        ]
+      }
+    },
+    "/api/v1/me/invoices/{id}": {
+      "get": {
+        "operationId": "getMyInvoice",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvoiceDetailResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Get member invoice details",
+        "tags": [
+          "Payments"
+        ]
+      }
+    },
+    "/api/v1/me/membership": {
+      "get": {
+        "operationId": "getMyMembership",
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/MemberMembershipSummaryResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "membership-controller"
+        ]
+      }
+    },
+    "/api/v1/me/membership/change-preview": {
+      "post": {
+        "operationId": "changePreview",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangePreviewRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChangePreviewResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "membership-controller"
+        ]
+      }
+    },
+    "/api/v1/me/payments": {
+      "get": {
+        "operationId": "getMyPayments",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "pageRequest",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/PageRequestDto"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageResponseMemberPaymentSummaryDto"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Get member payments and refunds history",
+        "tags": [
+          "Payments"
+        ]
+      }
+    },
+    "/api/v1/me/permissions": {
+      "get": {
+        "operationId": "getMyPermissions",
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionsResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Get roles and permissions of the currently authenticated user",
+        "tags": [
+          "Current User"
+        ]
+      }
+    },
+    "/api/v1/memberships/cancel": {
+      "post": {
+        "operationId": "cancelMembership",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "object"
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "membership-controller"
+        ]
+      }
+    },
+    "/api/v1/memberships/change": {
+      "post": {
+        "operationId": "changeMembership",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangeMembershipRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "membership-controller"
+        ]
+      }
+    },
+    "/api/v1/memberships/change-preview": {
+      "post": {
+        "operationId": "changePreview_1",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangePreviewRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChangePreviewResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "membership-controller"
+        ]
+      }
+    },
+    "/api/v1/memberships/subscribe": {
+      "post": {
+        "operationId": "subscribe",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubscribeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentIntentResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "membership-controller"
+        ]
+      }
+    },
+    "/api/v1/payments/webhooks/razorpay": {
+      "post": {
+        "operationId": "handleRazorpayWebhook",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Razorpay-Signature",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Razorpay-Event-Id",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "format": "byte",
+                "type": "string"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Ingest Razorpay webhook event with HMAC-SHA256 signature verification",
+        "tags": [
+          "Payment Webhooks"
+        ]
+      }
+    },
+    "/api/v1/payments/{paymentId}": {
+      "get": {
+        "operationId": "getPayment",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "paymentId",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentDetailResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Get payment intent status",
+        "tags": [
+          "Payments"
+        ]
+      }
+    },
+    "/api/v1/payments/{paymentId}/client-payload": {
+      "get": {
+        "operationId": "getClientPayload",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "paymentId",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "object"
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Get client payload for rendering payment checkout",
+        "tags": [
+          "Payments"
+        ]
+      }
+    },
+    "/api/v1/payments/{paymentId}/confirm": {
+      "post": {
+        "operationId": "confirmPayment",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "paymentId",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfirmPaymentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentDetailResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Confirm a payment intent (Phase 2)",
+        "tags": [
+          "Payments"
+        ]
+      }
+    },
+    "/api/v1/plans": {
+      "get": {
+        "operationId": "getActivePlans",
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PlanDto"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "plan-controller"
+        ]
+      }
+    },
+    "/api/v1/sessions": {
+      "get": {
+        "operationId": "getSessions",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "from",
+            "required": false,
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "to",
+            "required": false,
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "category",
+            "required": false,
+            "schema": {
+              "enum": [
+                "YOGA",
+                "PILATES",
+                "HIIT",
+                "STRENGTH",
+                "CARDIO",
+                "DANCE",
+                "MOBILITY",
+                "BOXING"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "intensity",
+            "required": false,
+            "schema": {
+              "enum": [
+                "LOW",
+                "MODERATE",
+                "HIGH"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "trainerId",
+            "required": false,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "onlyAvailable",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "format": "int32",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "size",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "format": "int32",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageResponseSessionDetailResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "List class sessions with filters",
+        "tags": [
+          "Sessions"
+        ]
+      }
+    },
+    "/api/v1/sessions/{id}": {
+      "get": {
+        "operationId": "getSessionById",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionDetailResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Get class session by ID",
+        "tags": [
+          "Sessions"
+        ]
+      }
+    },
+    "/api/v1/trainer/me": {
+      "get": {
+        "operationId": "getMyTrainerProfile",
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrainerProfileResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Get current trainer's own full profile including pay rate",
+        "tags": [
+          "Trainers"
+        ]
+      },
+      "patch": {
+        "operationId": "updateMyTrainerProfile",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateTrainerProfileRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrainerProfileResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Update trainer bio, specialties, certifications, and availability",
+        "tags": [
+          "Trainers"
+        ]
+      }
+    },
+    "/api/v1/trainer/me/earnings": {
+      "get": {
+        "operationId": "getMyEarnings",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "from",
+            "required": false,
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "to",
+            "required": false,
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrainerEarningsResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "trainer-earnings-controller"
+        ]
+      }
+    },
+    "/api/v1/trainer/me/summary": {
+      "get": {
+        "operationId": "getTrainerSummary",
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrainerSummaryResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Get summary metrics for current trainer (upcoming sessions and earnings)",
+        "tags": [
+          "Trainers"
+        ]
+      }
+    },
+    "/api/v1/trainer/sessions": {
+      "get": {
+        "operationId": "getTrainerSessions",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "from",
+            "required": false,
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "to",
+            "required": false,
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/TrainerSessionResponse"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Get trainer's own sessions with attendee summaries",
+        "tags": [
+          "Trainer Sessions"
+        ]
+      }
+    },
+    "/api/v1/trainer/sessions/{id}/attendance": {
+      "post": {
+        "operationId": "markAttendance",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MarkAttendanceRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarkAttendanceResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "trainer-attendance-controller"
+        ]
+      }
+    },
+    "/api/v1/trainer/sessions/{id}/complete": {
+      "post": {
+        "operationId": "completeSession",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompleteSessionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompleteSessionResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "trainer-attendance-controller"
+        ]
+      }
+    },
+    "/api/v1/trainer/sessions/{sessionId}/prep": {
+      "get": {
+        "operationId": "getPrepSummary",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "sessionId",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrainerPrepResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Get anonymous aggregated restriction counts and movement modifications (min 3 consenting attendees)",
+        "tags": [
+          "Trainer Session Prep"
+        ]
+      }
+    },
+    "/api/v1/trainers": {
+      "get": {
+        "operationId": "listTrainers",
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/TrainerPublicResponse"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "List active trainers with public details (name, bio, specialties)",
+        "tags": [
+          "Trainers"
+        ]
+      }
+    },
+    "/api/v1/trainers/{id}": {
+      "get": {
+        "operationId": "getTrainer",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrainerPublicResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Get single active trainer public details",
+        "tags": [
+          "Trainers"
+        ]
+      }
+    },
+    "/api/v1/waitlist/{sessionId}": {
+      "delete": {
+        "operationId": "leaveWaitlist",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "sessionId",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "booking-controller"
+        ]
+      }
+    },
+    "/api/v1/wellness/classes/safe": {
+      "get": {
+        "operationId": "getSafeClasses",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "from",
+            "required": false,
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "to",
+            "required": false,
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "format": "int32",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "size",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "format": "int32",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SafeClassesResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Get sessions filtered by deterministic safety rules (eligible vs avoid)",
+        "tags": [
+          "Wellness Profile"
+        ]
+      }
+    },
+    "/api/v1/wellness/classes/{classId}/burn": {
+      "get": {
+        "operationId": "getClassBurn",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "classId",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClassBurnResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Estimate calorie burn for a class based on duration, MET value, and member weight",
+        "tags": [
+          "Wellness Nutrition"
+        ]
+      }
+    },
+    "/api/v1/wellness/classes/{classId}/check": {
+      "get": {
+        "operationId": "checkClassSafety",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "classId",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SafetyVerdict"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Check safety verdict for a specific fitness class (advisory only)",
+        "tags": [
+          "Wellness Profile"
+        ]
+      }
+    },
+    "/api/v1/wellness/consent": {
+      "get": {
+        "operationId": "getConsentInfo",
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConsentInfoResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Get consent text, available purposes, current grants, and 18+ eligibility",
+        "tags": [
+          "Wellness Consent"
+        ]
+      },
+      "post": {
+        "operationId": "grantConsent",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GrantConsentRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "summary": "Grant health data processing consent for specified purposes",
+        "tags": [
+          "Wellness Consent"
+        ]
+      }
+    },
+    "/api/v1/wellness/consent/{purpose}": {
+      "delete": {
+        "operationId": "revokeConsent",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "purpose",
+            "required": true,
+            "schema": {
+              "enum": [
+                "PERSONALIZED_CLASSES",
+                "CALORIE_ESTIMATES",
+                "SHARE_TRAINER_SUMMARY",
+                "AI_ASSISTANT_PROCESSING"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "summary": "Revoke health data processing consent for a specific purpose",
+        "tags": [
+          "Wellness Consent"
+        ]
+      }
+    },
+    "/api/v1/wellness/data": {
+      "delete": {
+        "operationId": "deleteHealthData",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteHealthDataRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "summary": "Permanently hard-delete all health records, metrics, logs, and proposals",
+        "tags": [
+          "Wellness Profile"
+        ]
+      }
+    },
+    "/api/v1/wellness/export": {
+      "get": {
+        "operationId": "exportHealthData",
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthExportResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Export complete decrypted wellness records, metrics, feedback, and access log history",
+        "tags": [
+          "Wellness Profile"
+        ]
+      }
+    },
+    "/api/v1/wellness/metadata": {
+      "get": {
+        "operationId": "getMetadata",
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/WellnessMetadataResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Get coded health vocabularies, enum values, and PAR-Q questions",
+        "tags": [
+          "Wellness Metadata"
+        ]
+      }
+    },
+    "/api/v1/wellness/metrics": {
+      "get": {
+        "operationId": "getMetrics",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "from",
+            "required": false,
+            "schema": {
+              "format": "date",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "to",
+            "required": false,
+            "schema": {
+              "format": "date",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/BodyMetricResponse"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Get decrypted history of body metrics measurements",
+        "tags": [
+          "Wellness Profile"
+        ]
+      },
+      "post": {
+        "operationId": "recordMetric",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BodyMetricRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/BodyMetricResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Record encrypted body metrics measurement (weight, height)",
+        "tags": [
+          "Wellness Profile"
+        ]
+      }
+    },
+    "/api/v1/wellness/nutrition/numbers": {
+      "get": {
+        "operationId": "getNutritionNumbers",
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/NutritionNumbersResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Get deterministic BMR, TDEE, and daily target calorie estimates",
+        "tags": [
+          "Wellness Nutrition"
+        ]
+      }
+    },
+    "/api/v1/wellness/profile": {
+      "get": {
+        "operationId": "getProfile",
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Get decrypted fitness profile and screening evaluation for owner",
+        "tags": [
+          "Wellness Profile"
+        ]
+      },
+      "put": {
+        "operationId": "saveProfile",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FitnessProfile"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Create or update encrypted fitness profile and return deterministic screening verdict",
+        "tags": [
+          "Wellness Profile"
+        ]
+      }
+    },
+    "/api/v1/wellness/progress/weekly": {
+      "get": {
+        "operationId": "getWeeklyProgress",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "weekStart",
+            "required": false,
+            "schema": {
+              "format": "date",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/WeeklyProgressResponse"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Get weekly booking counts, attendance, streak weeks, and calorie expenditure",
+        "tags": [
+          "Wellness Feedback & Progress"
+        ]
+      }
+    },
+    "/api/v1/wellness/restriction-proposals": {
+      "get": {
+        "operationId": "getProposals",
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/RestrictionProposalDto"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Get pending movement restriction proposals generated by pain feedback",
+        "tags": [
+          "Wellness Feedback & Progress"
+        ]
+      }
+    },
+    "/api/v1/wellness/restriction-proposals/{id}/accept": {
+      "post": {
+        "operationId": "acceptProposal",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AcceptProposalRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/RestrictionProposalDto"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Explicitly accept a restriction proposal and raise health profile injury severity",
+        "tags": [
+          "Wellness Feedback & Progress"
+        ]
+      }
+    },
+    "/api/v1/wellness/restriction-proposals/{id}/dismiss": {
+      "post": {
+        "operationId": "dismissProposal",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/RestrictionProposalDto"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Dismiss a pending movement restriction proposal",
+        "tags": [
+          "Wellness Feedback & Progress"
+        ]
+      }
+    },
+    "/dev/jobs/{name}/run": {
+      "post": {
+        "operationId": "runJob",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "object"
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "dev-job-controller"
+        ]
+      }
+    },
+    "/dev/mail": {
+      "delete": {
+        "operationId": "clearEmails",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "dev-mail-controller"
+        ]
+      },
+      "get": {
+        "operationId": "getReceivedEmails",
+        "responses": {
+          "200": {
+            "content": {
+              "*/*": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/EmailMessageDto"
+                  },
+                  "type": "array"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "dev-mail-controller"
+        ]
+      }
+    },
+    "/dev/razorpay-checkout": {
+      "get": {
+        "operationId": "getCheckoutPage",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "paymentId",
+            "required": false,
+            "schema": {
+              "format": "int64",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "token",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Dev-only standalone Razorpay test checkout page",
+        "tags": [
+          "Dev Tools"
+        ]
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "servers": [
+    {
+      "description": "Generated server url",
+      "url": "http://localhost:8080"
+    }
+  ],
+  "tags": [
+    {
+      "description": "Public webhook ingestion endpoint for Razorpay gateway events",
+      "name": "Payment Webhooks"
+    },
+    {
+      "description": "Administrative configuration for AI models and runtime Gemini API keys",
+      "name": "AI Settings"
+    },
+    {
+      "description": "Workout progress tracking, attended class feedback, pain detection, and restriction proposals",
+      "name": "Wellness Feedback & Progress"
+    },
+    {
+      "description": "Multi-agent conversational assistant for FitFlow members, trainers, and administrators",
+      "name": "Agent Chat"
+    },
+    {
+      "description": "Endpoints for managing the outbox, queues, and dead-letter queue replays",
+      "name": "Admin Messaging"
+    },
+    {
+      "description": "Member health data consent management under DPDP Act",
+      "name": "Wellness Consent"
+    },
+    {
+      "description": "Current authenticated user profile, permissions, export, and self-service",
+      "name": "Current User"
+    },
+    {
+      "description": "Coded health vocabularies and PAR-Q screening questionnaire",
+      "name": "Wellness Metadata"
+    },
+    {
+      "description": "Public trainer catalog and trainer profile self-service",
+      "name": "Trainers"
+    },
+    {
+      "description": "Authentication, registration, token refresh, and password management",
+      "name": "Authentication"
+    },
+    {
+      "description": "Development only test tools",
+      "name": "Dev Tools"
+    },
+    {
+      "description": "AI Agent runtime and configuration status",
+      "name": "Agent Status"
+    },
+    {
+      "description": "Administrative Fitness Class Management",
+      "name": "Admin Classes"
+    },
+    {
+      "description": "Member payment confirmation, history, and invoices",
+      "name": "Payments"
+    },
+    {
+      "description": "Trainer Assigned Class Sessions & Attendee Roster",
+      "name": "Trainer Sessions"
+    },
+    {
+      "description": "Administrative configuration for payment gateways and Razorpay credentials",
+      "name": "Payment Settings"
+    },
+    {
+      "description": "Administrative trainer compensation management",
+      "name": "Admin Trainers"
+    },
+    {
+      "description": "Administrative refund approvals and governance",
+      "name": "Admin Refunds"
+    },
+    {
+      "description": "Administrative user management and role assignment",
+      "name": "Admin Users"
+    },
+    {
+      "description": "Administrative Utilization and Analytics Reports",
+      "name": "Admin Reports"
+    },
+    {
+      "description": "Member encrypted health profile, safety screening, biometrics, and DPDP data rights",
+      "name": "Wellness Profile"
+    },
+    {
+      "description": "Public & Member Class Session Schedule",
+      "name": "Sessions"
+    },
+    {
+      "description": "Privacy-preserving anonymous class injury counts and suggested modifications",
+      "name": "Trainer Session Prep"
+    },
+    {
+      "description": "Deterministic calorie burn and daily energy expenditure calculations",
+      "name": "Wellness Nutrition"
+    },
+    {
+      "description": "Administrative Class Session Scheduling & Management",
+      "name": "Admin Sessions"
+    },
+    {
+      "description": "Public & Member Fitness Class Catalog",
+      "name": "Fitness Classes"
+    }
+  ]
+}

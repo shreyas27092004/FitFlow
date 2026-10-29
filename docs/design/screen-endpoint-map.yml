@@ -1,0 +1,777 @@
+# ==============================================================================
+# FitFlow Screen to Endpoint Mapping (docs/design/screen-endpoint-map.yml)
+# Anti-Drift Contract between Frontend Screens and OpenAPI Backend Endpoints
+# Roles permitted: MEMBER, TRAINER, ADMIN
+# ==============================================================================
+
+screens:
+  # ----------------------------------------------------------------------------
+  # PUBLIC SCREENS
+  # ----------------------------------------------------------------------------
+  - id: public-landing
+    route: /
+    roles:
+      - MEMBER
+      - TRAINER
+      - ADMIN
+    endpoints:
+      - GET /api/v1/classes
+      - GET /api/v1/plans
+    states:
+      - loading
+      - empty
+      - error
+      - success
+      - forbidden
+    notes: Public landing marketing page displaying top featured fitness classes and subscription tiers.
+
+  - id: public-login
+    route: /login
+    roles:
+      - MEMBER
+      - TRAINER
+      - ADMIN
+    endpoints:
+      - POST /api/v1/auth/login
+    states:
+      - loading
+      - empty
+      - error
+      - success
+      - forbidden
+    notes: Email and password authentication with rate-limiting lock display on 5 failed attempts.
+
+  - id: public-register
+    route: /register
+    roles:
+      - MEMBER
+      - TRAINER
+      - ADMIN
+    endpoints:
+      - POST /api/v1/auth/register
+    states:
+      - loading
+      - empty
+      - error
+      - success
+      - forbidden
+    notes: New member registration with mandatory date of birth (age >= 14 enforcement).
+
+  - id: public-forgot-password
+    route: /forgot-password
+    roles:
+      - MEMBER
+      - TRAINER
+      - ADMIN
+    endpoints:
+      - POST /api/v1/auth/forgot-password
+    states:
+      - loading
+      - empty
+      - error
+      - success
+      - forbidden
+    notes: Password reset request initiating an email dispatch with recovery token.
+
+  - id: public-reset-password
+    route: /reset-password
+    roles:
+      - MEMBER
+      - TRAINER
+      - ADMIN
+    endpoints:
+      - POST /api/v1/auth/reset-password
+    states:
+      - loading
+      - empty
+      - error
+      - success
+      - forbidden
+    notes: Completes password reset given a valid one-time recovery token.
+
+  - id: public-plans
+    route: /plans
+    roles:
+      - MEMBER
+      - TRAINER
+      - ADMIN
+    endpoints:
+      - GET /api/v1/plans
+    states:
+      - loading
+      - empty
+      - error
+      - success
+      - forbidden
+    notes: Public catalog of available membership plans with session quotas and pricing.
+
+  - id: public-not-found
+    route: /404
+    roles:
+      - MEMBER
+      - TRAINER
+      - ADMIN
+    endpoints: []
+    states:
+      - loading
+      - empty
+      - error
+      - success
+      - forbidden
+    notes: Friendly fallback page for non-existent routes with navigation back to role dashboard.
+
+  - id: public-forbidden
+    route: /403
+    roles:
+      - MEMBER
+      - TRAINER
+      - ADMIN
+    endpoints: []
+    states:
+      - loading
+      - empty
+      - error
+      - success
+      - forbidden
+    notes: Access denied screen when an authenticated user lacks required role or permission.
+
+  - id: public-session-expired
+    route: /session-expired
+    roles:
+      - MEMBER
+      - TRAINER
+      - ADMIN
+    endpoints:
+      - POST /api/v1/auth/refresh
+    states:
+      - loading
+      - empty
+      - error
+      - success
+      - forbidden
+    notes: Displays when in-memory access token expired and silent refresh via httpOnly cookie failed.
+
+  # ----------------------------------------------------------------------------
+  # MEMBER CORE SCREENS
+  # ----------------------------------------------------------------------------
+  - id: member-home-dashboard
+    route: /app/dashboard
+    roles:
+      - MEMBER
+    endpoints:
+      - GET /api/v1/me
+      - GET /api/v1/me/membership
+      - GET /api/v1/me/bookings
+      - GET /api/v1/sessions
+    states:
+      - loading
+      - empty
+      - error
+      - success
+      - forbidden
+    notes: Member dashboard showing greeting, active plan status, remaining sessions, next booked class, and quick action cards.
+
+  - id: member-browse-classes
+    route: /app/classes
+    roles:
+      - MEMBER
+    endpoints:
+      - GET /api/v1/classes
+      - GET /api/v1/classes/metadata
+      - GET /api/v1/trainers
+    states:
+      - loading
+      - empty
+      - error
+      - success
+      - forbidden
+    notes: Searchable and filterable fitness class directory with category, intensity, trainer, and availability filters.
+
+  - id: member-class-details
+    route: /app/classes/:id
+    roles:
+      - MEMBER
+    endpoints:
+      - GET /api/v1/classes/{id}
+      - GET /api/v1/sessions
+    states:
+      - loading
+      - empty
+      - error
+      - success
+      - forbidden
+    notes: Detailed view of a fitness class, instructor bio, MET estimate, contraindications, and scheduled upcoming sessions.
+
+  - id: member-session-details
+    route: /app/sessions/:id
+    roles:
+      - MEMBER
+    endpoints:
+      - GET /api/v1/sessions/{id}
+      - POST /api/v1/bookings
+      - DELETE /api/v1/waitlist/{sessionId}
+    states:
+      - loading
+      - empty
+      - error
+      - success
+      - forbidden
+    notes: Specific session details with live capacity counter, 1-click Book button, or Join Waitlist if capacity reached.
+
+  - id: member-my-bookings
+    route: /app/bookings
+    roles:
+      - MEMBER
+    endpoints:
+      - GET /api/v1/me/bookings
+      - DELETE /api/v1/bookings/{id}
+    states:
+      - loading
+      - empty
+      - error
+      - success
+      - forbidden
+    notes: Upcoming and historical bookings list with 2-hour cutoff cancellation alert and attendance status.
+
+  - id: member-membership
+    route: /app/membership
+    roles:
+      - MEMBER
+    endpoints:
+      - GET /api/v1/me/membership
+      - GET /api/v1/plans
+      - POST /api/v1/me/membership/change-preview
+      - POST /api/v1/memberships/cancel
+    states:
+      - loading
+      - empty
+      - error
+      - success
+      - forbidden
+    notes: Current plan summary, renewal date, session entitlement gauge, prorated upgrade/downgrade preview, and cancellation.
+
+  - id: member-checkout
+    route: /app/membership/checkout
+    roles:
+      - MEMBER
+    endpoints:
+      - POST /api/v1/memberships/subscribe
+      - POST /api/v1/memberships/change
+      - GET /api/v1/payments/{paymentId}/client-payload
+    states:
+      - loading
+      - empty
+      - error
+      - success
+      - forbidden
+    notes: Plan subscription and upgrade checkout launching Razorpay modal via client payload.
+
+  - id: member-payment-result
+    route: /app/membership/payment-result
+    roles:
+      - MEMBER
+    endpoints:
+      - POST /api/v1/payments/{paymentId}/confirm
+      - GET /api/v1/payments/{paymentId}
+    states:
+      - loading
+      - empty
+      - error
+      - success
+      - forbidden
+    notes: Post-gateway verification screen confirming payment signature and unlocking membership entitlement.
+
+  - id: member-payments-invoices
+    route: /app/payments
+    roles:
+      - MEMBER
+    endpoints:
+      - GET /api/v1/me/payments
+      - GET /api/v1/me/invoices/{id}
+    states:
+      - loading
+      - empty
+      - error
+      - success
+      - forbidden
+    notes: History of completed transactions, refund statuses, and downloadable PDF/HTML tax invoices.
+
+  - id: member-account
+    route: /app/account
+    roles:
+      - MEMBER
+    endpoints:
+      - GET /api/v1/me
+      - PATCH /api/v1/me
+      - POST /api/v1/auth/change-password
+      - GET /api/v1/me/export
+      - POST /api/v1/me/delete-request
+    states:
+      - loading
+      - empty
+      - error
+      - success
+      - forbidden
+    notes: Member personal profile, notification preferences, password update, DPDP personal data export, and account deletion.
+
+  # ----------------------------------------------------------------------------
+  # MEMBER WELLNESS SCREENS
+  # ----------------------------------------------------------------------------
+  - id: member-wellness-consent
+    route: /app/wellness/consent
+    roles:
+      - MEMBER
+    endpoints:
+      - GET /api/v1/wellness/consent
+      - POST /api/v1/wellness/consent
+      - DELETE /api/v1/wellness/consent/{purpose}
+    states:
+      - loading
+      - empty
+      - error
+      - success
+      - forbidden
+    notes: Plain-language DPDP consent management with version v1 text, per-purpose toggles, and right to withdraw.
+
+  - id: member-wellness-profile
+    route: /app/wellness/profile
+    roles:
+      - MEMBER
+    endpoints:
+      - GET /api/v1/wellness/profile
+      - PUT /api/v1/wellness/profile
+      - GET /api/v1/wellness/metadata
+    states:
+      - loading
+      - empty
+      - error
+      - success
+      - forbidden
+    notes: Multi-step wellness profile wizard (basics, experience, goals & availability, injuries, conditions, PAR-Q Q1-Q7).
+
+  - id: member-screening-result
+    route: /app/wellness/screening
+    roles:
+      - MEMBER
+    endpoints:
+      - GET /api/v1/wellness/profile
+    states:
+      - loading
+      - empty
+      - error
+      - success
+      - forbidden
+    notes: Deterministic safety screening verdict (ALLOWED, CAUTION, RESTRICTED, RED_FLAG) with prominent doctor check banner.
+
+  - id: member-safe-classes
+    route: /app/wellness/safe-classes
+    roles:
+      - MEMBER
+    endpoints:
+      - GET /api/v1/wellness/classes/safe
+      - GET /api/v1/wellness/classes/{classId}/check
+    states:
+      - loading
+      - empty
+      - error
+      - success
+      - forbidden
+    notes: Color-coded safe class schedule separating ALLOWED, CAUTION (with modifications), and RESTRICTED classes.
+
+  - id: member-calorie-numbers
+    route: /app/wellness/calories
+    roles:
+      - MEMBER
+    endpoints:
+      - GET /api/v1/wellness/nutrition/numbers
+      - GET /api/v1/wellness/classes/{classId}/burn
+    states:
+      - loading
+      - empty
+      - error
+      - success
+      - forbidden
+    notes: Pure deterministic BMR/TDEE calculations and class burn estimates with mandatory wellness disclaimer note.
+
+  - id: member-weekly-progress
+    route: /app/wellness/progress
+    roles:
+      - MEMBER
+    endpoints:
+      - GET /api/v1/wellness/progress/weekly
+      - GET /api/v1/wellness/metrics
+      - POST /api/v1/wellness/metrics
+    states:
+      - loading
+      - empty
+      - error
+      - success
+      - forbidden
+    notes: Weekly workout completion summary, active streaks, estimated calorie burn, and body weight trend log.
+
+  - id: member-post-class-feedback
+    route: /app/wellness/feedback
+    roles:
+      - MEMBER
+    endpoints:
+      - POST /api/v1/bookings/{bookingId}/feedback
+    states:
+      - loading
+      - empty
+      - error
+      - success
+      - forbidden
+    notes: Attended session rating and confidential pain detection feedback triggering safety review proposals.
+
+  - id: member-restriction-proposals
+    route: /app/wellness/proposals
+    roles:
+      - MEMBER
+    endpoints:
+      - GET /api/v1/wellness/restriction-proposals
+      - POST /api/v1/wellness/restriction-proposals/{id}/accept
+      - POST /api/v1/wellness/restriction-proposals/{id}/dismiss
+    states:
+      - loading
+      - empty
+      - error
+      - success
+      - forbidden
+    notes: System-generated safety modification proposals following reported pain, with 1-click Accept or Dismiss.
+
+  - id: member-my-health-data
+    route: /app/wellness/data-rights
+    roles:
+      - MEMBER
+    endpoints:
+      - GET /api/v1/wellness/profile
+      - GET /api/v1/wellness/export
+      - DELETE /api/v1/wellness/data
+    states:
+      - loading
+      - empty
+      - error
+      - success
+      - forbidden
+    notes: Explicit data rights screen showing access isolation ("only you"), DPDP health JSON export, and typed permanent deletion.
+
+  # ----------------------------------------------------------------------------
+  # MEMBER AI ASSISTANT
+  # ----------------------------------------------------------------------------
+  - id: member-assistant-panel
+    route: /app/assistant
+    roles:
+      - MEMBER
+    endpoints:
+      - POST /api/v1/agent/chat
+      - GET /api/v1/agent/chat/stream
+      - POST /api/v1/agent/chat/stream
+      - GET /api/v1/agent/conversations
+      - GET /api/v1/agent/conversations/{id}/messages
+      - DELETE /api/v1/agent/conversations/{id}
+      - GET /api/v1/agent/actions/pending
+      - POST /api/v1/agent/actions/{id}/confirm
+      - POST /api/v1/agent/actions/{id}/reject
+      - GET /api/v1/agent/status
+    states:
+      - loading
+      - empty
+      - error
+      - success
+      - forbidden
+    notes: Multi-turn conversational AI assistant with streaming SSE, tool indicator chips, pending action cards, and disclaimer banner.
+
+  # ----------------------------------------------------------------------------
+  # TRAINER SCREENS
+  # ----------------------------------------------------------------------------
+  - id: trainer-dashboard
+    route: /trainer/dashboard
+    roles:
+      - TRAINER
+    endpoints:
+      - GET /api/v1/trainer/me
+      - GET /api/v1/trainer/me/summary
+      - GET /api/v1/trainer/sessions
+    states:
+      - loading
+      - empty
+      - error
+      - success
+      - forbidden
+    notes: Trainer overview with today's class schedule, completed session count, and monthly earnings summary.
+
+  - id: trainer-my-sessions
+    route: /trainer/sessions
+    roles:
+      - TRAINER
+    endpoints:
+      - GET /api/v1/trainer/sessions
+    states:
+      - loading
+      - empty
+      - error
+      - success
+      - forbidden
+    notes: Weekly calendar and list view of assigned class sessions with room names and enrolled counts.
+
+  - id: trainer-session-detail
+    route: /trainer/sessions/:id
+    roles:
+      - TRAINER
+    endpoints:
+      - GET /api/v1/sessions/{id}
+      - POST /api/v1/trainer/sessions/{id}/attendance
+      - POST /api/v1/trainer/sessions/{id}/complete
+    states:
+      - loading
+      - empty
+      - error
+      - success
+      - forbidden
+    notes: Attendee check-in roster, marked attendance submit, and class completion action unlocking payout eligibility.
+
+  - id: trainer-class-prep-summary
+    route: /trainer/sessions/:id/prep
+    roles:
+      - TRAINER
+    endpoints:
+      - GET /api/v1/trainer/sessions/{sessionId}/prep
+    states:
+      - loading
+      - empty
+      - error
+      - success
+      - forbidden
+    notes: Privacy-preserving aggregated injury count summary and suggested exercise modifications with the small-group privacy banner.
+
+  - id: trainer-earnings
+    route: /trainer/earnings
+    roles:
+      - TRAINER
+    endpoints:
+      - GET /api/v1/trainer/me/earnings
+    states:
+      - loading
+      - empty
+      - error
+      - success
+      - forbidden
+    notes: Completed session payout ledger, base rate per session, paid vs pending earnings, and approved payout receipts.
+
+  - id: trainer-profile-editor
+    route: /trainer/profile
+    roles:
+      - TRAINER
+    endpoints:
+      - GET /api/v1/trainer/me
+      - PATCH /api/v1/trainer/me
+    states:
+      - loading
+      - empty
+      - error
+      - success
+      - forbidden
+    notes: Public instructor profile editor for bio, fitness specialties, and weekly recurring teaching availability.
+
+  # ----------------------------------------------------------------------------
+  # ADMIN SCREENS
+  # ----------------------------------------------------------------------------
+  - id: admin-dashboard
+    route: /admin/dashboard
+    roles:
+      - ADMIN
+    endpoints:
+      - GET /api/v1/admin/reports/utilization
+      - GET /api/v1/admin/refunds
+      - GET /api/v1/admin/messaging/queues
+      - GET /api/v1/admin/messaging/outbox
+    states:
+      - loading
+      - empty
+      - error
+      - success
+      - forbidden
+    notes: High-level operations center showing studio utilization rates, pending refund queue count, and transactional outbox health.
+
+  - id: admin-users
+    route: /admin/users
+    roles:
+      - ADMIN
+    endpoints:
+      - GET /api/v1/admin/users
+      - POST /api/v1/admin/users
+      - GET /api/v1/admin/users/{id}
+      - PATCH /api/v1/admin/users/{id}
+      - PUT /api/v1/admin/users/{id}/permissions
+      - POST /api/v1/admin/users/{id}/suspend
+      - POST /api/v1/admin/users/{id}/reactivate
+    states:
+      - loading
+      - empty
+      - error
+      - success
+      - forbidden
+    notes: Administrative user directory with trainer/admin provisioning, role-based permission assignment, and suspension controls.
+
+  - id: admin-classes
+    route: /admin/classes
+    roles:
+      - ADMIN
+    endpoints:
+      - GET /api/v1/classes
+      - POST /api/v1/admin/classes
+      - PUT /api/v1/admin/classes/{id}
+      - POST /api/v1/admin/classes/{id}/activate
+      - POST /api/v1/admin/classes/{id}/deactivate
+      - POST /api/v1/admin/classes/{id}/confirm-metadata
+    states:
+      - loading
+      - empty
+      - error
+      - success
+      - forbidden
+    notes: Fitness class catalog administration with category/intensity assignment, contraindication tags, and AI metadata confirmation.
+
+  - id: admin-sessions
+    route: /admin/sessions
+    roles:
+      - ADMIN
+    endpoints:
+      - GET /api/v1/sessions
+      - POST /api/v1/admin/sessions
+      - PATCH /api/v1/admin/sessions/{id}/reschedule
+      - POST /api/v1/admin/sessions/{id}/cancel
+      - POST /api/v1/admin/bookings/{id}/cancel
+    states:
+      - loading
+      - empty
+      - error
+      - success
+      - forbidden
+    notes: Studio scheduling calendar with recurring generation, room conflict detection, emergency cancellation, and re-booking alerts.
+
+  - id: admin-plans
+    route: /admin/plans
+    roles:
+      - ADMIN
+    endpoints:
+      - GET /api/v1/plans
+      - POST /api/v1/admin/plans
+      - PUT /api/v1/admin/plans/{id}
+    states:
+      - loading
+      - empty
+      - error
+      - success
+      - forbidden
+    notes: Membership tier management defining pricing in paise, session allocations, and active status toggles.
+
+  - id: admin-refunds
+    route: /admin/refunds
+    roles:
+      - ADMIN
+    endpoints:
+      - GET /api/v1/admin/refunds
+      - POST /api/v1/admin/refunds/{id}/approve
+      - POST /api/v1/admin/refunds/{id}/reject
+    states:
+      - loading
+      - empty
+      - error
+      - success
+      - forbidden
+    notes: Member refund governance queue requiring administrative review and approval with reason recording.
+
+  - id: admin-payouts
+    route: /admin/payouts
+    roles:
+      - ADMIN
+    endpoints:
+      - POST /api/v1/admin/payouts
+      - GET /api/v1/admin/payouts/{id}
+      - POST /api/v1/admin/payouts/{id}/approve
+      - POST /api/v1/admin/payouts/{id}/mark-paid
+      - GET /api/v1/admin/payouts/{id}/export.csv
+      - PATCH /api/v1/admin/trainers/{id}/rate
+    states:
+      - loading
+      - empty
+      - error
+      - success
+      - forbidden
+    notes: Monthly trainer compensation batch generator requiring dual-admin approval, banking CSV export, and rate override.
+
+  - id: admin-settings-ai
+    route: /admin/settings/ai
+    roles:
+      - ADMIN
+    endpoints:
+      - GET /api/v1/admin/settings/ai
+      - PUT /api/v1/admin/settings/ai/key
+      - DELETE /api/v1/admin/settings/ai/key
+      - PUT /api/v1/admin/settings/ai/model
+      - POST /api/v1/admin/settings/ai/test
+    states:
+      - loading
+      - empty
+      - error
+      - success
+      - forbidden
+    notes: Dynamic AI runtime configuration with masked Gemini key entry, model selection, and live connection test.
+
+  - id: admin-settings-payments
+    route: /admin/settings/payments
+    roles:
+      - ADMIN
+    endpoints:
+      - GET /api/v1/admin/settings/payments
+      - PUT /api/v1/admin/settings/payments/gateway
+      - PUT /api/v1/admin/settings/payments/razorpay
+      - DELETE /api/v1/admin/settings/payments/razorpay
+      - POST /api/v1/admin/settings/payments/razorpay/test
+    states:
+      - loading
+      - empty
+      - error
+      - success
+      - forbidden
+    notes: Payment gateway switch (MOCK vs RAZORPAY) with encrypted key storage and webhook connectivity verification.
+
+  - id: admin-messaging
+    route: /admin/messaging
+    roles:
+      - ADMIN
+    endpoints:
+      - GET /api/v1/admin/messaging/outbox
+      - POST /api/v1/admin/messaging/outbox/{id}/retry
+      - GET /api/v1/admin/messaging/queues
+      - POST /api/v1/admin/messaging/dlq/{queue}/replay
+    states:
+      - loading
+      - empty
+      - error
+      - success
+      - forbidden
+    notes: Operational messaging console monitoring RabbitMQ queue depths, dead-letter replays, and transactional outbox retries.
+
+  - id: admin-assistant-panel
+    route: /admin/assistant
+    roles:
+      - ADMIN
+    endpoints:
+      - POST /api/v1/agent/chat
+      - GET /api/v1/agent/chat/stream
+      - POST /api/v1/agent/chat/stream
+      - GET /api/v1/agent/conversations
+      - GET /api/v1/agent/conversations/{id}/messages
+      - GET /api/v1/agent/actions/pending
+      - POST /api/v1/agent/actions/{id}/confirm
+      - POST /api/v1/agent/actions/{id}/reject
+      - GET /api/v1/agent/status
+    states:
+      - loading
+      - empty
+      - error
+      - success
+      - forbidden
+    notes: Administrative AI copilot for retention analysis, demand forecasting, and class metadata drafting (health data strictly banned).

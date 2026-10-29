@@ -1,0 +1,96 @@
+{
+  "brand": {
+    "name": "FitFlow",
+    "tagline": "Move with purpose. Train with intelligence.",
+    "wellnessDisclaimer": "Wellness suggestions, not medical advice. Rules are illustrative and must be reviewed by a qualified professional before real use.",
+    "doctorCheckAlert": "Doctor Consultation Recommended: Your screening indicates you should consult a doctor before starting intense exercise."
+  },
+  "nav": {
+    "home": "Home",
+    "classes": "Classes",
+    "bookings": "My Bookings",
+    "membership": "Membership",
+    "wellness": "Wellness",
+    "assistant": "AI Assistant",
+    "trainerDashboard": "Trainer Dashboard",
+    "trainerSessions": "My Schedule",
+    "trainerEarnings": "Earnings",
+    "trainerProfile": "Profile & Hours",
+    "adminDashboard": "Admin Dashboard",
+    "adminUsers": "Users",
+    "adminClasses": "Class Catalog",
+    "adminSessions": "Schedule",
+    "adminPlans": "Plans & Tiers",
+    "adminRefunds": "Refunds",
+    "adminPayouts": "Payouts",
+    "adminSettingsAi": "AI Settings",
+    "adminSettingsPayments": "Payment Settings",
+    "adminMessaging": "Messaging & Outbox",
+    "signOut": "Sign Out"
+  },
+  "auth": {
+    "signInTitle": "Sign in to your account",
+    "registerTitle": "Create your FitFlow account",
+    "emailLabel": "Email Address",
+    "passwordLabel": "Password",
+    "confirmPasswordLabel": "Confirm Password",
+    "fullNameLabel": "Full Name",
+    "dobLabel": "Date of Birth (Must be 14+)",
+    "signInButton": "Sign In",
+    "registerButton": "Create Account",
+    "forgotPassword": "Forgot password?",
+    "ageError": "You must be at least 14 years old to join FitFlow.",
+    "accountLocked": "Account temporarily locked for 15 minutes due to multiple failed sign-in attempts."
+  },
+  "errors": {
+    "VALIDATION_FAILED": "Please check your information and correct the highlighted fields.",
+    "UNAUTHENTICATED": "Your session has expired. Please sign in again.",
+    "FORBIDDEN": "You do not have permission to view this section or perform this action.",
+    "NOT_FOUND": "The requested item or page was not found.",
+    "CONFLICT": "This email or reservation conflicts with an existing record.",
+    "OPTIMISTIC_LOCK": "Schedule updated by another user. Reloading latest availability.",
+    "RATE_LIMITED": "Too many requests. Please wait a moment before trying again.",
+    "UPGRADE_REQUIRED": "You have used all session credits included in your current plan.",
+    "SESSION_FULL": "This class is full. You can join the waitlist.",
+    "BOOKING_RULE_VIOLATION": "Classes lock 2 hours before start. Cancellations or new bookings are closed.",
+    "IDEMPOTENCY_REPLAY_MISMATCH": "Transaction in progress. Please do not submit duplicate requests.",
+    "PAYMENT_FAILED": "Payment was not completed by your issuing bank. Please try another card.",
+    "CONSENT_REQUIRED": "Health consent is required before accessing personalized wellness features.",
+    "AGE_RESTRICTED": "You must be 18 or older to access nutrition calculations and workout safety screening.",
+    "LOCKED": "Account temporarily locked. Please check your password and try again later.",
+    "INTERNAL_ERROR": "Temporary server error. Please try again in a few moments."
+  },
+  "empty": {
+    "classes": "No classes match your current filters. Try clearing your search.",
+    "bookings": "You have no upcoming classes scheduled. Ready to move? Browse our weekly studio calendar.",
+    "invoices": "No past invoices found for this account.",
+    "pendingActions": "No pending action requests. Everything is confirmed and up to date.",
+    "users": "No users match your search criteria."
+  },
+  "actions": {
+    "book": "Book This Session",
+    "joinWaitlist": "Join Waitlist",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "reject": "Reject",
+    "save": "Save Changes",
+    "delete": "Delete",
+    "exportJson": "Export Data (JSON)",
+    "retry": "Try Again"
+  },
+  "wellness": {
+    "allowed": "Allowed",
+    "caution": "Caution (Modified)",
+    "restricted": "Restricted",
+    "redFlag": "Red Flag",
+    "dataPrivacyNotice": "Your wellness data is stored in dedicated encrypted tables and is accessible only to you.",
+    "smallGroupPrivacy": "When fewer than 3 attendees are enrolled in a session, individual injury and modification tags are withheld to maintain personal health confidentiality."
+  },
+  "ai": {
+    "assistantName": "FitFlow Assistant",
+    "mockModeNotice": "Assistant running in demonstration / rule-based mode.",
+    "pendingHeader": "PROPOSED ACTION:",
+    "expiresIn": "Proposal expires in",
+    "circuitBreaker": "The AI assistant is temporarily unavailable. You can still use the app screens to browse and book classes directly."
+  }
+}

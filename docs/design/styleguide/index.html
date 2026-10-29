@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FitFlow Design System & Component Style Guide</title>
+  <style>
+    /* Design Tokens */
+    :root, [data-theme="light"] {
+      --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+      --color-bg-page: #ffffff;
+      --color-bg-surface: #f8fafc;
+      --color-bg-surface-elevated: #ffffff;
+      --color-bg-subtle: #f1f5f9;
+
+      --color-border: #cbd5e1;
+      --color-border-subtle: #e2e8f0;
+
+      --color-text-primary: #0f172a;
+      --color-text-secondary: #475569;
+      --color-text-muted: #64748b;
+
+      --color-brand-primary: #0284c7;
+      --color-brand-primary-hover: #0369a1;
+      --color-brand-focus-ring: #0284c7;
+
+      --btn-primary-bg: #0369a1;
+      --btn-primary-text: #ffffff;
+      --btn-secondary-bg: #f1f5f9;
+      --btn-secondary-text: #0f172a;
+      --btn-danger-bg: #b91c1c;
+      --btn-danger-text: #ffffff;
+
+      --badge-success-bg: #dcfce7;
+      --badge-success-text: #14532d;
+      --badge-warning-bg: #fef3c7;
+      --badge-warning-text: #78350f;
+      --badge-danger-bg: #fee2e2;
+      --badge-danger-text: #7f1d1d;
+      --badge-info-bg: #e0f2fe;
+      --badge-info-text: #0c4a6e;
+    }
+
+    [data-theme="dark"] {
+      --color-bg-page: #090d16;
+      --color-bg-surface: #0f172a;
+      --color-bg-surface-elevated: #1e293b;
+      --color-bg-subtle: #1e293b;
+
+      --color-border: #64748b;
+      --color-border-subtle: #334155;
+
+      --color-text-primary: #f8fafc;
+      --color-text-secondary: #cbd5e1;
+      --color-text-muted: #94a3b8;
+
+      --color-brand-primary: #38bdf8;
+      --color-brand-primary-hover: #7dd3fc;
+      --color-brand-focus-ring: #38bdf8;
+
+      --btn-primary-bg: #7dd3fc;
+      --btn-primary-text: #090d16;
+      --btn-secondary-bg: #1e293b;
+      --btn-secondary-text: #f8fafc;
+      --btn-danger-bg: #b91c1c;
+      --btn-danger-text: #ffffff;
+
+      --badge-success-bg: #14532d;
+      --badge-success-text: #bbf7d0;
+      --badge-warning-bg: #78350f;
+      --badge-warning-text: #fde68a;
+      --badge-danger-bg: #7f1d1d;
+      --badge-danger-text: #fecaca;
+      --badge-info-bg: #0c4a6e;
+      --badge-info-text: #bae6fd;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--color-bg-page);
+      color: var(--color-text-primary);
+      line-height: 1.5;
+      padding: 24px;
+      transition: background-color 150ms ease, color 150ms ease;
+    }
+
+    .container { max-width: 1200px; margin: 0 auto; }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--color-border);
+      margin-bottom: 32px;
+    }
+
+    h1 { font-size: 28px; font-weight: 700; color: var(--color-text-primary); }
+    h2 { font-size: 20px; font-weight: 600; margin: 32px 0 16px 0; color: var(--color-text-primary); }
+    p { color: var(--color-text-secondary); margin-bottom: 16px; font-size: 14px; }
+
+    .theme-toggle-btn {
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 8px;
+      border: 1px solid var(--color-border);
+      background: var(--color-bg-surface);
+      color: var(--color-text-primary);
+      cursor: pointer;
+    }
+    .theme-toggle-btn:focus-visible {
+      outline: 2px solid var(--color-brand-focus-ring);
+      outline-offset: 2px;
+    }
+
+    /* Grid layout */
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+    .card {
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    /* Button styles */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 8px;
+      padding: 10px 18px;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      min-height: 44px;
+      min-width: 44px;
+    }
+    .btn:focus-visible {
+      outline: 2px solid var(--color-brand-focus-ring);
+      outline-offset: 2px;
+    }
+    .btn-primary { background: var(--btn-primary-bg); color: var(--btn-primary-text); }
+    .btn-secondary { background: var(--btn-secondary-bg); color: var(--btn-secondary-text); border: 1px solid var(--color-border); }
+    .btn-danger { background: var(--btn-danger-bg); color: var(--btn-danger-text); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* Form Inputs */
+    .form-group { margin-bottom: 16px; }
+    label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 6px; color: var(--color-text-primary); }
+    input[type="text"], input[type="password"], select {
+      width: 100%;
+      height: 44px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--color-border);
+      background: var(--color-bg-surface-elevated);
+      color: var(--color-text-primary);
+      font-size: 14px;
+    }
+    input:focus, select:focus {
+      outline: 2px solid var(--color-brand-focus-ring);
+      outline-offset: 1px;
+    }
+    .error-text { color: var(--badge-danger-text); font-size: 12px; margin-top: 4px; font-weight: 500; }
+    .has-error input { border-color: var(--badge-danger-text); }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .badge-success { background: var(--badge-success-bg); color: var(--badge-success-text); }
+    .badge-warning { background: var(--badge-warning-bg); color: var(--badge-warning-text); }
+    .badge-danger { background: var(--badge-danger-bg); color: var(--badge-danger-text); }
+    .badge-info { background: var(--badge-info-bg); color: var(--badge-info-text); }
+
+    /* Banners & Callouts */
+    .banner {
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      font-size: 14px;
+      border-left: 4px solid transparent;
+    }
+    .banner-warning {
+      background: var(--badge-warning-bg);
+      color: var(--badge-warning-text);
+      border-left-color: #d97706;
+    }
+    .banner-danger {
+      background: var(--badge-danger-bg);
+      color: var(--badge-danger-text);
+      border-left-color: #dc2626;
+    }
+
+    /* Disclaimer Note */
+    .disclaimer-note {
+      background: var(--color-bg-subtle);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 13px;
+      color: var(--color-text-secondary);
+      margin: 16px 0;
+    }
+
+    /* Pending Action Card */
+    .pending-action-card {
+      border: 2px solid var(--color-brand-primary);
+      border-radius: 12px;
+      padding: 16px;
+      background: var(--color-bg-surface-elevated);
+      margin: 16px 0;
+    }
+    .pending-header { font-weight: 700; font-size: 15px; margin-bottom: 6px; }
+    .pending-expiry { font-size: 12px; color: var(--color-text-muted); margin-bottom: 12px; }
+
+    /* Color Swatch */
+    .swatch {
+      height: 48px;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      border: 1px solid var(--color-border);
+    }
+
+    /* Accessible Table */
+    table { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 12px; }
+    th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--color-border); }
+    th { font-weight: 600; color: var(--color-text-secondary); background: var(--color-bg-subtle); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <h1>FitFlow Design System Style Guide</h1>
+        <p>WCAG 2.2 AA compliant tokens and components in Light &amp; Dark themes</p>
+      </div>
+      <button class="theme-toggle-btn" id="theme-btn" onclick="toggleTheme()">
+        Switch Theme
+      </button>
+    </header>
+
+    <main>
+      <!-- Section 1: Brand & Wellness Microcopy -->
+      <section aria-labelledby="sec-brand">
+        <h2 id="sec-brand">1. Brand &amp; Wellness Microcopy</h2>
+        <div class="disclaimer-note" role="note">
+          <strong>Wellness suggestions, not medical advice.</strong> Rules are illustrative and must be reviewed by a qualified professional before real use.
+        </div>
+        <div class="banner banner-warning" role="region" aria-label="Health Consultation Warning">
+          <strong>Doctor Consultation Recommended:</strong> Your screening indicates you should consult a doctor before starting intense exercise.
+        </div>
+      </section>
+
+      <!-- Section 2: Color Palette Swatches -->
+      <section aria-labelledby="sec-colors">
+        <h2 id="sec-colors">2. Semantic Color Palette</h2>
+        <div class="grid">
+          <div class="card">
+            <div class="swatch" style="background: var(--btn-primary-bg);"></div>
+            <strong>Primary Action</strong>
+            <p>Buttons, active tabs, focus ring</p>
+          </div>
+          <div class="card">
+            <div class="swatch" style="background: var(--badge-success-bg);"></div>
+            <strong style="color: var(--badge-success-text);">Success Palette</strong>
+            <p>Allowed status, completed payment</p>
+          </div>
+          <div class="card">
+            <div class="swatch" style="background: var(--badge-warning-bg);"></div>
+            <strong style="color: var(--badge-warning-text);">Warning / Caution</strong>
+            <p>Exercise caution, modified workout</p>
+          </div>
+          <div class="card">
+            <div class="swatch" style="background: var(--badge-danger-bg);"></div>
+            <strong style="color: var(--badge-danger-text);">Danger / Restricted</strong>
+            <p>Class restriction, cancellations</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 3: Buttons & Interactive Controls -->
+      <section aria-labelledby="sec-buttons">
+        <h2 id="sec-buttons">3. Buttons &amp; Action States</h2>
+        <div class="grid">
+          <div class="card">
+            <p><strong>Primary Button</strong></p>
+            <button type="button" class="btn btn-primary">Book Class Session</button>
+          </div>
+          <div class="card">
+            <p><strong>Secondary Button</strong></p>
+            <button type="button" class="btn btn-secondary">View Schedule</button>
+          </div>
+          <div class="card">
+            <p><strong>Danger Action</strong></p>
+            <button type="button" class="btn btn-danger">Cancel Booking</button>
+          </div>
+          <div class="card">
+            <p><strong>Disabled State</strong></p>
+            <button type="button" class="btn btn-primary" disabled aria-disabled="true">Quota Exceeded</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 4: Form Controls -->
+      <section aria-labelledby="sec-forms">
+        <h2 id="sec-forms">4. Form Inputs &amp; Validation States</h2>
+        <div class="grid">
+          <div class="card">
+            <div class="form-group">
+              <label for="demo-email">Email Address</label>
+              <input type="text" id="demo-email" value="member@fitflow.local">
+            </div>
+            <div class="form-group has-error">
+              <label for="demo-dob">Date of Birth</label>
+              <input type="text" id="demo-dob" value="12/05/2014" aria-invalid="true" aria-describedby="dob-err">
+              <div id="dob-err" class="error-text">You must be at least 14 years old to join FitFlow.</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="form-group">
+              <label for="demo-category">Class Category</label>
+              <select id="demo-category">
+                <option value="YOGA">Yoga &amp; Flexibility</option>
+                <option value="HIIT">HIIT &amp; Cardio</option>
+                <option value="STRENGTH">Strength Training</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="demo-password">Password</label>
+              <input type="password" id="demo-password" value="secretpassword123">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 5: Badges & Status Indicators -->
+      <section aria-labelledby="sec-badges">
+        <h2 id="sec-badges">5. Coded Health &amp; Class Verdict Badges</h2>
+        <div class="card">
+          <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+            <span class="badge badge-success">&#10003; ALLOWED</span>
+            <span class="badge badge-warning">&#9888; CAUTION (MODIFIED)</span>
+            <span class="badge badge-danger">&#10007; RESTRICTED</span>
+            <span class="badge badge-danger">&#9888; RED FLAG</span>
+            <span class="badge badge-info">&#8505; INFO ACTIVE</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 6: AI Pending Action Confirmation Card -->
+      <section aria-labelledby="sec-ai">
+        <h2 id="sec-ai">6. AI Assistant Action Card (Human-in-the-Loop)</h2>
+        <div class="pending-action-card" role="group" aria-label="AI Proposed Action">
+          <div class="pending-header">PROPOSED ACTION: Book Power Vinyasa Yoga</div>
+          <p>Session: Tomorrow, 07:00 AM IST | Studio A | Trainer: Maya Rao</p>
+          <div class="pending-expiry">&#9200; Proposal expires in: 14 mins 45 secs</div>
+          <div style="display: flex; gap: 12px;">
+            <button type="button" class="btn btn-primary">Confirm &amp; Book (1 Credit)</button>
+            <button type="button" class="btn btn-secondary">Reject Proposal</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 7: Responsive Accessible Table -->
+      <section aria-labelledby="sec-table">
+        <h2 id="sec-table">7. Accessible Tabular Data</h2>
+        <div class="card">
+          <table>
+            <caption style="text-align: left; font-weight: 600; margin-bottom: 8px;">Weekly Training Schedule</caption>
+            <thead>
+              <tr>
+                <th scope="col">Class</th>
+                <th scope="col">Time</th>
+                <th scope="col">Trainer</th>
+                <th scope="col">Capacity</th>
+                <th scope="col">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Power Vinyasa Yoga</td>
+                <td>07:00 AM IST</td>
+                <td>Maya Rao</td>
+                <td>18 / 20</td>
+                <td><span class="badge badge-success">Open</span></td>
+              </tr>
+              <tr>
+                <td>Athletic HIIT</td>
+                <td>08:30 AM IST</td>
+                <td>Arjun Kapoor</td>
+                <td>20 / 20</td>
+                <td><span class="badge badge-warning">Waitlist</span></td>
+              </tr>
+              <tr>
+                <td>Reformer Pilates</td>
+                <td>10:00 AM IST</td>
+                <td>Sarah Todd</td>
+                <td>12 / 15</td>
+                <td><span class="badge badge-success">Open</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('theme') === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    }
+
+    function toggleTheme() {
+      const html = document.documentElement;
+      const current = html.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', next);
+    }
+  </script>
+</body>
+</html>
