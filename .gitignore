@@ -8,3 +8,6 @@ node_modules/
 .vscode/
 *.log
 *.class
+dist/
+playwright-report/
+test-results/

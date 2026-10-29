@@ -76,6 +76,7 @@ public class RefreshTokenIT {
         RefreshRequest request = new RefreshRequest(initialRefreshToken);
 
         MvcResult result = mockMvc.perform(post("/api/v1/auth/refresh")
+                        .header("X-Client", "api")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
@@ -108,6 +109,7 @@ public class RefreshTokenIT {
         // Legitimate rotation 1: V1 -> V2
         RefreshRequest req1 = new RefreshRequest(tokenV1);
         MvcResult res1 = mockMvc.perform(post("/api/v1/auth/refresh")
+                        .header("X-Client", "api")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(req1)))
                 .andExpect(status().isOk())
@@ -117,6 +119,7 @@ public class RefreshTokenIT {
         // Legitimate rotation 2: V2 -> V3
         RefreshRequest req2 = new RefreshRequest(tokenV2);
         MvcResult res2 = mockMvc.perform(post("/api/v1/auth/refresh")
+                        .header("X-Client", "api")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(req2)))
                 .andExpect(status().isOk())

@@ -44,7 +44,7 @@ public class SecurityConfig {
     private final RestAccessDeniedHandler accessDeniedHandler;
     private final Environment environment;
 
-    @Value("${fitflow.security.cors.allowed-origins:http://localhost:3000,http://localhost:5173}")
+    @Value("${CORS_ALLOWED_ORIGINS:${fitflow.security.cors.allowed-origins:http://localhost:3000,http://localhost:5173}}")
     private String corsAllowedOrigins;
 
     /**

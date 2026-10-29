@@ -71,6 +71,7 @@ public class LoginIT {
         LoginRequest request = new LoginRequest("validuser@fitflow.local", "Password123!");
 
         mockMvc.perform(post("/api/v1/auth/login")
+                        .header("X-Client", "api")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
@@ -151,6 +152,7 @@ public class LoginIT {
         LoginRequest request = new LoginRequest("suspended@fitflow.local", "ValidPass123!");
 
         mockMvc.perform(post("/api/v1/auth/login")
+                        .header("X-Client", "api")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isUnauthorized())
@@ -166,6 +168,7 @@ public class LoginIT {
         LoginRequest request = new LoginRequest("mustchange@fitflow.local", "TempPass123!");
 
         mockMvc.perform(post("/api/v1/auth/login")
+                        .header("X-Client", "api")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
